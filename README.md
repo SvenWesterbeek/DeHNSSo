@@ -102,7 +102,7 @@ _Grid.mode_ allows for several built-in grid generations to be used. The options
 | _Grid.ny_ | Number of wall-normal stations | [-] | $1$ |
 | _Grid.wall_ | Smooth wall description | [-] | ($nx\_{wall}$,2) |
 | _Grid.H_ | Domain height | [-] | $1$ |
-| _Grid.y\_i_ | Median collocation point height | [-] | 1 |
+| _Grid.y\_i_ | Median collocation point height | [-] | $1$ |
 | _Grid.S_ | Domain start | [-] | $1$ |
 | _Grid.L_ | Domain length | [-] | $1$ |
 | _Grid.mode_ | Grid generation mode | [-] | String |
@@ -124,11 +124,11 @@ The _Stab_ structure is used to define the mode ensemble of interest and present
 | _Stab.N_ | Spectral truncation of beta modes | [-] | $1$ |
 | _Stab.M_ | Spectral truncation of omega modes | [-] | $1$ |
 | _Stab.A0_ | Initial amplitude of all modes | [-] | $((2N+1) \times (2M+1),1)$ |
-| _Stab.omega\_0_ | Fundamental frequency | [-] | 1 |
-| _Stab.beta\_0_ | Fundamental spanwise wavelength | [-] | 1 |
+| _Stab.omega\_0_ | Fundamental frequency | [-] | $1$ |
+| _Stab.beta\_0_ | Fundamental spanwise wavelength | [-] | $1$ |
 | _Stab.IC_ | Initialization method "ILST","ZERO'', 'LOAD" | [-] | string |
 | _Stab.bcwx_ | Inhomogeneous boundary condition locations | [-] | $(any,1)$ |
-| _Stab.bcw_ | Inhomogeneous boundary conditions (default = 0's) | [-] | $($Stab.bcwx$, 3\times(2N+1)\times(2M+1))$ |
+| _Stab.bcw_ | Inhomogeneous boundary conditions (default = 0's) | [-] | $($ Stab.bcwx $, 3\times(2N+1)\times(2M+1))$ |
 | _Stab.u0_ | Normalized streamwise perturbation velocity at x\_0 | [-] | $(3 \times (2N+1) \times (2M+1)),ny)$ |
 | _Stab.v0_ | Normalized wall-normal perturbation velocity at x\_0 | [-] | $(3 \times (2N+1) \times (2M+1)),ny)$ |
 | _Stab.w0_ | Normalized spanwise perturbation velocity at x\_0 | [-] | $(3 \times (2N+1) \times (2M+1)),ny)$ |
