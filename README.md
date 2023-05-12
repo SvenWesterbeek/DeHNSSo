@@ -1,2 +1,330 @@
+#
 # DeHNSSo
-Delft Harmonic Navier-Stokes Solver
+
+Delft Nonlinear Harmonic Navier-Stokes Solver
+
+_Thank you for your interest in using DeHNSSo. This page is intended to guide you through using DeHNSSo easily and fast._
+
+# How to use DeHNSSo
+
+The first step to using DeHNSSo is ensuring that you have MATLAB installed. It is recommended to use at least version R2022b. For help with installing Matlab, please follow the instructions on the [MathWorks web page](https://rb.gy/lbe63k). Then, you will need to download DeHNSSo from the DeHNSSo GitHub as will be explained below. DeHNSSo comes with 4 standard examples that can be run immediately. To perform custom simulations, please familiarize yourself with the input formats through these examples and adjust them accordingly.
+
+## Installation
+
+To start using DeHNSSo, please download the files from \*link\*. The current version of DeHNSSo was made using MATLAB R2022b. Support for earlier versions is not guaranteed. This file contains several folders, namely: Callers, Tools, Data Files and Documentation. It is important that all folders remain together in a directory of your choosing.
+
+The files are structured as follows:
+
+| DeHNSSo/ |
+| --- |
+| Callers/ | Tools/ | Data Files/ | License | Readme |
+| CFI in a swept wing BL/ | Grid generation/ | Base Flows |
+ |
+ |
+| CFI over a hump in a swept wing BL/ | Mathematics/ | Reference results |
+ |
+ |
+| CFI over a step in a swept-wing BL/ | Stability/ |
+ |
+ |
+ |
+| TS-Waves in a Blasius BL/ |
+ |
+ |
+ |
+ |
+
+## Input files
+
+DeHNSSo requires several inputs that describe the basic state flow field, the numerical domain and grid, and an inflow boundary condition among others. This data should be provided in dimensionless form. The reference values should be provided in BF. The contents of these structs should carry specific names. These structs can be summarized as follows:
+
+1. BF - Base flow domain, grid, velocity field and reference values
+2. Grid - numerical domain and discretization
+3. Stab - Mode specifications, spectral truncation and inflow data
+4. Opt - Solver options such as outflow buffer specifications and inflow amplitude growth rate.
+
+These structures will be discussed in detail below to help you make your own input files.
+
+### BF
+
+BF contains the base flow data, the grid on which it is defined and the reference values by which everything is normalized. This data can be provided in a structured, unstructured grid or vector format.
+
+This data does not need to be presented on the same grid as presented in the Grid struct as the data will be interpolated onto the numerical grid within DeHNSSo using the griddata function (method = 'cubic'). The numerical domain cannot exceed the domain of the base flow. In the table below, the required contents of BF are described. In short, BF.X and BF.Y describe the locations where base flow quantities are described. BF.U, BF.V and BF.W describe the velocities in x, y and z respectively. Then, the BF.dxU, BF.dxV, BF.dxW, BF.dyU, BF.dyV, and BF.dyW describe the streamwise and wall-normal derivatives of the aforementioned velocities. Lastly, BF.lref, BF.Uref, BF.nu and BF.Re are the reference values and corresponding Reynolds number defined as .
+
+| Name | Content | Unit | Size |
+| --- | --- | --- | --- |
+| _BF.X_ | Streamwise grid locations | [-] | (nx,ny) |
+| _BF.Y_ | Wall-normal grid locations | [-] | (nx,ny) |
+| _BF.U_ | Streamwise velocity | [-] | (nx,ny) |
+| _BF.V_ | Wall-normal velocity | [-] | (nx,ny) |
+| _BF.W_ | Spanwise velocity | [-] | (nx,ny) |
+| _BF.dxU_ | First-order streamwise derivative of BF.U | [-] | (nx,ny) |
+| _BF.dxV_ | First-order streamwise derivative of BF.V | [-] | (nx,ny) |
+| _BF.dxW_ | First-order streamwise derivative of BF.W | [-] | (nx,ny) |
+| _BF.dyU_ | First-order wall-normal derivative of BF.U | [-] | (nx,ny) |
+| _BF.dyV_ | First-order wall-normal derivative of BF.V | [-] | (nx,ny) |
+| _BF.dyW_ | First-order wall-normal derivative of BF.W | [-] | (nx,ny) |
+| _BF.lref_ | Reference length | [m] | (1) |
+| _BF.Uref_ | Reference velocity | [m/s] | (1) |
+| _BF.nu_ | Kinematic viscosity | [m^2/s] | (1) |
+| _BF.Re_ | Reynolds number ( | [-] | (1) |
+
+| Name | Content | Unit | Size |
+| --- | --- | --- | --- |
+| _Grid.nx_ | Number of streamwise stations | [-] | 1 |
+| _Grid.ny_ | Number of wall-normal stations | [-] | 1 |
+| _Grid.wall_ | Smooth wall description | [-] | (nx\_wall,2) |
+| _Grid.H_ | Domain height | [-] | 1 |
+| _Grid.y\_i_ | Median collocation point height | [-] | 1 |
+| _Grid.S_ | Domain start | [-] | 1 |
+| _Grid.L_ | Domain length | [-] | 1 |
+| _Grid.mode_ | Grid generation mode | [-] | String |
+| _Grid.ft_ | Flat top flag [0, 1], enforces the top boundary to be flat if 1 (default = 1) | [-] | 1 |
+| _Grid.mug_ | Refinement peak location [S S+L] | [-] | 1 |
+| _Grid.sig_ | Refinement variance (Gaussian) [0-1] (default = 1) | [-] | 1 |
+| _Grid.ag_ | Refinement strength [0-1] (default = 0) | [-] | 1 |
+| _Grid.StepX_ | Step location (default = 0) | [-] | 1 |
+| _Grid.StepH_ | Step Height (default = 0) | [-] | 1 |
+| _Grid.ystretch_ | Wall-normal distribution stretching factor | [-] | 1 |
+| Grid.StepType | Sharp geometry type "FFS", "BFS", "GAP", "HUMP" | [-] | String |
+
+### Grid
+
+The Grid structure contains the information on the numerical domain and grid. All contents of this structure are summarized in the table below.
+
+_Grid.wall_ presents the CHNS with the bottom wall coordinates via 2 rows of data. The first row contains the x-coordinates and the second row supplies the corresponding y-coordinates; This matrix can be of any size. However, it is preferred to be highly refined around any geometric wall features to ensure the interpolation is performed well. Sharp features should not be accounted for in wall as they will be incorporated via an embedded boundary method.
+
+_Grid.mode_ allows for several built-in grid generations to be used. The options currently available are:
+
+- "equidistant"
+  - Creates a grid following equidistant streamwise discretization and an eta distribution of collocation points following Malik for a user-defined median collocation point y\_i.
+- "refined"
+  - Creates a grid with a streamwise refined grid based on a Gaussian distribution following user-defined inputs _Grid.mug, Grid.sig and Grid.ag._Wall-normal distribution follows Malik for a user-defined median collocation point y\_i.
+- "curved"
+  - Creates an equidistant distribution of streamwise grid points over a curved surface with straight eta axes wall-normal to that surface. The eta axes are thus not parallel to the global y axes. Wall-normal collocation points are clustered near the wall following Malik's mapping for a user-defined median collocation point y\_i.
+- "wallorthogonal"
+  - Creates a grid elliptically with orthogonality at the wall following exactly the eta distribution of the mapping of Malik according to a user-defined y\_i. The streamwise distribution is nearly equidistant but can be slightly adjusted for the sake of orthogonality.
+
+## Stab
+
+The _Stab_ structure is used to define the mode ensemble of interest and present the solver with inflow conditions.
+
+| Name | Content | Size |
+| --- | --- | --- |
+| _Stab.N_ | Spectral truncation of beta modes | 1 |
+| _Stab.M_ | Spectral truncation of omega modes | 1 |
+| _Stab.A0_ | Initial amplitude of all modes | ((2N+1)x(2M+1),1) |
+| _Stab.omega\_0_ | Fundamental frequency | 1 |
+| _Stab.beta\_0_ | Fundamental spanwise wavelength | 1 |
+| _Stab.IC_ | Initialization method "ILST","ZERO'', 'LOAD" | string |
+| _Stab.bcwx_ | Inhomogeneous boundary condition locations | (any,1) |
+| _Stab.bcw_ | Inhomogeneous boundary conditions (default = 0's) | (Stab.bcwx, 3x(2N+1)x(2M+1)) |
+| _Stab.u0_ | Normalized streamwise perturbation velocity at x\_0 | (3x(2N+1)x(2M+1)),ny) |
+| _Stab.v0_ | Normalized wall-normal perturbation velocity at x\_0 | (3x(2N+1)x(2M+1)),ny) |
+| _Stab.w0_ | Normalized spanwise perturbation velocity at x\_0 | (3x(2N+1)x(2M+1)),ny) |
+| _Stab.p0_ | Normalized perturbation pressure at x\_0 | (3x(2N+1)x(2M+1)),ny) |
+| _Stab.y0_ | Wall-normal distribution of inflow perturbation data | (1,ny) |
+
+_Stab.IC_ sets the mode initialization method. Currently, two methods are implemented. "ILST" calls a routine that finds the solution to the local eigenvalue problem at the inflow for all modes that have a nonzero amplitude (presented in _Stab.A0_). These results are then normalized with the maximum streamwise perturbation velocity and multiplied by the respective initialization amplitude. "ZERO" instead means no inflow condition is supplied. This generally means that the user intends to simulate the receptivity problem by supplying inhomogeneous boundary conditions. "LOAD" instead uses the perturbation profiles presented in _Stab.u0, Stab.v0, Stab.w0, Stab.p0_ to define the inflow boundary condition. The initial perturbation data is interpolated onto the numerical grid within the solver and can thus be supplied on any distribution of points consistent with _Stab.y0_.
+
+Stab.bcw is used to define inhomogeneous wall conditions in the streamwise, wall-normal and spanwise velocity components per mode defined at the streamwise locations presented in _Stab.bcwx._
+
+## BF
+
+All values should be presented to the solver in dimensionless form. The reference values are presented to the solver via the BF structure. To solve the problem, only a Reynolds number is required. For plotting purposes and ensuring consistency with the definition of _Re_ used in the solver, the reference quantities are also presented to the solver.
+
+| Name | Content | Size |
+| --- | --- | --- |
+| BF.Re | Reynolds number () | 1 |
+| BF.Uref | Reference velocity | 1 |
+| BF.lref | Reference length | 1 |
+| BF.nu | Kinematic viscosity | 1 |
+
+## Opt
+
+The final structure put into the solver contains solver-specific options.
+
+| Name | Content | Size |
+| --- | --- | --- |
+| Opt.xb | Buffer starting location [0 1] | 1 |
+| Opt.kappa | Buffer strength [1 -\>] | 1 |
+| Opt.nltbufxb | Nonlinear term buffer starting location | 1 |
+| Opt.Th | Nonlinear convergence threshold | 1 |
+| Opt.Sweep | Output intermediate results flag (true = 1, false = 0) | 1 |
+| Opt.AFg | Amplitude factor growth rate (default = 1.1) | 1 |
+| Opt.Conv | Convergence criterion (default = 1e-4) | 1 |
+| Opt.ConvF | Convergence criterion relaxation during ramping (default = 100) | 1 |
+| Opt.AMAX | Maximum amplitude for initializing ramping procedure (default = 0.1) | 1 |
+
+## Output files
+
+The solver returns the following structures with outputs:
+
+1. StabGrid; The numerical grid generated within the solver as well as all grid transformations
+2. StabRes; Stability calculation results
+3. BF; Base flow values interpolated on the numerical grid
+
+## StabGrid
+
+The StabGrid structure contains the numerical grid generated in the solver on which the simulation results are defined. The streamwise location increases with the column index while the wall-normal location decreases with the row index. The StabGrid contains both the physical (x,y) and the computational (\xi,\eta) grid. The transformation coefficients are also presented in this structure.
+
+| Name | Content | Size |
+| --- | --- | --- |
+| StabGrid.xw | Global Streamwise wall coordinate | (nx) |
+| StabGrid.yw | Global Wall-normal wall coordinate | (nx) |
+| StabGrid.x | Global streamwise coordinate | (nx,ny) |
+| StabGrid.y | Global wall-normal coordinate | (nx,ny) |
+| StabGrid.xi | Computational streamwise coordinate | (nx,ny) |
+| StabGrid.eta | Computational wall-normal coordinate | (nx,ny) |
+| StabGrid.xix | dxi/dx transformation coefficient | (nx,ny) |
+| StabGrid.xiy | dxi/dy transformation coefficient | (nx,ny) |
+| StabGrid.xixx | ddxi/dxx transformation coefficient | (nx,ny) |
+| StabGrid.xiyy | ddxi/dyy transformation coefficient | (nx,ny) |
+| StabGrid.etax | deta/dx transformation coefficient | (nx,ny) |
+| StabGrid.etay | deta/dy transformation coefficient | (nx,ny) |
+| StabGrid.etaxx | ddeta/dxx transformation coefficient | (nx,ny) |
+| StabGrid.etayy | ddeta/dyy transformation coefficient | (nx,ny) |
+
+## StabRes
+
+The StabRes structure contains all the stability results defined on the locations defined by StabGrid.x, StabGrid.y. Additionally, some key factors are calculated that are commonly used in stability analysis for comparison purposes even when they might not be used in HNS (such as the streamwise wavenumber alpha). Results are shown BFensionally and normalized. In other words, amplitudes are extracted from the perturbation shape functions of u, v, w, and p based on the maximum of the absolute streamwise velocity perturbation value u.
+
+| Name | Content | Size |
+| --- | --- | --- |
+| StabRes.A | Perturbation amplitudes based on maximum u | (nx,nf) |
+| StabRes.u | Streamwise perturbation velocities | (nx,ny,nf) |
+| StabRes.v | Wall-normal perturbation velocities | (nx,ny,nf) |
+| StabRes.w | Spanwise perturbation velocities | (nx,ny,nf) |
+| StabRes.p | Perturbation pressures | (nx,ny,nf) |
+| StabRes.beta | Spanwise wavenumber per mode | (nf) |
+| StabRes.omega | Angular frequency per mode | (nf) |
+| StabRes.alpha | Streamwise wavenumber per mode | (nx,nf) |
+
+If an amplitude sweep is performed, intermediate results are also presented via additional outputs in the StabRes struct. These fields will contain the word "sweep". The "iter" in the size of these fields corresponds to the iteration. Not that this concerns only one fully converged result per inflow amplitude.
+
+| Name | Content | Size |
+| --- | --- | --- |
+| StabRes.Asweep | Perturbation amplitudes based on maximum u | (nx,nf,iter) |
+| StabRes.usweep | Streamwise perturbation velocities | (nx,ny,nf,iter) |
+| StabRes.vsweep | Wall-normal perturbation velocities | (nx,ny,nf,iter) |
+| StabRes.wsweep | Spanwise perturbation velocities | (nx,ny,nf,iter) |
+| StabRes.psweep | Perturbation pressures | (nx,ny,nf,iter) |
+| StabRes.alphasweep | Streamwise wavenumber per mode | (nx,nf,iter) |
+| StabRes.beta | Spanwise wavenumber per mode | (nf) |
+| StabRes.omega | Angular frequency per mode | (nf) |
+
+## BF
+
+The BF structure is both an input and output. In the output, the structure is appended with the result of the base flow interpolation for easier post-processing. The following quantities are added:
+
+| Name | Content | Size |
+| --- | --- | --- |
+| BF.Ur | Streamwise base flow velocity | (nx,ny) |
+| BF.Vr | Wall-normal base flow velocity | (nx,ny) |
+| BF.Wr | Spanwise base flow velocity | (nx,ny) |
+| BF.dxUr | x-derivative of streamwise base flow velocity | (nx,ny) |
+| BF.dxVr | x-derivative of wall-normal base flow velocity | (nx,ny) |
+| BF.dxWr | x-derivative of spanwise base flow velocity | (nx,ny) |
+| BF.dyUr | y-derivative of streamwise base flow velocity | (nx,ny) |
+| BF.dyVr | y-derivative of wall-normal base flow velocity | (nx,ny) |
+| BF.dyWr | y-derivative of spanwise base flow velocity | (nx,ny) |
+
+# Example cases
+
+Some example cases are presented here so that users can test DeHNSSo and get familiar with the required inputs through some canonical cases. Additionally, these cases can be adjusted easily to represent cases relevant to the user. The details of the inputs are not disclosed here. They can be found in the respective caller. Instead, the cases are shortly described below.
+
+% For all cases describe
+
+1. Geometry of the domain
+2. Reference lengths and Velocities
+3. Discretization
+4. Base Flow Calculation
+5. Nonlinear Mode Ensemble
+6. Outflow Buffer
+7. Amplitude ramping
+
+## Blasius boundary layer: Tollmien-Schlichting instabilities
+
+The development of Tollmien-Schlichting instabilities in a Blasius boundary layer is considered in the first case. This case was previously considered in Bertolotti et al. (1992), Chang et al. (1993), and Herbert (1997).
+
+### Geometry, outflow buffer and discretization
+
+The flow setup can be described by a constant external velocity of 10 m/s (and zero pressure gradient) over a domain ranging from x = [0.243 1.7336] m. The domain height is set to 0.06 m.
+
+### Reference quantities
+
+All quantities will be BFensionalized by (a combination of) the reference velocity U\_0=10 and l\_ref = . The kinematic viscosity is 1.518 m^2/s such that the global Re = U\_0\*l\_ref/nu = 400 in accordance with the references.
+
+### Nonlinear mode ensemble and amplitude ramping
+
+The inflow conditions are comprised of the solution to the local eigenvalue problem at the inflow for 90 Hz corresponding to omega = 0.0344 superimposed with an initial streamwise perturbation amplitude of A = 0.00125 sqrt(2). This inflow amplitude does not require any amplitude ramping.
+
+For this example case, the spectral domain is truncated at M = 5 (and N = 0). Equal to the number of modes presented in the references. Higher harmonics and the MFD are not presented at the inflow and rise naturally downstream of the inflow through nonlinear forcing.
+
+### Base Flow
+
+The base flow is the solution to the incompressible boundary layer equation found using an in-house solver. The base flow simulation was performed on a fine equidistant numerical grid of 2000 streamwise stations by 100 collocation points and stored here in the BF structure. The boundary layer solver is not part DeHNSSo a
+
+Running this case exactly as given will result in the figure XX from Westerbeek et al. (2023).
+
+## Swept-wing boundary layer: Stationary crossflow instability
+
+In the second example, the stability of a swept-wing boundary layer is assessed nonlinearly for stationary crossflow instabilities. The boundary layer is simulated on a flat plate mimicking the experiments of Rius-Vidales et al. (2021). This is done by imposing a fitted external velocity distribution on the top boundary of the base flow simulation as presented in Casacuberta et al. (2022). The external velocity is given by the equation:
+
+[insert Ue equation]
+
+### Domain description and reference values
+
+The problem is described additionally by the streamwise coordinate ranging from x = [] m. The domain height is set to 0.02 m. The reference length, defined as the Blasius length at the inflow is l\_ref = 1.817 e-4 m. The external velocity at the inflow is U\_ref = 20.847 m/s. The kinematic viscosity of the flow is 1.47e-5 such that the global Reynolds number is 257.53.
+
+### Base Flow
+
+The base flow data is an interpolated version of DNS results using INCA (cite) for the problem as described in the previous paragraph. This data was kindly provided by J. Casacuberta who performed a full DNS simulation for this problem in (cite).
+
+### Numerical domain and buffer
+
+The domain is discretized in 1272 equidistant stations and 50 wall-normal collocation points. The outflow buffer is initialized from 85% of the domain and an additional damping of the nonlinear terms starts from 80% of the domain.
+
+### Nonlinear mode ensemble, reference data, and ramping
+
+The spectral domain is truncated at 5 harmonics for this case (N=5, M=0) and the mean flow distortion. Only the fundamental mode, characterized by a spanwise wavelength of XXX, resulting in \beta = XXX is introduced at the inflow as the solution to the local eigenvalue problem. The inflow amplitude of A = … is imposed on the result. For this case, amplitude ramping is required. The inflow amplitude is increased by 10% each iteration after an amplitude reduction ensures that the linear simulation result is capped at AMAX (=0.1, the default value). Reference data for the stability solution is presented by J. Casacuberta (see \cite{Casacuberta2021Mechanism} as well as NPSE solutions for the current problem provided by the authors of the current code and also previously shown in \cite{Casacuberta2021Mechanism}.
+
+## Swept-wing boundary layer: Interaction of Stationary crossflow instability with a hump
+
+This third simulation considers the interaction of a stationary CFI with a smooth hump. This case was previously examined in both \cite{Westerbeek2023linear} and the paper on the current solver \cite{Westerbeek2023efficient}.
+
+### Domain description, base flow and reference values
+
+The same external flow velocity as for the flat plate case is prescribed at the top boundary of the base flow calculation. For this problem, the base flow calculation is performed in COMSOL (\cite comsol). The domain is described by x = [] and a domain height of 0.02 m. This leads to the same reference values as for the flat plate case. The reference length is l\_ref = 1.817 e-4 m. The external velocity at the inflow is U\_ref = 20.847 m/s. The kinematic viscosity of the flow is 1.47e-5 such that the global Reynolds number is 257.53.
+
+The hump is symmetrical and centered around x\_m = . The hump is … high and … wide. The hump is relatively shallow. Consequently, the base flow features no flow separation. The problem is thus not too challenging and does not demand much refinement around the hump. Still, a slight streamwise refinement is introduced (using Grid.mode "xrefined") around the hump for users to play with.
+
+### Nonlinear mode ensemble, reference data, and ramping
+
+The stability of this flow problem is assessed linearly given that few solvers are able to perform such simulations. Only the fundamental CFI, characterized by beta = is introduced at the inflow (N=1, M=0). The reference data is provided by J. Franco of DLR using AHLNS (See \cite{franco}) on the same base flow. The AHLNS is physically equivalent to the current HNS for linear simulations. No amplitude ramping is required as this concerns a linear simulation.
+
+The default value of xb = 0.85 is used to define a buffer region covering the last 15% of the domain.
+
+# License
+
+The contents in the Data Files/ directory are licensed under a  **CC-BY 4.0**  (see [CC-BY-4.0](https://github.com/DriesAllaerts/lbow/blob/main/LICENSES/CC-BY-4.0.txt) file). The codes and any other file in this repository are licensed under a  **GPLv3 license**  (see  file).
+
+Copyright notice:
+
+Technische Universiteit Delft hereby disclaims all copyright interest in the program "DeHNSSo". DeHNSSo is a MATLAB tool to solve Nonlinear Harmonic Navier-Stokes problems written by the Author(s).
+
+Henri Werij, Dean of Faculty of Aerospace Engineering, Technische Universiteit Delft.
+
+© 2023, Sven Westerbeek & Marios Kotsonis
+
+# Common errors and solutions
+
+# FAQ
+
+# Data visualisation examples
+
+# DeHNSSo results
+
+# How to cite DeHNSSo
+
+# References
