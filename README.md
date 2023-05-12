@@ -313,12 +313,15 @@ Henri Werij, Dean of Faculty of Aerospace Engineering, Technische Universiteit D
 © 2023, Sven Westerbeek & Marios Kotsonis
 
 # Common errors and solutions <a id="common-errors-and-solutions"></a>
+Some errors might be the result of improper use rather than a problem with the solver. In this section, we will post some hints as to what might have gone wrong when certain errors appear. Additionally, DeHNSSo might be adjusted to provide error messages with solution hints within MATLAB directly.
 
 # FAQ<a id="faq"></a>
-
-# Data visualisation examples <a id="data-visualisation-examples"></a>
+Questions that we receive concerning DeHNSSo will be used to improve DeHNSSo. This concerns either the code itself, the commenting, the manual and/or posting the questions with answers in this section.
 
 # DeHNSSo results<a id="dehnsso-results"></a>
+Here we will post results obtained using DeHNSSo. If you have worked with DeHNSSo and have figures that you would like to post. Please contact us at:
+S.H.J.Westerbeek@tudelft.nl
+M.Kotsonis@tudelft.nl
 
 # How to cite DeHNSSo<a id="how-to-cite-dehnsso"></a>
 If you have used DeHNSSo or any subroutine within this GitHub. Please cite the GitHub and the journal article:
