@@ -63,27 +63,27 @@ This data does not need to be presented on the same grid as presented in the Gri
 
 | Name | Content | Unit | Size |
 | --- | --- | --- | --- |
-| _BF.X_ | Streamwise grid locations | [-] | (nx,ny) |
-| _BF.Y_ | Wall-normal grid locations | [-] | (nx,ny) |
-| _BF.U_ | Streamwise velocity | [-] | (nx,ny) |
-| _BF.V_ | Wall-normal velocity | [-] | (nx,ny) |
-| _BF.W_ | Spanwise velocity | [-] | (nx,ny) |
-| _BF.dxU_ | First-order streamwise derivative of BF.U | [-] | (nx,ny) |
-| _BF.dxV_ | First-order streamwise derivative of BF.V | [-] | (nx,ny) |
-| _BF.dxW_ | First-order streamwise derivative of BF.W | [-] | (nx,ny) |
-| _BF.dyU_ | First-order wall-normal derivative of BF.U | [-] | (nx,ny) |
-| _BF.dyV_ | First-order wall-normal derivative of BF.V | [-] | (nx,ny) |
-| _BF.dyW_ | First-order wall-normal derivative of BF.W | [-] | (nx,ny) |
-| _BF.lref_ | Reference length | [m] | (1) |
-| _BF.Uref_ | Reference velocity | [m/s] | (1) |
-| _BF.nu_ | Kinematic viscosity | [m^2/s] | (1) |
-| _BF.Re_ | Reynolds number | [-] | (1) |
+| _BF.X_ | Streamwise grid locations | [-] | $(nx,ny)$ |
+| _BF.Y_ | Wall-normal grid locations | [-] | $(nx,ny)$ |
+| _BF.U_ | Streamwise velocity | [-] | $(nx,ny)$|
+| _BF.V_ | Wall-normal velocity | [-] | $(nx,ny)$ |
+| _BF.W_ | Spanwise velocity | [-] | $(nx,ny)$ |
+| _BF.dxU_ | First-order streamwise derivative of BF.U | [-] | $(nx,ny)$ |
+| _BF.dxV_ | First-order streamwise derivative of BF.V | [-] | $(nx,ny)$ |
+| _BF.dxW_ | First-order streamwise derivative of BF.W | [-] | $(nx,ny)$ |
+| _BF.dyU_ | First-order wall-normal derivative of BF.U | [-] | $(nx,ny)$ |
+| _BF.dyV_ | First-order wall-normal derivative of BF.V | [-] | $(nx,ny)$ |
+| _BF.dyW_ | First-order wall-normal derivative of BF.W | [-] | $(nx,ny)$ |
+| _BF.lref_ | Reference length | [m] | $1$ |
+| _BF.Uref_ | Reference velocity | [m/s] | $1$ |
+| _BF.nu_ | Kinematic viscosity | [m^2/s] | $1$ |
+| _BF.Re_ | Reynolds number | [-] | $1$ |
 
 ### Grid <a id="grid"></a>
 
 The Grid structure contains the information on the numerical domain and grid. All contents of this structure are summarized in the table below.
 
-_Grid.wall_ presents the CHNS with the bottom wall coordinates via 2 rows of data. The first row contains the x-coordinates and the second row supplies the corresponding y-coordinates; This matrix can be of any size. However, it is preferred to be highly refined around any geometric wall features to ensure the interpolation is performed well. Sharp features should not be accounted for in wall as they will be incorporated via an embedded boundary method.
+_Grid.wall_ presents the CHNS with the bottom wall coordinates via 2 rows of data. The first row contains the $x$-coordinates and the second row supplies the corresponding $y$-coordinates; This matrix can be of any size. However, it is preferred to be highly refined around any geometric wall features to ensure the interpolation is performed well. Sharp features should not be accounted for in wall as they will be incorporated via an embedded boundary method.
 
 _Grid.mode_ allows for several built-in grid generations to be used. The options currently available are:
 
@@ -98,21 +98,21 @@ _Grid.mode_ allows for several built-in grid generations to be used. The options
 
 | Name | Content | Unit | Size |
 | --- | --- | --- | --- |
-| _Grid.nx_ | Number of streamwise stations | [-] | 1 |
-| _Grid.ny_ | Number of wall-normal stations | [-] | 1 |
-| _Grid.wall_ | Smooth wall description | [-] | (nx\_wall,2) |
-| _Grid.H_ | Domain height | [-] | 1 |
+| _Grid.nx_ | Number of streamwise stations | [-] | $1$ |
+| _Grid.ny_ | Number of wall-normal stations | [-] | $1$ |
+| _Grid.wall_ | Smooth wall description | [-] | ($nx\_{wall}$,2) |
+| _Grid.H_ | Domain height | [-] | $1$ |
 | _Grid.y\_i_ | Median collocation point height | [-] | 1 |
-| _Grid.S_ | Domain start | [-] | 1 |
-| _Grid.L_ | Domain length | [-] | 1 |
+| _Grid.S_ | Domain start | [-] | $1$ |
+| _Grid.L_ | Domain length | [-] | $1$ |
 | _Grid.mode_ | Grid generation mode | [-] | String |
-| _Grid.ft_ | Flat top flag [0, 1], enforces the top boundary to be flat if 1 (default = 1) | [-] | 1 |
-| _Grid.mug_ | Refinement peak location [S S+L] | [-] | 1 |
-| _Grid.sig_ | Refinement variance (Gaussian) [0-1] (default = 1) | [-] | 1 |
-| _Grid.ag_ | Refinement strength [0-1] (default = 0) | [-] | 1 |
-| _Grid.StepX_ | Step location (default = 0) | [-] | 1 |
-| _Grid.StepH_ | Step Height (default = 0) | [-] | 1 |
-| _Grid.ystretch_ | Wall-normal distribution stretching factor | [-] | 1 |
+| _Grid.ft_ | Flat top flag [0, 1], enforces the top boundary to be flat if 1 (default = 1) | [-] | $1$ |
+| _Grid.mug_ | Refinement peak location [S S+L] | [-] | $1$ |
+| _Grid.sig_ | Refinement variance (Gaussian) [0-1] (default = 1) | [-] | $1$ |
+| _Grid.ag_ | Refinement strength [0-1] (default = 0) | [-] | $1$ |
+| _Grid.StepX_ | Step location (default = 0) | [-] | $1$ |
+| _Grid.StepH_ | Step Height (default = 0) | [-] | $1$ |
+| _Grid.ystretch_ | Wall-normal distribution stretching factor | [-] | $1$ |
 | Grid.StepType | Sharp geometry type "FFS", "BFS", "GAP", "HUMP" | [-] | String |
 
 ## <a id="stab"></a> stab
@@ -121,19 +121,19 @@ The _Stab_ structure is used to define the mode ensemble of interest and present
 
 | Name | Content | Unit | Size |
 | --- | --- | --- | --- |
-| _Stab.N_ | Spectral truncation of beta modes | [-] | 1 |
-| _Stab.M_ | Spectral truncation of omega modes | [-] | 1 |
-| _Stab.A0_ | Initial amplitude of all modes | [-] | ((2N+1)x(2M+1),1) |
+| _Stab.N_ | Spectral truncation of beta modes | [-] | $1$ |
+| _Stab.M_ | Spectral truncation of omega modes | [-] | $1$ |
+| _Stab.A0_ | Initial amplitude of all modes | [-] | $((2N+1) \times (2M+1),1)$ |
 | _Stab.omega\_0_ | Fundamental frequency | [-] | 1 |
 | _Stab.beta\_0_ | Fundamental spanwise wavelength | [-] | 1 |
 | _Stab.IC_ | Initialization method "ILST","ZERO'', 'LOAD" | [-] | string |
-| _Stab.bcwx_ | Inhomogeneous boundary condition locations | [-] | (any,1) |
-| _Stab.bcw_ | Inhomogeneous boundary conditions (default = 0's) | [-] | (Stab.bcwx, 3x(2N+1)x(2M+1)) |
-| _Stab.u0_ | Normalized streamwise perturbation velocity at x\_0 | [-] | (3x(2N+1)x(2M+1)),ny) |
-| _Stab.v0_ | Normalized wall-normal perturbation velocity at x\_0 | [-] | (3x(2N+1)x(2M+1)),ny) |
-| _Stab.w0_ | Normalized spanwise perturbation velocity at x\_0 | [-] | (3x(2N+1)x(2M+1)),ny) |
-| _Stab.p0_ | Normalized perturbation pressure at x\_0 | [-] | (3x(2N+1)x(2M+1)),ny) |
-| _Stab.y0_ | Wall-normal distribution of inflow perturbation data | [-] | (1,ny) |
+| _Stab.bcwx_ | Inhomogeneous boundary condition locations | [-] | $(any,1)$ |
+| _Stab.bcw_ | Inhomogeneous boundary conditions (default = 0's) | [-] | $($Stab.bcwx$, 3\times(2N+1)\times(2M+1))$ |
+| _Stab.u0_ | Normalized streamwise perturbation velocity at x\_0 | [-] | $(3 \times (2N+1) \times (2M+1)),ny)$ |
+| _Stab.v0_ | Normalized wall-normal perturbation velocity at x\_0 | [-] | $(3 \times (2N+1) \times (2M+1)),ny)$ |
+| _Stab.w0_ | Normalized spanwise perturbation velocity at x\_0 | [-] | $(3 \times (2N+1) \times (2M+1)),ny)$ |
+| _Stab.p0_ | Normalized perturbation pressure at x\_0 | [-] | $(3 \times (2N+1) \times (2M+1)),ny)$ |
+| _Stab.y0_ | Wall-normal distribution of inflow perturbation data | [-] | $(1,ny)$ |
 
 _Stab.IC_ sets the mode initialization method. Currently, two methods are implemented. "ILST" calls a routine that finds the solution to the local eigenvalue problem at the inflow for all modes that have a nonzero amplitude (presented in _Stab.A0_). These results are then normalized with the maximum streamwise perturbation velocity and multiplied by the respective initialization amplitude. "ZERO" instead means no inflow condition is supplied. This generally means that the user intends to simulate the receptivity problem by supplying inhomogeneous boundary conditions. "LOAD" instead uses the perturbation profiles presented in _Stab.u0, Stab.v0, Stab.w0, Stab.p0_ to define the inflow boundary condition. The initial perturbation data is interpolated onto the numerical grid within the solver and can thus be supplied on any distribution of points consistent with _Stab.y0_.
 
@@ -145,15 +145,15 @@ The final structure put into the solver contains solver-specific options.
 
 | Name | Content | Unit | Size |
 | --- | --- | --- | --- |
-| Opt.xb | Buffer starting location [0 1] | [-] | 1 |
-| Opt.kappa | Buffer strength [1 -\>] | [-] | 1 |
-| Opt.nltbufxb | Nonlinear term buffer starting location | [-] | 1 |
-| Opt.Th | Nonlinear convergence threshold | [-] | 1 |
-| Opt.Sweep | Output intermediate results flag (true = 1, false = 0) | [-] | 1 |
-| Opt.AFg | Amplitude factor growth rate (default = 1.1) | [-] | 1 |
-| Opt.Conv | Convergence criterion (default = 1e-4) | [-] | 1 |
-| Opt.ConvF | Convergence criterion relaxation during ramping (default = 100) | [-] | 1 |
-| Opt.AMAX | Maximum amplitude for initializing ramping procedure (default = 0.1) | [-] | 1 |
+| Opt.xb | Buffer starting location [0 1] | [-] | $1$ |
+| Opt.kappa | Buffer strength [1 -\>] | [-] | $1$ |
+| Opt.nltbufxb | Nonlinear term buffer starting location | [-] | $1$ |
+| Opt.Th | Nonlinear convergence threshold | [-] | $1$ |
+| Opt.Sweep | Output intermediate results flag (true = $1$, false = $0$) | [-] | $1$ |
+| Opt.AFg | Amplitude factor growth rate (default = 1.1) | [-] | $1$ |
+| Opt.Conv | Convergence criterion (default = 1e-4) | [-] | $1$ |
+| Opt.ConvF | Convergence criterion relaxation during ramping (default = 100) | [-] | $1$ |
+| Opt.AMAX | Maximum amplitude for initializing ramping procedure (default = 0.1) | [-] | $1$ |
 
 ## output files <a id="output-files"></a>
 
@@ -169,20 +169,20 @@ The StabGrid structure contains the numerical grid generated in the solver on wh
 
 | Name | Content | Unit | Size |
 | --- | --- | --- | --- |
-| StabGrid.xw | Global Streamwise wall coordinate | [-] | (nx) |
-| StabGrid.yw | Global Wall-normal wall coordinate | [-] | (nx) |
-| StabGrid.x | Global streamwise coordinate | [-] | (nx,ny) |
-| StabGrid.y | Global wall-normal coordinate | [-] | (nx,ny) |
-| StabGrid.xi | Computational streamwise coordinate | [-] | (nx,ny) |
-| StabGrid.eta | Computational wall-normal coordinate | [-] | (nx,ny) |
-| StabGrid.xix | dxi/dx transformation coefficient | [-] | (nx,ny) |
-| StabGrid.xiy | dxi/dy transformation coefficient | [-] | (nx,ny) |
-| StabGrid.xixx | ddxi/dxx transformation coefficient | [-] | (nx,ny) |
-| StabGrid.xiyy | ddxi/dyy transformation coefficient | [-] | (nx,ny) |
-| StabGrid.etax | deta/dx transformation coefficient | [-] | (nx,ny) |
-| StabGrid.etay | deta/dy transformation coefficient | [-] | (nx,ny) |
-| StabGrid.etaxx | ddeta/dxx transformation coefficient | [-] | (nx,ny) |
-| StabGrid.etayy | ddeta/dyy transformation coefficient | [-] | (nx,ny) |
+| StabGrid.xw | Global Streamwise wall coordinate | [-] | $(nx)$ |
+| StabGrid.yw | Global Wall-normal wall coordinate | [-] | $(nx)$ |
+| StabGrid.x | Global streamwise coordinate | [-] | $(nx,ny)$ |
+| StabGrid.y | Global wall-normal coordinate | [-] | $(nx,ny)$ |
+| StabGrid.xi | Computational streamwise coordinate | [-] | $(nx,ny)$ |
+| StabGrid.eta | Computational wall-normal coordinate | [-] | $(nx,ny)$ |
+| StabGrid.xix | dxi/dx transformation coefficient | [-] | $(nx,ny)$ |
+| StabGrid.xiy | dxi/dy transformation coefficient | [-] | $(nx,ny)$ |
+| StabGrid.xixx | ddxi/dxx transformation coefficient | [-] | $(nx,ny)$ |
+| StabGrid.xiyy | ddxi/dyy transformation coefficient | [-] | $(nx,ny)$ |
+| StabGrid.etax | deta/dx transformation coefficient | [-] | $(nx,ny)$ |
+| StabGrid.etay | deta/dy transformation coefficient | [-] | $(nx,ny)$ |
+| StabGrid.etaxx | ddeta/dxx transformation coefficient | [-] | $(nx,ny)$ |
+| StabGrid.etayy | ddeta/dyy transformation coefficient | [-] | $(nx,ny)$ |
 
 ## StabRes <a id="stabres"></a>
 
@@ -190,27 +190,27 @@ The StabRes structure contains all the stability results defined on the location
 
 | Name | Content | Unit | Size |
 | --- | --- | --- | --- |
-| StabRes.A | Perturbation amplitudes based on maximum u | [-] | (nx,nf) |
-| StabRes.u | Streamwise perturbation velocities | [-] | (nx,ny,nf) |
-| StabRes.v | Wall-normal perturbation velocities | [-] | (nx,ny,nf) |
-| StabRes.w | Spanwise perturbation velocities | [-] | (nx,ny,nf) |
-| StabRes.p | Perturbation pressures | [-] | (nx,ny,nf) |
-| StabRes.beta | Spanwise wavenumber per mode | [-] | (nf) |
-| StabRes.omega | Angular frequency per mode | [-] | (nf) |
-| StabRes.alpha | Streamwise wavenumber per mode | [-] | (nx,nf) |
+| StabRes.A | Perturbation amplitudes based on maximum u | [-] | $(nx,nf)$ |
+| StabRes.u | Streamwise perturbation velocities | [-] | $(nx,ny,nf)$ |
+| StabRes.v | Wall-normal perturbation velocities | [-] | $(nx,ny,nf)$ |
+| StabRes.w | Spanwise perturbation velocities | [-] | $(nx,ny,nf)$ |
+| StabRes.p | Perturbation pressures | [-] | $(nx,ny,nf)$ |
+| StabRes.beta | Spanwise wavenumber per mode | [-] | $(nf)$ |
+| StabRes.omega | Angular frequency per mode | [-] | $(nf)$ |
+| StabRes.alpha | Streamwise wavenumber per mode | [-] | $(nx,nf)$ |
 
 If an amplitude sweep is performed, intermediate results are also presented via additional outputs in the StabRes struct. These fields will contain the word "sweep". The "iter" in the size of these fields corresponds to the iteration. Not that this concerns only one fully converged result per inflow amplitude.
 
 | Name | Content | Unit | Size |
 | --- | --- | --- | --- |
-| StabRes.Asweep | Perturbation amplitudes based on maximum u | [-] | (nx,nf,iter) |
-| StabRes.usweep | Streamwise perturbation velocities | [-] | (nx,ny,nf,iter) |
-| StabRes.vsweep | Wall-normal perturbation velocities | [-] | (nx,ny,nf,iter) |
-| StabRes.wsweep | Spanwise perturbation velocities | [-] | (nx,ny,nf,iter) |
-| StabRes.psweep | Perturbation pressures | [-] | (nx,ny,nf,iter) |
-| StabRes.alphasweep | Streamwise wavenumber per mode | [-] | (nx,nf,iter) |
-| StabRes.beta | Spanwise wavenumber per mode | [-] | (nf) |
-| StabRes.omega | Angular frequency per mode | [-] | (nf) |
+| StabRes.Asweep | Perturbation amplitudes based on maximum u | [-] | $(nx,nf,iter)$ |
+| StabRes.usweep | Streamwise perturbation velocities | [-] | $(nx,ny,nf,iter)$ |
+| StabRes.vsweep | Wall-normal perturbation velocities | [-] | $(nx,ny,nf,iter)$ |
+| StabRes.wsweep | Spanwise perturbation velocities | [-] | $(nx,ny,nf,iter)$ |
+| StabRes.psweep | Perturbation pressures | [-] | $(nx,ny,nf,iter)$ |
+| StabRes.alphasweep | Streamwise wavenumber per mode | [-] | $(nx,nf,iter)$ |
+| StabRes.beta | Spanwise wavenumber per mode | [-] | $(nf)$ |
+| StabRes.omega | Angular frequency per mode | [-] | $(nf)$ |
 
 ## BF <a id="bf"></a>
 
@@ -218,15 +218,15 @@ The BF structure is both an input and output. In the output, the structure is ap
 
 | Name | Content | Unit | Size |
 | --- | --- | --- | --- |
-| BF.Ur | Streamwise base flow velocity | [-] | (nx,ny) |
-| BF.Vr | Wall-normal base flow velocity | [-] | (nx,ny) |
-| BF.Wr | Spanwise base flow velocity | [-] | (nx,ny) |
-| BF.dxUr | x-derivative of streamwise base flow velocity | [-] | (nx,ny) |
-| BF.dxVr | x-derivative of wall-normal base flow velocity | [-] | (nx,ny) |
-| BF.dxWr | x-derivative of spanwise base flow velocity | [-] | (nx,ny) |
-| BF.dyUr | y-derivative of streamwise base flow velocity | [-] | (nx,ny) |
-| BF.dyVr | y-derivative of wall-normal base flow velocity | [-] | (nx,ny) |
-| BF.dyWr | y-derivative of spanwise base flow velocity | [-] | (nx,ny) |
+| BF.Ur | Streamwise base flow velocity | [-] | $(nx,ny)$ |
+| BF.Vr | Wall-normal base flow velocity | [-] | $(nx,ny)$ |
+| BF.Wr | Spanwise base flow velocity | [-] | $(nx,ny)$ |
+| BF.dxUr | $x$-derivative of streamwise base flow velocity | [-] | $(nx,ny)$ |
+| BF.dxVr | $x$-derivative of wall-normal base flow velocity | [-] | $(nx,ny)$ |
+| BF.dxWr | $x$-derivative of spanwise base flow velocity | [-] | $(nx,ny)$ |
+| BF.dyUr | y-derivative of streamwise base flow velocity | [-] | $(nx,ny)$ |
+| BF.dyVr | y-derivative of wall-normal base flow velocity | [-] | $(nx,ny)$ |
+| BF.dyWr | y-derivative of spanwise base flow velocity | [-] | $(nx,ny)$ |
 
 # Example cases <a id="example-cases"></a>
 
