@@ -256,7 +256,7 @@ The base flow is the solution to the incompressible boundary layer equation foun
 
 Running this case exactly as given will result in the date used to plot Figure 8 from Westerbeek et al. (2023).
 
-## Swept-wing boundary layer: Stationary crossflow instability <a id="swept-wing-boundary-layer-stationary-cfi"></a>
+## Swept-wing boundary layer: Stationary crossflow instability <a id="swept-wing-boundary-layer-stationary-crossflow-instability"></a>
 
 In the second example, the stability of a swept-wing boundary layer is assessed nonlinearly for stationary crossflow instabilities. The boundary layer is simulated on a flat plate mimicking the experiments of Rius-Vidales et al. (2021). This is done by imposing a fitted external velocity distribution on the top boundary of the base flow simulation as presented in Casacuberta et al. (2022). The external velocity is given by the equation:
 
