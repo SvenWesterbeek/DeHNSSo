@@ -35,11 +35,11 @@ _Thank you for your interest in using DeHNSSo. This page is intended to guide yo
 
 ## How to use DeHNSSo <a id="how-to-use-dehnsso"></a>
 
-The first step to using DeHNSSo is ensuring that you have MATLAB installed. It is recommended to use at least version R2022b. For help with installing Matlab, please follow the instructions on the [MathWorks web page](https://rb.gy/lbe63k). Then, you will need to download DeHNSSo from the DeHNSSo GitHub as will be explained below. DeHNSSo comes with 4 standard examples that can be run immediately. To perform custom simulations, please familiarize yourself with the input formats through these examples and adjust them accordingly.
+The first step to using DeHNSSo is ensuring that you have MATLAB installed. It is recommended to use at least version R2022b. For help with installing Matlab, please follow the instructions on the [MathWorks web page](https://nl.mathworks.com/products/matlab.html). Then, you will need to download DeHNSSo from the DeHNSSo GitHub as will be explained below. DeHNSSo comes with 4 standard examples that can be run immediately. To perform custom simulations, please familiarize yourself with the input formats through these examples and adjust them accordingly.
 
 ## Installation <a id="installation"></a>
 
-To start using DeHNSSo, please download the files from this GitHub [Repository](https://PLACEHOLDER). The current version of DeHNSSo was made using MATLAB R2022b. Support for earlier versions is not guaranteed. This file contains several folders, namely: Callers, Tools, Data Files, and Documentation. It is important that all folders remain together in a directory of your choosing.
+To start using DeHNSSo, please download the files from this GitHub [Repository](https://github.com/SvenWesterbeek/DeHNSSo). The current version of DeHNSSo was made using MATLAB R2022b. Support for earlier versions is not guaranteed. This file contains several folders, namely: Callers, Tools, Data Files, and Documentation. It is important that all folders remain together in a directory of your choosing.
 
 The base flow data for the fourth example case "CFI over a step in a swept-wing BL" is too large for this repository and can be found in the data [Repository](https://PLACEHOLDER) repository of J. Casacuberta instead.
 
