@@ -165,7 +165,7 @@ The solver returns the following structures with outputs:
 
 ## StabGrid <a id="stabgrid"></a>
 
-The StabGrid structure contains the numerical grid generated in the solver on which the simulation results are defined. The streamwise location increases with the column index while the wall-normal location decreases with the row index. The StabGrid contains both the physical (x,y) and the computational (\xi,\eta) grid. The transformation coefficients are also presented in this structure.
+The StabGrid structure contains the numerical grid generated in the solver on which the simulation results are defined. The streamwise location increases with the column index while the wall-normal location decreases with the row index. The StabGrid contains both the physical ($x$,$y$) and the computational (\xi,\eta) grid. The transformation coefficients are also presented in this structure.
 
 | Name | Content | Unit | Size |
 | --- | --- | --- | --- |
@@ -186,7 +186,7 @@ The StabGrid structure contains the numerical grid generated in the solver on wh
 
 ## StabRes <a id="stabres"></a>
 
-The StabRes structure contains all the stability results defined on the locations defined by StabGrid.x, StabGrid.y. Additionally, some key factors are calculated that are commonly used in stability analysis for comparison purposes even when they might not be used in HNS (such as the streamwise wavenumber alpha). Results are shown nondimensionally and normalized. In other words, amplitudes are extracted from the perturbation shape functions of u, v, w, and p based on the maximum of the absolute streamwise velocity perturbation value u.
+The StabRes structure contains all the stability results defined on the locations defined by StabGrid.x, StabGrid.y. Additionally, some key factors are calculated that are commonly used in stability analysis for comparison purposes even when they might not be used in HNS (such as the streamwise wavenumber $\alpha$). Results are shown nondimensionally and normalized. In other words, amplitudes are extracted from the perturbation shape functions of $\hat{u}$, $\hat{v}$, $\hat{w}$, and $\hat{p}$ based on the maximum of the absolute streamwise velocity perturbation value $u$.
 
 | Name | Content | Unit | Size |
 | --- | --- | --- | --- |
@@ -238,7 +238,7 @@ The development of Tollmien-Schlichting instabilities in a Blasius boundary laye
 
 ### Geometry, outflow buffer, and discretization
 
-The flow setup can be described by a constant external velocity of 10 m/s (and zero pressure gradient) over a domain ranging from $x = [0.243 1.7336]$ m. The domain height is set to 0.06 m.
+The flow setup can be described by a constant external velocity of 10 m/s (and zero pressure gradient) over a domain ranging from $x = [0.243 1.7336]$ m. The domain height is set to $0.06$ m.
 
 ### Reference quantities
 
@@ -246,7 +246,7 @@ All quantities will be Nondimensionalized by (a combination of) the reference ve
 
 ### Nonlinear mode ensemble and amplitude ramping
 
-The inflow conditions are comprised of the solution to the local eigenvalue problem at the inflow for 90 Hz corresponding to $\omega = 0.0344$ superimposed with an initial streamwise perturbation amplitude of $A = 0.00125 \sqrt{2}$. This inflow amplitude does not require any amplitude ramping.
+The inflow conditions are comprised of the solution to the local eigenvalue problem at the inflow for $90$ Hz corresponding to $\omega = 0.0344$ superimposed with an initial streamwise perturbation amplitude of $A = 0.00125 \sqrt{2}$. This inflow amplitude does not require any amplitude ramping.
 
 For this example case, the spectral domain is truncated at $M = 5$ (and $N = 0$). Equal to the number of modes presented in the references. Higher harmonics and the MFD are not presented at the inflow and rise naturally downstream of the inflow through nonlinear forcing.
 
@@ -266,7 +266,7 @@ and holds for all cases described hereafter.
 
 ### Domain description and reference values
 
-The problem is described additionally by the streamwise coordinate ranging from $x = 220$. The domain height is set to 0.02 m. The reference length, defined as the Blasius length at the inflow is $l\_{ref} = 2.1394 \times 10^{-4}$ m. The external velocity at the inflow is U\_{ref} = 15.1 m/s. The kinematic viscosity of the flow is 1.47e-5 such that the global Reynolds number is 220.
+The problem is described additionally by the streamwise coordinate ranging from $x = 220$. The domain height is set to 0.02 m. The reference length, defined as the Blasius length at the inflow is $l\_{ref} = 2.1394 \times 10^{-4}$ m. The external velocity at the inflow is $U\_{ref} = 15.1$ m/s. The kinematic viscosity of the flow is 1.47e-5 such that the global Reynolds number is 220.
 
 ### Base Flow
 
