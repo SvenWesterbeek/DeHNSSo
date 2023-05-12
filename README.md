@@ -10,15 +10,34 @@ _Thank you for your interest in using DeHNSSo. This page is intended to guide yo
 ## Table of Contents
 
 1. [How to use DeHNSSo](#how-to-use-dehnsso)
-2. [Installation](https://github.com/SvenWesterbeek/DeHNSSo/edit/main/README.md#installation)
+2. [Installation](#installation)
 3. [Input files](#input-files)
-   1. [Stab](#stab)
+   1. [BF](#bf)
+   2. [Grid](#grid)
+   3. [Stab](#stab)
+   4. [Opt](#opt)
+4. [Output files](#output-files)
+   1. [StabGrid](#stabgrid)
+   2. [StabRes](#stabres)
+   3. [BF](#bf2)
+5. [Example cases](#example-cases)
+   1. [Blasius boundary layer](#blasius-boundary-layer)
+   2. [Swept-wing boundary layer: stationary crossflow instability](#swept-wing-boundary-layer-stationary-crossflow-instability)
+   3. [Swept-wing boundary layer: interaction of a stationary CFI with a hump](#swept-wing-boundary-layer-interaction-of-a-stationary-cfi-with-a-hump)
+   4. [Swept-wing boundary layer: interaction of a stationary CFI with a step](#swept-wing-boundary-layer-interaction-of-a-stationary-cfi-with-a-step)
+6. [License](#license)
+7. [Common errors and solutions](#common-errors-and-solutions)
+8. [FAQ](#faq)
+9. [Data visualisation examples](#data-visualisation examples)
+10. [DeHNSSo results](#dehnsso-results)
+11. [How to cite DeHNSSo](#how-to-cite-dehnsso)
+12. [References](#references)
 
 ## How to use DeHNSSo <a id="how-to-use-dehnsso"></a>
 
 The first step to using DeHNSSo is ensuring that you have MATLAB installed. It is recommended to use at least version R2022b. For help with installing Matlab, please follow the instructions on the [MathWorks web page](https://rb.gy/lbe63k). Then, you will need to download DeHNSSo from the DeHNSSo GitHub as will be explained below. DeHNSSo comes with 4 standard examples that can be run immediately. To perform custom simulations, please familiarize yourself with the input formats through these examples and adjust them accordingly.
 
-### Installation
+## Installation <a id="installation"></a>
 
 To start using DeHNSSo, please download the files from this GitHub [Repository](https://PLACEHOLDER). The current version of DeHNSSo was made using MATLAB R2022b. Support for earlier versions is not guaranteed. This file contains several folders, namely: Callers, Tools, Data Files, and Documentation. It is important that all folders remain together in a directory of your choosing.
 
@@ -36,7 +55,7 @@ DeHNSSo requires several inputs that describe the basic state flow field, the nu
 
 These structures will be discussed in detail below to help you make your own input files.
 
-### BF
+### BF <a id="bf"></a>
 
 BF contains the base flow data, the grid on which it is defined, and the reference values by which everything is normalized. This data can be provided in a structured, unstructured grid, or vector format.
 
@@ -60,7 +79,7 @@ This data does not need to be presented on the same grid as presented in the Gri
 | _BF.nu_ | Kinematic viscosity | [m^2/s] | (1) |
 | _BF.Re_ | Reynolds number ( | [-] | (1) |
 
-### Grid
+### Grid <a id="grid"></a>
 
 The Grid structure contains the information on the numerical domain and grid. All contents of this structure are summarized in the table below.
 
@@ -120,7 +139,7 @@ _Stab.IC_ sets the mode initialization method. Currently, two methods are implem
 
 Stab.bcw is used to define inhomogeneous wall conditions in the streamwise, wall-normal and spanwise velocity components per mode defined at the streamwise locations presented in _Stab.bcwx._
 
-## Opt
+## Opt <a id="opt"></a>
 
 The final structure put into the solver contains solver-specific options.
 
@@ -136,7 +155,7 @@ The final structure put into the solver contains solver-specific options.
 | Opt.ConvF | Convergence criterion relaxation during ramping (default = 100) | [-] | 1 |
 | Opt.AMAX | Maximum amplitude for initializing ramping procedure (default = 0.1) | [-] | 1 |
 
-## Output files
+## output files <a id="output-files"></a>
 
 The solver returns the following structures with outputs:
 
@@ -144,7 +163,7 @@ The solver returns the following structures with outputs:
 2. StabRes; Stability calculation results
 3. BF; Base flow values interpolated on the numerical grid
 
-## StabGrid
+## StabGrid <a id="stabgrid"></a>
 
 The StabGrid structure contains the numerical grid generated in the solver on which the simulation results are defined. The streamwise location increases with the column index while the wall-normal location decreases with the row index. The StabGrid contains both the physical (x,y) and the computational (\xi,\eta) grid. The transformation coefficients are also presented in this structure.
 
@@ -165,7 +184,7 @@ The StabGrid structure contains the numerical grid generated in the solver on wh
 | StabGrid.etaxx | ddeta/dxx transformation coefficient | [-] | (nx,ny) |
 | StabGrid.etayy | ddeta/dyy transformation coefficient | [-] | (nx,ny) |
 
-## StabRes
+## StabRes <a id="stabres"></a>
 
 The StabRes structure contains all the stability results defined on the locations defined by StabGrid.x, StabGrid.y. Additionally, some key factors are calculated that are commonly used in stability analysis for comparison purposes even when they might not be used in HNS (such as the streamwise wavenumber alpha). Results are shown nondimensionally and normalized. In other words, amplitudes are extracted from the perturbation shape functions of u, v, w, and p based on the maximum of the absolute streamwise velocity perturbation value u.
 
@@ -193,7 +212,7 @@ If an amplitude sweep is performed, intermediate results are also presented via 
 | StabRes.beta | Spanwise wavenumber per mode | [-] | (nf) |
 | StabRes.omega | Angular frequency per mode | [-] | (nf) |
 
-## BF
+## BF <a id="bf"></a>
 
 The BF structure is both an input and output. In the output, the structure is appended with the result of the base flow interpolation for easier post-processing. The following quantities are added:
 
@@ -209,11 +228,11 @@ The BF structure is both an input and output. In the output, the structure is ap
 | BF.dyVr | y-derivative of wall-normal base flow velocity | [-] | (nx,ny) |
 | BF.dyWr | y-derivative of spanwise base flow velocity | [-] | (nx,ny) |
 
-# Example cases
+# Example cases <a id="example-cases"></a>
 
 Some example cases are presented here so that users can test DeHNSSo and get familiar with the required inputs through some canonical cases. Additionally, these cases can be adjusted easily to represent cases relevant to the user. The details of the inputs are not disclosed here. They can be found in the respective caller. Instead, the cases are shortly described below.
 
-## Blasius boundary layer: Tollmien-Schlichting instabilities
+## Blasius boundary layer: Tollmien-Schlichting instabilities <a id="blasius-boundary-layer-tollmien-schlichting-instabilities"></a>
 
 The development of Tollmien-Schlichting instabilities in a Blasius boundary layer is considered in the first case. This case was previously considered in Bertolotti et al. (1992), Chang et al. (1993), and Herbert (1997).
 
@@ -237,11 +256,13 @@ The base flow is the solution to the incompressible boundary layer equation foun
 
 Running this case exactly as given will result in the date used to plot Figure 8 from Westerbeek et al. (2023).
 
-## Swept-wing boundary layer: Stationary crossflow instability
+## Swept-wing boundary layer: Stationary crossflow instability <a id="swept-wing-boundary-layer-stationary-cfi"></a>
 
 In the second example, the stability of a swept-wing boundary layer is assessed nonlinearly for stationary crossflow instabilities. The boundary layer is simulated on a flat plate mimicking the experiments of Rius-Vidales et al. (2021). This is done by imposing a fitted external velocity distribution on the top boundary of the base flow simulation as presented in Casacuberta et al. (2022). The external velocity is given by the equation:
 
-### And holds for all cases described hereafter.
+U_e(x) = 0.0023 ln(x)^4 + 0.0377 ln(x)^3 + 0.1752 ln(x)^2 + 0.5303 ln(x) + 1.874
+
+and holds for all cases described hereafter.
 
 ### Domain description and reference values
 
@@ -259,7 +280,7 @@ The domain is discretized in 1272 equidistant stations and 50 wall-normal colloc
 
 The spectral domain is truncated at 5 harmonics for this case (N=5, M=0) and the mean flow distortion. Only the fundamental mode, characterized by a spanwise wavelength of 7.5 mm, resulting in beta = 0.18 is introduced at the inflow as the solution to the local eigenvalue problem. The inflow amplitude of A = 3.5e-2 is imposed on the result. For this case, amplitude ramping is required. The inflow amplitude is increased by 10% each iteration after an amplitude reduction ensures that the linear simulation result is capped at AMAX (=0.1, the default value). Reference data for the stability solution is presented by J. Casacuberta (2021) as well as NPSE solutions for the current problem provided by the authors of the current code and also previously shown in the aforementioned work.
 
-## Swept-wing boundary layer: Interaction of Stationary crossflow instability with a hump
+## Swept-wing boundary layer: Interaction of Stationary crossflow instability with a hump <a id="swept-wing-boundary-layer-interaction-of-a-stationary-cfi-with-a-hump"></a>
 
 This third simulation considers the interaction of a stationary CFI with a smooth hump. This case was previously examined in both Westerbeek 2023a and the article on the current solver Westerbeek 2023b.
 
@@ -275,7 +296,7 @@ The stability of this flow problem is assessed linearly given that few solvers a
 
 The default value of xb = 0.85 is used to define a buffer region covering the last 15% of the domain.
 
-## Swept-wing boundary layer: Interaction of Stationary crossflow instability with a Forward-Facing Step
+## Swept-wing boundary layer: Interaction of Stationary crossflow instability with a Forward-Facing Step <a id="swept-wing-boundary-layer-interaction-of-a-stationary-cfi-with-a-step"></a>
 
 This last simulation
 
@@ -300,5 +321,7 @@ Henri Werij, Dean of Faculty of Aerospace Engineering, Technische Universiteit D
 # DeHNSSo results
 
 # How to cite DeHNSSo
+If you have used DeHNSSo or any subroutine within this GitHub. Please cite the GitHub and the journal article:
+
 
 # References
