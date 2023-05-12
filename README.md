@@ -28,7 +28,7 @@ _Thank you for your interest in using DeHNSSo. This page is intended to guide yo
 6. [License](#license)
 7. [Common errors and solutions](#common-errors-and-solutions)
 8. [FAQ](#faq)
-9. [Data visualisation examples](#data-visualisation examples)
+9. [Data visualisation examples](#data-visualisation-examples)
 10. [DeHNSSo results](#dehnsso-results)
 11. [How to cite DeHNSSo](#how-to-cite-dehnsso)
 12. [References](#references)
