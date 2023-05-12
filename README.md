@@ -21,14 +21,14 @@ _Thank you for your interest in using DeHNSSo. This page is intended to guide yo
    2. [StabRes](#stabres)
    3. [BF](#bf2)
 5. [Example cases](#example-cases)
-   1. [Blasius boundary layer](#blasius-boundary-layer)
+   1. [Blasius boundary layer](#blasius-boundary-layer-tollmien-schlichting-instabilities)
    2. [Swept-wing boundary layer: stationary crossflow instability](#swept-wing-boundary-layer-stationary-crossflow-instability)
    3. [Swept-wing boundary layer: interaction of a stationary CFI with a hump](#swept-wing-boundary-layer-interaction-of-a-stationary-cfi-with-a-hump)
    4. [Swept-wing boundary layer: interaction of a stationary CFI with a step](#swept-wing-boundary-layer-interaction-of-a-stationary-cfi-with-a-step)
 6. [License](#license)
 7. [Common errors and solutions](#common-errors-and-solutions)
 8. [FAQ](#faq)
-9. [Data visualisation examples](#data-visualisation-examples)
+9. [Data visualization examples](#data-visualization-examples)
 10. [DeHNSSo results](#dehnsso-results)
 11. [How to cite DeHNSSo](#how-to-cite-dehnsso)
 12. [References](#references)
@@ -39,7 +39,7 @@ The first step to using DeHNSSo is ensuring that you have MATLAB installed. It i
 
 ## Installation <a id="installation"></a>
 
-To start using DeHNSSo, please download the files from this GitHub [Repository](https://github.com/SvenWesterbeek/DeHNSSo). The current version of DeHNSSo was made using MATLAB R2022b. Support for earlier versions is not guaranteed. This file contains several folders, namely: Callers, Tools, Data Files, and Documentation. It is important that all folders remain together in a directory of your choosing.
+To start using DeHNSSo, please download the files from this GitHub [Repository](https://github.com/SvenWesterbeek/DeHNSSo). The current version of DeHNSSo was made using MATLAB R2022b. Support for earlier versions is not guaranteed. This file contains several folders, namely: Callers, Tools, Data Files, and Documentation. All folders must remain together in a directory of your choosing.
 
 The base flow data for the fourth example case "CFI over a step in a swept-wing BL" is too large for this repository and can be found in the data [Repository](https://PLACEHOLDER) repository of J. Casacuberta instead.
 
@@ -47,9 +47,9 @@ The base flow data for the fourth example case "CFI over a step in a swept-wing 
 
 DeHNSSo requires several inputs that describe the basic state flow field, the numerical domain and grid, and an inflow boundary condition among others. This data should be provided in dimensionless form. The reference values should be provided in BF. The contents of these structs should carry specific names. These structs can be summarized as follows:
 
-1. BF - Base flow domain, grid, velocity field and reference values
+1. BF - Base flow domain, grid, velocity field, and reference values
 2. Grid - numerical domain and discretization
-3. Stab - Mode specifications, spectral truncation and inflow data
+3. Stab - Mode specifications, spectral truncation, and inflow data
 4. Opt - Solver options such as outflow buffer specifications and inflow amplitude growth rate.
 
 
@@ -238,17 +238,17 @@ The development of Tollmien-Schlichting instabilities in a Blasius boundary laye
 
 ### Geometry, outflow buffer, and discretization
 
-The flow setup can be described by a constant external velocity of 10 m/s (and zero pressure gradient) over a domain ranging from x = [0.243 1.7336] m. The domain height is set to 0.06 m.
+The flow setup can be described by a constant external velocity of 10 m/s (and zero pressure gradient) over a domain ranging from $x = [0.243 1.7336]$ m. The domain height is set to 0.06 m.
 
 ### Reference quantities
 
-All quantities will be Nondimensionalized by (a combination of) the reference velocity U\_0=10 and l\_ref = 6.075e-4. The kinematic viscosity is 1.518 m^2/s such that the global Re = U\_0\*l\_ref/nu = 400 in accordance with the references.
+All quantities will be Nondimensionalized by (a combination of) the reference velocity $U\_0=10$ m/s and $l\_{ref} = 6.075e \times 10^{-4}$ m. The kinematic viscosity is $1.518$ m^2/s such that the global $Re = U\_0 \times l\_{ref}/\nu = 400$ in accordance with the references
 
 ### Nonlinear mode ensemble and amplitude ramping
 
-The inflow conditions are comprised of the solution to the local eigenvalue problem at the inflow for 90 Hz corresponding to omega = 0.0344 superimposed with an initial streamwise perturbation amplitude of A = 0.00125 sqrt(2). This inflow amplitude does not require any amplitude ramping.
+The inflow conditions are comprised of the solution to the local eigenvalue problem at the inflow for 90 Hz corresponding to $\omega = 0.0344$ superimposed with an initial streamwise perturbation amplitude of $A = 0.00125 \sqrt{2}$. This inflow amplitude does not require any amplitude ramping.
 
-For this example case, the spectral domain is truncated at M = 5 (and N = 0). Equal to the number of modes presented in the references. Higher harmonics and the MFD are not presented at the inflow and rise naturally downstream of the inflow through nonlinear forcing.
+For this example case, the spectral domain is truncated at $M = 5$ (and $N = 0$). Equal to the number of modes presented in the references. Higher harmonics and the MFD are not presented at the inflow and rise naturally downstream of the inflow through nonlinear forcing.
 
 ### Base Flow
 
@@ -260,13 +260,13 @@ Running this case exactly as given will result in the date used to plot Figure 8
 
 In the second example, the stability of a swept-wing boundary layer is assessed nonlinearly for stationary crossflow instabilities. The boundary layer is simulated on a flat plate mimicking the experiments of Rius-Vidales et al. (2021). This is done by imposing a fitted external velocity distribution on the top boundary of the base flow simulation as presented in Casacuberta et al. (2022). The external velocity is given by the equation:
 
-U_e(x) = 0.0023 ln(x)^4 + 0.0377 ln(x)^3 + 0.1752 ln(x)^2 + 0.5303 ln(x) + 1.874
+$U_e(x) = 0.0023 \ln(x)^4 + 0.0377 \ln(x)^3 + 0.1752 \ln(x)^2 + 0.5303 \ln(x) + 1.874$
 
 and holds for all cases described hereafter.
 
 ### Domain description and reference values
 
-The problem is described additionally by the streamwise coordinate ranging from x = 220 m. The domain height is set to 0.02 m. The reference length, defined as the Blasius length at the inflow is l\_ref = 2.1394-4 m. The external velocity at the inflow is U\_ref = 15.1 m/s. The kinematic viscosity of the flow is 1.47e-5 such that the global Reynolds number is 220.
+The problem is described additionally by the streamwise coordinate ranging from $x = 220$. The domain height is set to 0.02 m. The reference length, defined as the Blasius length at the inflow is $l\_{ref} = 2.1394 \times 10^{-4}$ m. The external velocity at the inflow is U\_{ref} = 15.1 m/s. The kinematic viscosity of the flow is 1.47e-5 such that the global Reynolds number is 220.
 
 ### Base Flow
 
@@ -278,7 +278,7 @@ The domain is discretized in 1272 equidistant stations and 50 wall-normal colloc
 
 ### Nonlinear mode ensemble, reference data, and ramping
 
-The spectral domain is truncated at 5 harmonics for this case (N=5, M=0) and the mean flow distortion. Only the fundamental mode, characterized by a spanwise wavelength of 7.5 mm, resulting in beta = 0.18 is introduced at the inflow as the solution to the local eigenvalue problem. The inflow amplitude of A = 3.5e-2 is imposed on the result. For this case, amplitude ramping is required. The inflow amplitude is increased by 10% each iteration after an amplitude reduction ensures that the linear simulation result is capped at AMAX (=0.1, the default value). Reference data for the stability solution is presented by J. Casacuberta (2021) as well as NPSE solutions for the current problem provided by the authors of the current code and also previously shown in the aforementioned work.
+The spectral domain is truncated at 5 harmonics for this case (N=5, M=0) and the mean flow distortion. Only the fundamental mode, characterized by a spanwise wavelength of 7.5 mm, resulting in beta = 0.18 is introduced at the inflow as the solution to the local eigenvalue problem. The inflow amplitude of $A = 3.5 \times 10^{-2}$ is imposed on the result. For this case, amplitude ramping is required. The inflow amplitude is increased by 10% each iteration after an amplitude reduction ensures that the linear simulation result is capped at AMAX (=0.1, the default value). Reference data for the stability solution is presented by J. Casacuberta (2021) as well as NPSE solutions for the current problem provided by the authors of the current code and also previously shown in the aforementioned work.
 
 ## Swept-wing boundary layer: Interaction of Stationary crossflow instability with a hump <a id="swept-wing-boundary-layer-interaction-of-a-stationary-cfi-with-a-hump"></a>
 
@@ -286,15 +286,15 @@ This third simulation considers the interaction of a stationary CFI with a smoot
 
 ### Domain description, base flow, and reference values
 
-The same external flow velocity as for the flat plate case is prescribed at the top boundary of the base flow calculation. For this problem, the base flow calculation is performed in COMSOL (COMSOL 2022). The domain is described by x = 220-2165 and a domain height of 89. Normalized by the reference length l\_ref = 2.14 e-4 m with is the Blasius length at the inflow. This leads to the same reference values as for the flat plate case. The external velocity at the inflow is U\_ref = 15.1 m/s. The kinematic viscosity of the flow is 1.47e-5 such that the global Reynolds number is 220.
+The same external flow velocity as for the flat plate case is prescribed at the top boundary of the base flow calculation. For this problem, the base flow calculation is performed in COMSOL (COMSOL 2022). The domain is described by $x = 220-2165$ and a domain height of $H=89$. Normalized by the reference length $l\_{ref} = 2.14 \times 10^{-4}$ m with is the Blasius length at the inflow. This leads to the same reference values as for the flat plate case. The external velocity at the inflow is $U\_{ref} = 15.1$ m/s. The kinematic viscosity of the flow is $1.47 \times 10^{-5}$ such that the global Reynolds number is $220$.
 
-The hump is symmetrical and centered around x\_m = 859 and relatively shallow. Consequently, the base flow features no flow separation. The problem is thus not too challenging and does not demand much refinement around the hump. Still, a slight streamwise refinement is introduced (using Grid.mode "xrefined") around the hump for users to get familiar and play with.
+The hump is symmetrical and centered around $x\_m = 859$ and relatively shallow. Consequently, the base flow features no flow separation. The problem is thus not too challenging and does not demand much refinement around the hump. Still, a slight streamwise refinement is introduced (using Grid.mode "xrefined") around the hump for users to get familiar and play with.
 
 ### Nonlinear mode ensemble, reference data, and ramping
 
-The stability of this flow problem is assessed linearly given that few solvers are able to perform such simulations. Only the fundamental CFI, characterized by beta = is introduced at the inflow (N=1, M=0). The reference data is provided by J. Franco of DLR using AHLNS (see Franco 2018) on the same base flow. The AHLNS is physically equivalent to the current HNS for linear simulations. No amplitude ramping is required as this concerns a linear simulation.
+The stability of this flow problem is assessed linearly given that few solvers are able to perform such simulations. Only the fundamental CFI, characterized by beta = is introduced at the inflow ($N=1$, $M=0$). The reference data is provided by J. Franco of DLR using AHLNS (see Franco 2018) on the same base flow. The AHLNS is physically equivalent to the current HNS for linear simulations. No amplitude ramping is required as this concerns a linear simulation.
 
-The default value of xb = 0.85 is used to define a buffer region covering the last 15% of the domain.
+The default value of $x_b = 0.85$ is used to define a buffer region covering the last 15% of the domain.
 
 ## Swept-wing boundary layer: Interaction of Stationary crossflow instability with a Forward-Facing Step <a id="swept-wing-boundary-layer-interaction-of-a-stationary-cfi-with-a-step"></a>
 
@@ -302,7 +302,7 @@ This last simulation
 
 # License<a id="license"></a>
 
-The contents in the Data files directory are licensed under a  **CC-BY 4.0**  (see CC-BY-4.0 file). The codes and any other file in this repository are licensed under a  **GPLv3 license**  (see GPLv3 file).
+The contents in the Data files directory are licensed under a  **CC-BY 4.0**  (see CC-BY-4.0 file and [here](/https://joinup.ec.europa.eu/licence/creative-commons-attribution-40-international-cc-40). The codes and any other file in this repository are licensed under a  **GPLv3 license**  (see GPLv3 file and [here](/https://www.gnu.org/licenses/gpl-3.0.en.html).
 
 Copyright notice:
 
