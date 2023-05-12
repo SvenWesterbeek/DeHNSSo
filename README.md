@@ -59,7 +59,7 @@ These structures will be discussed in detail below to help you make your own inp
 
 BF contains the base flow data, the grid on which it is defined, and the reference values by which everything is normalized. This data can be provided in a structured, unstructured grid, or vector format.
 
-This data does not need to be presented on the same grid as presented in the Grid struct as the data will be interpolated onto the numerical grid within DeHNSSo using the griddata function (method = 'cubic'). The numerical domain cannot exceed the domain of the base flow. In the table below, the required contents of BF are described. In short, BF.X and BF.Y describe the locations where base flow quantities are described. BF.U, BF.V and BF.W describe the velocities in x, y and z respectively. Then, the BF.dxU, BF.dxV, BF.dxW, BF.dyU, BF.dyV, and BF.dyW describe the streamwise and wall-normal derivatives of the aforementioned velocities. Lastly, BF.lref, BF.Uref, BF.nu and BF.Re are the reference values and corresponding Reynolds number defined as .
+This data does not need to be presented on the same grid as presented in the Grid struct as the data will be interpolated onto the numerical grid within DeHNSSo using the griddata function (method = 'cubic'). The numerical domain cannot exceed the domain of the base flow. In the table below, the required contents of BF are described. In short, BF.X and BF.Y describe the locations where base flow quantities are described. BF.U, BF.V and BF.W describe the velocities in $x$, $y$ and $z$ respectively. Then, the BF.dxU, BF.dxV, BF.dxW, BF.dyU, BF.dyV, and BF.dyW describe the streamwise and wall-normal derivatives of the aforementioned velocities. Lastly, BF.lref, BF.Uref, BF.nu and BF.Re are the reference values and corresponding Reynolds number defined as .
 
 | Name | Content | Unit | Size |
 | --- | --- | --- | --- |
@@ -88,13 +88,13 @@ _Grid.wall_ presents the CHNS with the bottom wall coordinates via 2 rows of dat
 _Grid.mode_ allows for several built-in grid generations to be used. The options currently available are:
 
 - "equidistant"
-  - Creates a grid following equidistant streamwise discretization and an eta distribution of collocation points following Malik for a user-defined median collocation point y\_i.
+  - Creates a grid following equidistant streamwise discretization and an eta distribution of collocation points following Malik for a user-defined median collocation point $y\_i$.
 - "refined"
-  - Creates a grid with a streamwise refined grid based on a Gaussian distribution following user-defined inputs _Grid.mug, Grid.sig and Grid.ag._ Wall-normal distribution follows Malik for a user-defined median collocation point y\_i.
+  - Creates a grid with a streamwise refined grid based on a Gaussian distribution following user-defined inputs _Grid.mug, Grid.sig and Grid.ag._ Wall-normal distribution follows Malik for a user-defined median collocation point $y\_i$.
 - "curved"
-  - Creates an equidistant distribution of streamwise grid points over a curved surface with straight eta axes wall-normal to that surface. The eta axes are thus not parallel to the global y axes. Wall-normal collocation points are clustered near the wall following Malik's mapping for a user-defined median collocation point y\_i.
+  - Creates an equidistant distribution of streamwise grid points over a curved surface with straight $\eta$ axes wall-normal to that surface. The $\eta$ axes are thus not parallel to the global y axes. Wall-normal collocation points are clustered near the wall following Malik's mapping for a user-defined median collocation point $y\_i$.
 - "wallorthogonal"
-  - Creates a grid elliptically with orthogonality at the wall following exactly the eta distribution of the mapping of Malik according to a user-defined y\_i. The streamwise distribution is nearly equidistant but can be slightly adjusted for the sake of orthogonality.
+  - Creates a grid elliptically with orthogonality at the wall following exactly the eta distribution of the mapping of Malik according to a user-defined $y\_i$. The streamwise distribution is nearly equidistant but can be slightly adjusted for the sake of orthogonality.
 
 | Name | Content | Unit | Size |
 | --- | --- | --- | --- |
@@ -165,7 +165,7 @@ The solver returns the following structures with outputs:
 
 ## StabGrid <a id="stabgrid"></a>
 
-The StabGrid structure contains the numerical grid generated in the solver on which the simulation results are defined. The streamwise location increases with the column index while the wall-normal location decreases with the row index. The StabGrid contains both the physical ($x$,$y$) and the computational (\xi,\eta) grid. The transformation coefficients are also presented in this structure.
+The StabGrid structure contains the numerical grid generated in the solver on which the simulation results are defined. The streamwise location increases with the column index while the wall-normal location decreases with the row index. The StabGrid contains both the physical ($x$,$y$) and the computational ($\xi$,$\eta$) grid. The transformation coefficients are also presented in this structure.
 
 | Name | Content | Unit | Size |
 | --- | --- | --- | --- |
@@ -238,17 +238,17 @@ The development of Tollmien-Schlichting instabilities in a Blasius boundary laye
 
 ### Geometry, outflow buffer, and discretization
 
-The flow setup can be described by a constant external velocity of 10 m/s (and zero pressure gradient) over a domain ranging from $x = [0.243 1.7336]$ m. The domain height is set to $0.06$ m.
+The flow setup can be described by a constant external velocity of 10 m/s (and zero pressure gradient) over a domain ranging from $x = 0.243$ to $x = 1.7336$ m. The domain height is set to $H = 0.06$ m.
 
 ### Reference quantities
 
-All quantities will be Nondimensionalized by (a combination of) the reference velocity $U\_0=10$ m/s and $l\_{ref} = 6.075e \times 10^{-4}$ m. The kinematic viscosity is $1.518$ m^2/s such that the global $Re = U\_0 \times l\_{ref}/\nu = 400$ in accordance with the references
+All quantities will be Nondimensionalized by (a combination of) the reference velocity $U\_0=10$ m/s and $l\_{ref} = 6.075 \times 10^{-4}$ m. The kinematic viscosity is $1.518$ m^2/s such that the global $Re = U\_0 \times l\_{ref}/\nu = 400$ in accordance with the references
 
 ### Nonlinear mode ensemble and amplitude ramping
 
 The inflow conditions are comprised of the solution to the local eigenvalue problem at the inflow for $90$ Hz corresponding to $\omega = 0.0344$ superimposed with an initial streamwise perturbation amplitude of $A = 0.00125 \sqrt{2}$. This inflow amplitude does not require any amplitude ramping.
 
-For this example case, the spectral domain is truncated at $M = 5$ (and $N = 0$). Equal to the number of modes presented in the references. Higher harmonics and the MFD are not presented at the inflow and rise naturally downstream of the inflow through nonlinear forcing.
+For this example case, the spectral domain is truncated at $M = 5$ (and $N = 0$). Equal to the number of modes presented in the references. Higher harmonics and the mean flow distortion are not presented at the inflow and rise naturally downstream of the inflow through nonlinear forcing.
 
 ### Base Flow
 
@@ -266,7 +266,7 @@ and holds for all cases described hereafter.
 
 ### Domain description and reference values
 
-The problem is described additionally by the streamwise coordinate ranging from $x = 220$. The domain height is set to 0.02 m. The reference length, defined as the Blasius length at the inflow is $l\_{ref} = 2.1394 \times 10^{-4}$ m. The external velocity at the inflow is $U\_{ref} = 15.1$ m/s. The kinematic viscosity of the flow is 1.47e-5 such that the global Reynolds number is 220.
+The problem is described additionally by the streamwise coordinate ranging from $x = 220$. The domain height is set to 0.02 m. The reference length, defined as the Blasius length at the inflow is $l\_{ref} = 2.1394 \times 10^{-4}$ m. The external velocity at the inflow is $U\_{ref} = 15.1$ m/s. The kinematic viscosity of the flow is $1.47 \times 10^{-5}$ such that the global Reynolds number is $220$.
 
 ### Base Flow
 
