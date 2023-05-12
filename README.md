@@ -77,7 +77,7 @@ This data does not need to be presented on the same grid as presented in the Gri
 | _BF.lref_ | Reference length | [m] | (1) |
 | _BF.Uref_ | Reference velocity | [m/s] | (1) |
 | _BF.nu_ | Kinematic viscosity | [m^2/s] | (1) |
-| _BF.Re_ | Reynolds number ( | [-] | (1) |
+| _BF.Re_ | Reynolds number | [-] | (1) |
 
 ### Grid <a id="grid"></a>
 
