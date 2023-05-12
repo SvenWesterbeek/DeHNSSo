@@ -266,7 +266,7 @@ and holds for all cases described hereafter.
 
 ### Domain description and reference values
 
-The problem is described additionally by the streamwise coordinate ranging from $x = 220$. The domain height is set to 0.02 m. The reference length, defined as the Blasius length at the inflow is $l\_{ref} = 2.1394 \times 10^{-4}$ m. The external velocity at the inflow is $U\_{ref} = 15.1$ m/s. The kinematic viscosity of the flow is $1.47 \times 10^{-5}$ such that the global Reynolds number is $220$.
+The problem is described additionally by the streamwise coordinate ranging from $x = 220$. The domain height is set to $H = 0.02$ m. The reference length, defined as the Blasius length at the inflow is $l\_{ref} = 2.1394 \times 10^{-4}$ m. The external velocity at the inflow is $U\_{ref} = 15.1$ m/s. The kinematic viscosity of the flow is $1.47 \times 10^{-5}$ such that the global Reynolds number is $220$.
 
 ### Base Flow
 
@@ -278,7 +278,7 @@ The domain is discretized in 1272 equidistant stations and 50 wall-normal colloc
 
 ### Nonlinear mode ensemble, reference data, and ramping
 
-The spectral domain is truncated at 5 harmonics for this case (N=5, M=0) and the mean flow distortion. Only the fundamental mode, characterized by a spanwise wavelength of 7.5 mm, resulting in beta = 0.18 is introduced at the inflow as the solution to the local eigenvalue problem. The inflow amplitude of $A = 3.5 \times 10^{-2}$ is imposed on the result. For this case, amplitude ramping is required. The inflow amplitude is increased by 10% each iteration after an amplitude reduction ensures that the linear simulation result is capped at AMAX (=0.1, the default value). Reference data for the stability solution is presented by J. Casacuberta (2021) as well as NPSE solutions for the current problem provided by the authors of the current code and also previously shown in the aforementioned work.
+The spectral domain is truncated at five harmonics for this case ($N=5$, $M=0$) and the mean flow distortion. Only the fundamental mode, characterized by a spanwise wavelength of $\lambda_z = 7.5$ mm or $\beta = 0.18$, is introduced at the inflow as the solution to the local eigenvalue problem. The inflow amplitude of $A = 3.5 \times 10^{-2}$ is imposed on the result. For this case, amplitude ramping is required. The inflow amplitude is increased by 10% each iteration after an amplitude reduction ensures that the linear simulation result is capped at AMAX ($= 0.1$, the default value). Reference data for the stability solution is presented by J. Casacuberta (2021) as well as NPSE solutions for the current problem provided by the authors of the current code and also previously shown in the aforementioned work.
 
 ## Swept-wing boundary layer: Interaction of Stationary crossflow instability with a hump <a id="swept-wing-boundary-layer-interaction-of-a-stationary-cfi-with-a-hump"></a>
 
