@@ -1,21 +1,30 @@
 #
 # DeHNSSo
 
-Delft Nonlinear Harmonic Navier-Stokes Solver
+Delft Nonlinear Harmonic Navier-Stokes Solver - A nonlinear stability solver for flow problems in complex 2-dimensional domains.
 
 _Thank you for your interest in using DeHNSSo. This page is intended to guide you through using DeHNSSo easily and fast._
 
-# How to use DeHNSSo
+© 2023, Sven Westerbeek & Marios Kotsonis
+
+## Table of Contents
+
+1. [How to use DeHNSSo](#how-to-use-dehnsso)
+2. [Installation](https://github.com/SvenWesterbeek/DeHNSSo/edit/main/README.md#installation)
+3. [Input files](#input-files)
+   1. [Stab](#stab)
+
+## How to use DeHNSSo <a id="how-to-use-dehnsso"></a>
 
 The first step to using DeHNSSo is ensuring that you have MATLAB installed. It is recommended to use at least version R2022b. For help with installing Matlab, please follow the instructions on the [MathWorks web page](https://rb.gy/lbe63k). Then, you will need to download DeHNSSo from the DeHNSSo GitHub as will be explained below. DeHNSSo comes with 4 standard examples that can be run immediately. To perform custom simulations, please familiarize yourself with the input formats through these examples and adjust them accordingly.
 
-## Installation
+### Installation
 
 To start using DeHNSSo, please download the files from this GitHub [Repository](https://PLACEHOLDER). The current version of DeHNSSo was made using MATLAB R2022b. Support for earlier versions is not guaranteed. This file contains several folders, namely: Callers, Tools, Data Files, and Documentation. It is important that all folders remain together in a directory of your choosing.
 
 The base flow data for the fourth example case "CFI over a step in a swept-wing BL" is too large for this repository and can be found in the data [Repository](https://PLACEHOLDER) repository of J. Casacuberta instead.
 
-## Input files
+### Input files <a name="input-files"></a>
 
 DeHNSSo requires several inputs that describe the basic state flow field, the numerical domain and grid, and an inflow boundary condition among others. This data should be provided in dimensionless form. The reference values should be provided in BF. The contents of these structs should carry specific names. These structs can be summarized as follows:
 
@@ -23,6 +32,7 @@ DeHNSSo requires several inputs that describe the basic state flow field, the nu
 2. Grid - numerical domain and discretization
 3. Stab - Mode specifications, spectral truncation and inflow data
 4. Opt - Solver options such as outflow buffer specifications and inflow amplitude growth rate.
+
 
 These structures will be discussed in detail below to help you make your own input files.
 
@@ -86,7 +96,7 @@ _Grid.mode_ allows for several built-in grid generations to be used. The options
 | _Grid.ystretch_ | Wall-normal distribution stretching factor | [-] | 1 |
 | Grid.StepType | Sharp geometry type "FFS", "BFS", "GAP", "HUMP" | [-] | String |
 
-## Stab
+## <a id="stab"></a> stab
 
 The _Stab_ structure is used to define the mode ensemble of interest and present the solver with inflow conditions.
 
