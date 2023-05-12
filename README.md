@@ -300,7 +300,7 @@ The default value of xb = 0.85 is used to define a buffer region covering the la
 
 This last simulation
 
-# License
+# License<a id="license"></a>
 
 The contents in the Data files directory are licensed under a  **CC-BY 4.0**  (see CC-BY-4.0 file). The codes and any other file in this repository are licensed under a  **GPLv3 license**  (see GPLv3 file).
 
@@ -312,16 +312,16 @@ Henri Werij, Dean of Faculty of Aerospace Engineering, Technische Universiteit D
 
 © 2023, Sven Westerbeek & Marios Kotsonis
 
-# Common errors and solutions
+# Common errors and solutions <a id="common-errors-and-solutions"></a>
 
-# FAQ
+# FAQ<a id="faq"></a>
 
-# Data visualisation examples
+# Data visualisation examples <a id="data-visualisation-examples"></a>
 
-# DeHNSSo results
+# DeHNSSo results<a id="dehnsso-results"></a>
 
-# How to cite DeHNSSo
+# How to cite DeHNSSo<a id="how-to-cite-dehnsso"></a>
 If you have used DeHNSSo or any subroutine within this GitHub. Please cite the GitHub and the journal article:
 
 
-# References
+# References<a id="references"></a>
