@@ -292,7 +292,7 @@ The hump is symmetrical and centered around $x\_m = 859$ and relatively shallow.
 
 ### Nonlinear mode ensemble, reference data, and ramping
 
-The stability of this flow problem is assessed linearly given that few solvers are able to perform such simulations. Only the fundamental CFI, characterized by beta = is introduced at the inflow ($N=1$, $M=0$). The reference data is provided by J. Franco of DLR using AHLNS (see Franco 2018) on the same base flow. The AHLNS is physically equivalent to the current HNS for linear simulations. No amplitude ramping is required as this concerns a linear simulation.
+The stability of this flow problem is assessed linearly ($N=1$, $M=0$) given that few solvers are able to perform such simulations. Only the fundamental CFI, characterized by $\beta = 0.18$ is introduced at the inflow. The reference data is provided by J. Franco of DLR using AHLNS (see Franco 2018) on the same base flow. The AHLNS is physically equivalent to the current HNS for linear simulations. No amplitude ramping is required as this concerns a linear simulation.
 
 The default value of $x_b = 0.85$ is used to define a buffer region covering the last 15% of the domain.
 
