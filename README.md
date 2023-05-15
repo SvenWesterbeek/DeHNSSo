@@ -165,7 +165,7 @@ The solver returns the following structures with outputs:
 
 ## StabGrid <a id="stabgrid"></a>
 
-The StabGrid structure contains the numerical grid generated in the solver on which the simulation results are defined. The streamwise location increases with the column index while the wall-normal location decreases with the row index. The StabGrid contains both the physical ($x$,$y$) and the computational ($\xi$,$\eta$) grid. The transformation coefficients are also presented in this structure.
+The StabGrid structure contains the numerical grid generated in the solver on which the simulation results are defined. The streamwise location increases with the column index while the wall-normal location decreases with the row index. The StabGrid contains both the physical ($x$, $y$) and the computational ($\xi$, $\eta$) grid. The transformation coefficients are also presented in this structure.
 
 | Name | Content | Unit | Size |
 | --- | --- | --- | --- |
