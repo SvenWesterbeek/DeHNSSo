@@ -254,7 +254,7 @@ For this example case, the spectral domain is truncated at $M = 5$ (and $N = 0$)
 
 The base flow is the solution to the incompressible boundary layer equation found using an in-house solver. The base flow simulation was performed on a fine equidistant numerical grid of 2000 streamwise stations by 100 collocation points and stored here in the BF structure. The boundary layer solver is not part of the package that comes with DeHNSSo.
 
-Running this case exactly as given will result in the date used to plot Figure 8 from Westerbeek et al. (2023).
+Running this case exactly as given will result in the data used to plot Figure 8 from Westerbeek et al. (2023).
 
 ## Swept-wing boundary layer: Stationary crossflow instability <a id="swept-wing-boundary-layer-stationary-crossflow-instability"></a>
 
