@@ -1,0 +1,29 @@
+function [ DD ] = FD2d2o_uneven(x,y)
+% Second derivative of numerical data "y" at "x", with respect to "x".
+% http://websrv.cs.umt.edu/isis/index.php/Finite_differencing:_Introduction
+% Data has to be provided in columns. If a matrix is inserted, derivatives are
+% taken along each columns for all columns separately.
+
+dx = diff(x);
+DD = y;
+
+% Central differences
+DD(2:end-1,:) = 2.*(   dx(1:end-1,:)             .* y(3:end,:) ...
+                    - (dx(1:end-1,:)+dx(2:end,:)).* y(2:end-1,:) ...
+                    +  dx(2:end,:)               .* y(1:end-2,:)  ) ...
+                   ./ (dx(1:end-1,:).*dx(2:end,:).*(dx(1:end-1,:) + dx(2:end,:)));
+          
+% Forward differences
+DD(1,:)       = 2.*(   dx(1,:)                   .* y(3,:) ...
+                    - (dx(1,:)+dx(2,:))          .* y(2,:) ...
+                    +  dx(2,:)                   .* y(1,:)  ) ...
+                   ./ (dx(1,:).*dx(2,:).*(dx(1,:) + dx(2,:)));
+    
+% Backward differences
+DD(end,:)     = 2.*(   dx(end-1,:)               .* y(end,:) ...
+                    - (dx(end-1,:)+dx(end,:))    .* y(end-1,:) ...
+                    +  dx(end,:)                 .* y(end-2,:)   ) ...
+                   ./ (dx(end-1,:).*dx(end,:).*(dx(end-1,:)+dx(end,:)));
+
+end
+

@@ -1,0 +1,761 @@
+function [StabGrid,D1,D2]=grid_gen(Grid)
+%% License
+
+%% Description
+% Creates a StabGrid for a domain defined by a wall, height and range with nx
+% streamwise stations and ny collocation points. Grid optionality is
+% provided via a string in "Grid.type". 
+
+% Grid.wall: x and y coordinates of the wall in physical space
+% Grid.S: inflow in physical space
+% Grid.L: length of calculation domain in physical space
+% Grid.H: height of computational domain at inflow
+% Grid.nx: points in numerical StabGrid in ksi
+% Grid.ny: points in eta (correspoinds to collocation points of Chebychev polynomials)
+% Grid.y_i: median collocation point height
+% Grid.type: type of StabGrid
+% Grid.ft: flat top flag 1=true, 0=false.
+
+% Grid modes:
+% "equidistant" - an equidistant streamwise distribution. Wall-refined.
+%               eta//y. 
+% "xrefined"    - streamwise gaussian distribution. Wall-refined. eta//y.
+% "fanned"      - equidistant streamwise distribution. Wall-normal eta axes to 
+%               account for wall curvature. wall-refined.
+% "wallorth"    - Locally wall-orthogonal grid
+
+
+
+%% (Re)define values
+xw  = Grid.wall(1,:);
+yw  = Grid.wall(2,:);
+wall= Grid.wall;
+nx  = Grid.nx;
+ny  = Grid.ny;
+H   = Grid.H;
+
+%%
+switch Grid.xtype
+    case "equidistant"
+       
+        xnw = linspace(Grid.S,Grid.S+Grid.L,nx);                          % interpolate physical x of wall on numerical StabGrid
+        ynw = interp1(wall(1,:),wall(2,:),xnw,'linear');           % interpolate physical y of wall on numerical StabGrid
+        
+        % construction of ksi
+        ksi = repmat(xnw,ny,1);
+        
+        % construction of eta
+        [yvec,DM] = chebdif(ny,2); % differentiation matrices
+        [etac,D1,D2] = Mapping(Grid,yvec',DM(:,:,1),DM(:,:,2)); % Malik mapping and construction of eta column
+        
+        eta = repmat(etac,1,nx);                                      % construction of the eta matrix (repeat the eta collumn)      
+        
+        % construction of x of physical domain
+        x = ksi;         % x is repetition of wall coordinate
+        
+        % construction of y of physical domain  (=eta)
+        if Grid.ft == 1
+        for i = 1:length(ynw)   
+            y(:,i)=eta(:,i)*(H-ynw(i))/H+ynw(i); % eta is parallel to y, but follows the wall while maintaining a flat top
+        end
+        else
+        for i = 1:length(ynw)   
+            y(:,i)=eta(:,i)+ynw(i); % eta is parallel to y, but follows the wall while maintaining a flat top
+        end
+        end
+
+  
+        
+    case "xrefined"
+
+        % Create locally refined X
+        XU = linspace(Grid.S,Grid.S+Grid.L,nx); %Uniform X
+        XC = linspace(-1,1,nx);     % equidistant grid on -1:1
+        
+        % Transform mug to % of domain
+        mug = (Grid.mug-XU(1))/(XU(end)-XU(1))*2-1;  % location of peak
+        
+        % Define step size based on gaussian
+        fg = 1/(Grid.sig*sqrt(2*pi))*exp(-0.5*((XC-mug)/Grid.sig).^2); % gaussian
+        fg = 1+(Grid.ag-1)*fg/max(fg);
+
+        % Initialize mapping 
+        X = 0;
+
+        for i=2:nx
+        X(1,i) = X(1,i-1)+fg(i);
+        end
+
+        X = XU(1,1)+(X/X(1,nx))*(XU(1,nx)-XU(1,1));
+
+        %Adjust X(end) so that one stage is exactly StepX if present
+        if Grid.StepH ~=0
+        Xfactor = (X(find(X<Grid.StepX,1,'last')+1)-X(1))/(Grid.StepX-X(1)); 
+        X = X(1)+(X-X(1))/Xfactor;
+        end
+
+        %First estimate of Y distribution
+        [yvec,DM] = chebdif(ny,2); % differentiation matrices
+        [Y,~,~] = Mapping(Grid,yvec',DM(:,:,1),DM(:,:,2));
+        clear DM yvec
+
+        %Find the ratio of the first spectral collocation point over the Step H
+        if Grid.StepH ~=0
+        Hfactor = Y(find(Y<Grid.StepH,1,'first')-1)/Grid.StepH; 
+        H = H/Hfactor;
+        Grid.y_i = Grid.y_i/Hfactor; %correct Grid.y_i
+        end
+        
+        xnw = X;
+        ynw = interp1(wall(1,:),wall(2,:),xnw,'linear');           % interpolate physical y of wall on numerical StabGrid
+
+        x =repmat(xnw,ny,1); 
+        
+        % construction of eta
+        [yvec,DM] = chebdif(ny,2); % differentiation matrices
+        [etac,D1,D2] = Mapping(Grid,yvec',DM(:,:,1),DM(:,:,2)); % Malik mapping and construction of eta column
+        
+        eta=repmat(etac,1,nx); 
+        
+        % construction of xi
+        ksi = linspace(xw(1),xw(end),nx);
+        ksi = repmat(ksi,ny,1);
+
+        % construction of y of physical domain  (=eta)
+        if Grid.ft == 1
+        for i = 1:length(ynw)   
+            y(:,i)=eta(:,i)*(H-ynw(i))/H+ynw(i); % eta is parallel to y, but follows the wall while maintaining a flat top
+        end
+        else
+        for i = 1:length(ynw)   
+            y(:,i)=eta(:,i)+ynw(i); % eta is parallel to y, but follows the wall while maintaining a flat top
+        end
+        end
+
+
+
+    case "fanned"
+        % construction of ksi
+        sw=cumtrapz(xw,sqrt(1+gradient(yw,xw).^2))+xw(1); % evaluate the arc length of the wall
+        
+        s1=interp1(xw,sw,Grid.S,'spline');    % arc length at inflow
+        s2=interp1(xw,sw,Grid.S+Grid.L,'spline');  % arc length at outflow
+        
+        ksir=linspace(s1,s2,nx);         % equispaced ksi row at wall
+        
+        ksi =repmat(ksir,ny,1);          % construction of the ksi matrix (repeat the ksi row)
+        
+        xnw=interp1(sw,xw,ksir,'spline');% interpolate physical x of wall on numerical grid
+        ynw=interp1(sw,yw,ksir,'spline');% interpolate physical y of wall on numerical grid
+        
+        aw=atand(gradient(ynw,xnw));     % local tangent to the wall
+        
+        % construction of eta
+        
+        [yvec,DM] = chebdif(ny,2); % differentiation matrices
+        [etac,D1,D2] = MappingMalik(H,y_i,yvec',DM(:,:,1),DM(:,:,2)); % Malik mapping and construction of eta column
+        
+        eta=repmat(etac,1,nx);                                      % construction of the eta matrix (repeat the eta collumn)
+        
+        % construction of x and y of physical domain
+        for i=1:nx
+            x(ny,i)=xnw(i);
+            y(ny,i)=ynw(i);
+            
+            for j=ny-1:-1:1
+                x(j,i)=-sind(aw(i))*(eta(j,i)-eta(j+1,i))+x(j+1,i);
+                y(j,i)=+cosd(aw(i))*(eta(j,i)-eta(j+1,i))+y(j+1,i);
+            end
+        end
+       
+    case "wallorthogonal"    %% Laplacian Curvilinear Orthogonal Grid LCOG
+        
+        % construction of ksi
+        
+        sw=cumtrapz(xw,sqrt(1+gradient(yw,xw).^2))+xw(1); % evaluate the arc length of the wall
+        
+        s1=interp1(xw,sw,Grid.S,'spline');                     % arc length at inflow
+        s2=interp1(xw,sw,Grid.S+Grid.L,'spline');                   % arc length at outflow
+        
+        ksir=linspace(s1,s2,nx);                          % equispaced ksi row at wall
+        
+        ksi =repmat(ksir,ny,1);                            % construction of the ksi matrix (repeat the ksi row)
+        
+        % construction of eta
+        
+        [yvec,DM] = chebdif(ny,2); % differentiation matrices
+        [etac,D1,D2] = Mapping(Grid,yvec',DM(:,:,1),DM(:,:,2)); % Malik mapping and construction of eta column
+        
+        eta=repmat(etac,1,nx);     
+        
+        
+        xw=interp1(sw,xw,ksir,'spline');                          % interpolate physical x of wall on numerical StabGrid
+        yw=interp1(sw,yw,ksir,'spline');                          % interpolate physical y of wall on numerical StabGrid
+        
+        maxit=1000;
+        show=0;            % 1 for yes o for no  to disp solution while solving
+        Ermax=10^-4;
+        
+        %---------initializing------------------
+
+        Angw= atand(gradient(yw)./gradient(xw));
+        if max(abs(Angw)>=30)
+            warning('Maximum wall angle over 30 degrees! Orthogonality might be weak. Continuing...')
+        end
+        
+        % Construct Domain Boundaries
+
+        c1=[zeros(1,ny)+S;linspace(0,H,ny)];        %left
+        c2=[xw;yw];          %bottom
+        c3=[zeros(1,ny)+S+Grid.L;linspace(0,H,ny)];        %right
+        c4=[S:(L)/(nx-1):(S+Grid.L);yw*0+H];        %top
+
+
+        
+%% Initialization
+
+alpha=zeros(ny,nx);
+alphaw=zeros(1,nx);
+beta=zeros(ny,nx);
+betaw=zeros(1,nx);
+gamma=zeros(ny,nx);
+gammaw=zeros(1,nx);
+
+r_xi=zeros(ny,nx,2);
+r_xiw=zeros(1,nx,2);
+r_xi_xi=zeros(ny,nx,2);
+r_xi_xiw=zeros(1,nx,2);
+r_eta=zeros(ny,nx,2);
+r_etaw=zeros(1,nx,2);
+r_eta_eta=zeros(ny,nx,2);
+r_eta_etaw=zeros(1,nx,2);
+r_xi_etaw=zeros(1,nx,2);
+r_xi_eta=zeros(ny,nx,2);
+
+P=zeros(ny,nx);
+Q=zeros(ny,nx);
+P1=zeros(1,nx);
+Q1=zeros(1,nx);
+
+Xg=zeros(1,nx);
+Yg=zeros(1,nx);
+
+X=zeros(ny,nx);
+
+X(:,1)=c3(1,:);             %right
+X(:,nx)=c1(1,:);            %left
+X(ny,:)=(c4(1,:)');         %top
+X(1,:)=(c2(1,:)');          %bottom
+Y=zeros(ny,nx);
+
+Y(:,1)=c3(2,:);             %right
+Y(:,nx)=c1(2,:);            %left
+Y(ny,:)=(c4(2,:)');         %top  
+Y(1,:)=(c2(2,:)');          %bottom
+
+
+% Create first assumption
+for j = 1:ny
+   Y(j,:) = Y(1,:)*(1-(H/(ny-1)*(j-1))/H) +H/(ny-1)*(j-1); 
+end
+for i = 1:nx
+   X(:,i) = X(1,i)*ones(ny,1);
+end
+
+% Create internal Ghost Points 
+% NOTE that here, as in other derivative calculations, the step size in ksi
+% and eta is assumed unity as it does not affect the end StabGrid and
+% simplifies the code. An actual eta and ksi have previously been
+% calculated and will be used to generate the Jacobian in the end.
+i=2:nx-1;
+r_etaw(1,i,1)=       X(2,i)-X(1,i); 
+r_etaw(1,i,2)=       Y(2,i)-Y(1,i); 
+r_xiw(1,i,1)=        (1/2).*((X(1,i+1)-X(1,i-1)));
+r_xiw(1,i,2)=        (1/2).*((Y(1,i+1)-Y(1,i-1)));
+
+a(1,i) =  (1/2)*(Y(1,i+1)-Y(1,i-1))./sqrt((1/2*(Y(1,i+1)-Y(1,i-1))).^2+(1/2*(X(1,i+1)-X(1,i-1))).^2 );
+a(2,i) = -(1/2)*(X(1,i+1)-X(1,i-1))./sqrt((1/2*(Y(1,i+1)-Y(1,i-1))).^2+(1/2*(X(1,i+1)-X(1,i-1))).^2 );
+
+XXI(:,i) = a(:,i).*dot(a(:,i),squeeze(r_etaw(1,i,:))',1) ;
+
+% Find Ghost Points
+Xg(1,i) = X(1,i)-XXI(1,i);
+Yg(1,i) = Y(1,i)-XXI(2,i);
+
+Xg(1,1) = 2*Xg(1,2)-Xg(1,3);
+Yg(1,1) = Yg(1,2);
+Xg(1,end) = 2*Xg(1,end-1)-Xg(1,end-2);
+Yg(1,end) = Yg(1,end-1);
+
+newX=X; newY=Y;
+Er1=zeros(1,maxit);
+Er2=zeros(1,maxit);
+
+% Ghost Points Check
+if show
+figure(5)
+plot(X(1,i),Y(1,i)); hold on; plot(Xg(1,i),Yg(1,i),'r.')
+hold on;
+plot(newX,newY,'k.')
+axis equal
+end
+%------------------------------------
+%---calculating by iterations--------
+%------------------------------------
+
+for t=1:maxit
+    
+    i=2:nx-1;
+    j=2:ny-1;
+    %% Calculate Alpha, Beta, Gamma
+    alpha(j,i)=(1/4)*((X(j+1,i)-X(j-1,i)).^2 + (Y(j+1,i) - Y(j-1,i)).^2); %
+    alphaw(1,i)=(1/4)*((X(2,i)-X(1,i)).^2 + (Y(2,i) - Y(1,i)).^2);
+    
+    beta(j,i)=(1/16)*((X(j,i+1)-X(j,i-1)).*(X(j+1,i)-X(j-1,i))+...  %
+        (Y(j,i+1) - Y(j,i-1)).*(Y(j+1,i) - Y(j-1,i))); 
+    betaw(1,i)=(1/16)*((X(1,i+1)-X(1,i-1)).*(X(2,i)-X(1,i))+...  %
+        (Y(1,i+1) - Y(1,i-1)).*(Y(2,i) - Y(1,i)));
+    
+    gamma(j,i)=(1/4)*((X(j,i+1)-X(j,i-1)).^2 + (Y(j,i+1) - Y(j,i-1)).^2); %
+    gammaw(1,i)=(1/4)*((X(1,i+1)-X(1,i-1)).^2 + (Y(1,i+1) - Y(1,i-1)).^2); %
+    
+%% Update ghost points
+r_etaw(1,i,1)=       X(2,i)-X(1,i); 
+r_etaw(1,i,2)=       Y(2,i)-Y(1,i); 
+r_xiw(1,i,1)=        (1/2).*((X(1,i+1)-X(1,i-1)));
+r_xiw(1,i,2)=        (1/2).*((Y(1,i+1)-Y(1,i-1)));
+
+a(1,i) =  (1/2)*(Y(1,i+1)-Y(1,i-1))./sqrt((1/2*(Y(1,i+1)-Y(1,i-1))).^2+(1/2*(X(1,i+1)-X(1,i-1))).^2 );
+a(2,i) = -(1/2)*(X(1,i+1)-X(1,i-1))./sqrt((1/2*(Y(1,i+1)-Y(1,i-1))).^2+(1/2*(X(1,i+1)-X(1,i-1))).^2 );
+
+XXI(:,i) = a(:,i).*dot(a(:,i),squeeze(r_etaw(1,i,:))',1) ;
+
+% Find Ghost Points
+Xg(1,i) = X(1,i)-XXI(1,i);
+Yg(1,i) = Y(1,i)-XXI(2,i);
+
+Xg(1,1) = 2*Xg(1,2)-Xg(1,3);
+Yg(1,1) = Yg(1,2);
+Xg(1,end) = 2*Xg(1,end-1)-Xg(1,end-2);
+Yg(1,end) = Yg(1,end-1);
+
+%% Prepare Derivative fields
+
+%derivatives of x
+    %Interior
+r_xi(j,i,1)=         (1/2).*((X(j,i+1)-X(j,i-1)));
+r_xi_xi(j,i,1)=      X(j,i+1)-2*X(j,i)+X(j,i-1);
+r_eta(j,i,1)=        (1/2).*((X(j+1,i)-X(j-1,i)));
+r_eta_eta(j,i,1)=     X(j+1,i)-2*X(j,i)+X(j-1,i);
+    %Wall
+r_xiw(1,i,1)=        (1/2).*((X(1,i+1)-X(1,i-1)));
+r_xi_xiw(1,i,1)=     X(1,i+1)-2*X(1,i)+X(1,i-1);
+r_etaw(1,i,1)=       (1/2)*(X(2,i)-Xg(1,i)); %Note the use of ghost points
+r_eta_etaw(1,i,1)=    X(2,i)-2*X(1,i)+Xg(1,i); %Note the use of ghost points
+ 
+%derivatives of y
+    %Interior
+r_xi(j,i,2)=         (1/2).*((Y(j,i+1)-Y(j,i-1)));
+r_xi_xi(j,i,2)=      Y(j,i+1)-2*Y(j,i)+Y(j,i-1);
+r_eta(j,i,2)=        (1/2).*((Y(j+1,i)-Y(j-1,i)));
+r_eta_eta(j,i,2)=    Y(j+1,i)-2*Y(j,i)+Y(j-1,i);
+    %Wall
+r_xiw(1,i,2)=        (1/2).*((Y(1,i+1)-Y(1,i-1)));
+r_xi_xiw(1,i,2)=     Y(1,i+1)-2*Y(1,i)+Y(1,i-1);
+r_etaw(1,i,2)=       (1/2)*(Y(2,i)-Yg(1,i)); %Note the use of ghost points
+r_eta_etaw(1,i,2)=    Y(2,i)-2*Y(1,i)+Yg(1,i); %Note the use of ghost points
+
+%Cross derivatives
+r_xi_etaw(1,i,1)= (1/4).*(X(2,i+1)-Xg(1,i+1)-X(2,i-1)+Xg(1,i-1)); %Note the use of ghost points
+r_xi_etaw(1,i,2)= (1/4).*(Y(2,i+1)-Yg(1,i+1)-Y(2,i-1)+Yg(1,i-1)); %Note the use of ghost points
+
+r_xi_eta(j,i,1)= (1/2).*(r_xi(j,i+1,1)-r_xi(j,i-1,1));
+r_xi_eta(j,i,2)= (1/2).*(r_xi(j,i+1,2)-r_xi(j,i-1,2));
+
+
+
+%% Forcing to ensure orthogonality at the wall
+
+% % Forcing in X, P 
+     P(1,i) = -(r_xiw(1,i,1).*r_xi_xiw(1,i,1)+r_xiw(1,i,2).*r_xi_xiw(1,i,2))./gammaw(1,i)   -(r_xiw(1,i,1) .*r_eta_etaw(1,i,1)+r_xiw(1,i,2) .*r_eta_etaw(1,i,2))  ./alphaw(1,i);
+% % Forcing in Y, Q 
+     Q(1,i) = -(r_etaw(1,i,1).*r_eta_etaw(1,i,1)+r_etaw(1,i,2).*r_eta_etaw(1,i,2))./alphaw(1,i)-(r_etaw(1,i,1).*r_xi_xiw(1,i,1)+r_etaw(1,i,2).*r_xi_xiw(1,i,2))./gammaw(1,i); 
+
+     %% Update Forcing 
+
+% % Forcing in X, P 
+     P(1,i) = -1*(r_xiw(1,i,1).*r_xi_xiw(1,i,1)+r_xiw(1,i,2).*r_xi_xiw(1,i,2))./gammaw(1,i)-(r_xiw(1,i,1) .*r_eta_etaw(1,i,1)+r_xiw(1,i,2) .*r_eta_etaw(1,i,2))  ./alphaw(1,i);
+% % Forcing in Y, Q 
+     Q(1,i) = -1*(r_etaw(1,i,1).*r_eta_etaw(1,i,1)+r_etaw(1,i,2).*r_eta_etaw(1,i,2))./alphaw(1,i)-(r_etaw(1,i,1).*r_xi_xiw(1,i,1)+r_etaw(1,i,2).*r_xi_xiw(1,i,2))./gammaw(1,i);
+
+
+%% Interpolation
+    omegap = 0.02; 
+    omegaq = 0.02;
+    
+    if t ==1
+    P(j,i) = omegap*(P(1,i)'*(1-((j-1)/max(j))))';
+    Q(j,i) = omegaq*(Q(1,i)'*(1-((j-1)/max(j))))';
+
+    else
+    P(j,i) = Pold(j,i) + omegap*(P(1,i)'*(1-((j-1)/max(j)))-Pold(j,i)')';
+    Q(j,i) = Qold(j,i) + omegaq*(Q(1,i)'*(1-((j-1)/max(j)))-Qold(j,i)')';
+
+    end
+    Pold=P;
+    Qold=Q;
+   
+    
+    
+     
+    %% Solve for X and Y
+    newX(j,i)=((-0.5)./(alpha(j,i)+gamma(j,i)+0*10^-9)).*(2*beta(j,i).*r_xi_eta(j,i,1)...
+        -alpha(j,i).*(X(j,i+1)+X(j,i-1)+P(j,i).*r_xi(j,i,1))-gamma(j,i).*(X(j+1,i)+X(j-1,i)+Q(j,i).*r_eta(j,i,1))); 
+    
+    newY(j,i)=((-0.5)./(alpha(j,i)+gamma(j,i)+0*10^-9)).*(1/2*beta(j,i).*r_xi_eta(j,i,1)...
+        -alpha(j,i).*(Y(j,i+1)+Y(j,i-1)+P(j,i).*r_xi(j,i,2))-gamma(j,i).*(Y(j+1,i)+Y(j-1,i)+Q(j,i).*r_eta(j,i,2))); 
+
+
+    Er1(1,t)=max(max(abs(newX-X)));
+    Er2(1,t)=max(max(abs(newY-Y)));
+    
+    % Neuman BC
+    newY(:,nx)= newY(:,nx-1);     %right
+    newY(:,1)= newY(:,2);           %left
+    newX(ny,:)= newX(ny-1,:);      %top
+
+    X=newX;
+    Y=newY;
+    if Er1(t)<Ermax &&Er2(t)<Ermax
+        break
+    end
+    if show==1
+        if ceil(t/10)*10==t
+            clf
+            hold on
+            axis equal
+            for m=1:nx
+                plot(X(:,m),Y(:,m),'b');
+            end
+            for m=1:ny
+                plot(X(m,:),Y(m,:),'Color',[0 0 0]);
+            end
+            pause(0.001)
+        end
+    end
+end
+if t==maxit
+    warning('Grid generation convergence not reached, check manually')
+end
+clf
+hold on
+axis equal
+for m=1:nx
+    plot(X(:,m),Y(:,m),'b');
+end
+for m=1:ny
+    plot(X(m,:),Y(m,:),'Color',[0 0 0]);
+    
+end
+
+%% Orthogonality check
+for i = 1:nx-1
+    for j = 1:ny-1
+   
+        ang1(j,i)=atand( (X(j+1,i)-X(j,i))/ (Y(j+1,i)-Y(j,i)) );
+        ang2(j,i)=atand( (Y(j,i+1)-Y(j,i))/ (X(j,i+1)-X(j,i)) );
+        OrthQ(j,i)=-ang2(j,i)-ang1(j,i);
+
+     end
+end
+
+
+%%
+if show
+figure(457)
+hold off
+contourf(X(1:ny-1,1:nx-1),Y(1:ny-1,1:nx-1),abs(OrthQ),'Linestyle','none')
+hold on
+colorbar
+caxis([-0*max(max(abs(OrthQ))),max(max(abs(OrthQ)))])   
+            for m=1:nx
+                plot(X(:,m),Y(:,m),'color',[150 150 150]/255,'Linewidth',0.1);
+            end
+            for m=1:ny
+                plot(X(m,:),Y(m,:),'color',[150 150 150]/255,'Linewidth',0.1);
+            end
+%axis equal
+% xlim([0.75 0.785])
+set(gca,'FontSize',18)
+xlabel('$x$','Interpreter','latex','FontSize',22)
+ylabel('$y$','Interpreter','latex','FontSize',22)
+set(get(gca,'YLabel'),'Rotation',0)
+
+end
+        
+%% Perform axis Interpolation For Chebyshev Points
+
+%Calculate all eta axis lengths
+[~,dy] = gradient(Y);
+[~,dx] = gradient(X);
+s = zeros(ny,nx);
+for i = 1:nx
+s(:,i) =cumtrapz(Y(:,i),sqrt(1+(dx(:,i)./dy(:,i)).^2));
+
+end
+
+xcheb = zeros(ny,nx);
+ycheb = xcheb;
+[yvec,DM] = chebdif(ny,2); % differentiation matrices
+[etac,D1,D2] = MappingMalik(s(end,1),Grid.y_i,yvec',DM(:,:,1),DM(:,:,2)); % Malik mapping and construction of eta column
+etac = flipud(etac);
+
+for i =1:nx
+%Make a normalized distribution given length s(end,i)
+
+%Use s, xi, X and Y for interpolation of the points on eta axis
+xcheb(:,i) = interp1(s(:,i),X(:,i),etac,'PCHIP');
+ycheb(:,i) = interp1(s(:,i),Y(:,i),etac,'PCHIP');
+
+for j = 1:ny
+    if isnan(xcheb(j,i))
+        xcheb(j,i) = X(j,i);
+    end
+    if isnan(ycheb(j,i))
+        ycheb(j,i) = Y(j,i);
+    end
+end
+
+end
+
+%% test
+for i = 1:nx
+    for j = 1:ny-1
+       dxs(j,i) = xcheb(j+1,i)-xcheb(j,i);
+       dys(j,i) = ycheb(j+1,i)-ycheb(j,i);
+       ds(j,i) = sqrt(dxs(j,i)^2+dys(j,i)^2);
+    end
+end
+
+%% Orthogonality check 2
+ang1 = zeros(ny,nx);
+ang2 = zeros(ny,nx);
+OrthQ = zeros(ny,nx);
+for i = 1:nx-1
+    for j = 1:ny-1
+   
+        ang1(j,i)=atand( (ycheb(j,i+1)-ycheb(j,i))/ (xcheb(j,i+1)-xcheb(j,i)) );
+        ang2(j,i)=atand( (xcheb(j+1,i)-xcheb(j,i))/ (ycheb(j+1,i)-ycheb(j,i)) );
+        OrthQ(j,i)=-ang2(j,i)-ang1(j,i);
+
+     end
+end
+ 
+
+%% Plotting
+if show
+figure(31)
+hold off
+contourf(xcheb(1:ny-1,1:nx-1),ycheb(1:ny-1,1:nx-1),abs(OrthQ(1:ny-1,1:nx-1)),'Linestyle','none')
+hold on
+colorbar
+caxis([-0*max(max(abs(OrthQ))),max(max(abs(OrthQ)))])   
+            for m=1:ny
+                plot(xcheb(m,:),ycheb(m,:),'color',[150 150 150]/255,'Linewidth',0.1);
+            end
+            for m=1:nx
+                plot(xcheb(:,m),ycheb(:,m),'color',[150 150 150]/255,'Linewidth',0.1);
+            end
+% axis equal
+% xlim([0.75 0.785])
+set(gca,'FontSize',18)
+xlabel('$x$','Interpreter','latex','FontSize',22)
+ylabel('$y$','Interpreter','latex','FontSize',22)
+set(get(gca,'YLabel'),'Rotation',0)
+end
+
+
+
+%% Interpolation check
+
+figure(32)
+hold on
+for j = 1:ny
+plot(X(j,:),Y(j,:),'k-')
+
+plot(xcheb(j,:),ycheb(j,:),'r-')
+end 
+
+%% Realign outputs
+x = flipud(xcheb);
+y = flipud(ycheb);
+
+        
+        
+            
+end
+
+%% calculation of the domain tranformation coefficients
+
+% this is currently done with gradient which is not super accurate. we
+% should write a higher order method soon using FD1d2o_uneven FD2d2o_uneven FD1d4o FD2d4o
+
+xi=ksi;
+
+dxi=xi(1,2)-xi(1,1);
+
+StabGrid.x=x;
+StabGrid.y=y;
+StabGrid.xi=xi;
+StabGrid.eta=eta;
+
+% Also create non-mesh vectors of the coordinates
+StabGrid.etaun = StabGrid.eta(:,1);
+StabGrid.xiun  = StabGrid.xi(end,:);
+StabGrid.yun   = StabGrid.y(:,1);
+StabGrid.xun   = StabGrid.x(end,:);
+
+% first and second derivatives 
+for j=1:ny
+xxi(j,:)=-FD1d4o(x(j,:),dxi);  
+yxi(j,:)=-FD1d4o(y(j,:),dxi); 
+xxixi(j,:)=FD2d4o(x(j,:),dxi); 
+yxixi(j,:)=FD2d4o(y(j,:),dxi); 
+end
+
+for i=1:nx
+    xeta(:,i)=FD1d2o_uneven(eta(:,i),x(:,i));          % dx/deta
+    yeta(:,i)=FD1d2o_uneven(eta(:,i),y(:,i));          % dy/deta
+    xetaeta(:,i)=FD2d2o_uneven(eta(:,i),x(:,i));          % dx/deta
+    yetaeta(:,i)=FD2d2o_uneven(eta(:,i),y(:,i));          % dy/deta
+    
+end
+
+J=xxi.*yeta-xeta.*yxi; 
+
+StabGrid.J=J;
+
+StabGrid.xix=yeta./J;
+StabGrid.etax=-yxi./J;
+StabGrid.xiy=-xeta./J;
+StabGrid.etay=xxi./J;
+
+StabGrid.xxi = xxi;
+StabGrid.xeta = xeta;
+StabGrid.yxi = yxi;
+StabGrid.yeta = yeta;
+
+StabGrid.xxixi=xxixi;
+StabGrid.yxixi=yxixi;
+StabGrid.xetaeta=xetaeta;
+StabGrid.yetaeta=yetaeta;
+
+% second derivatives
+
+% for j=1:ny
+%     xetaJxi(j,:)=-FD1d4o((-xeta(j,:)./J(j,:)),dxi);          % d(-xeta/J)/dxi
+%     xxiJxi(j,:)=-FD1d4o((xxi(j,:)./J(j,:)),dxi);          % dy/dksi
+%     yetaJxi(j,:)=-FD1d4o((yeta(j,:)./J(j,:)),dxi);
+%     yxiJxi(j,:)=-FD1d4o((-yxi(j,:)./J(j,:)),dxi);
+% 
+% end
+% 
+% for i=1:nx
+%     xetaJeta(:,i)=FD1d2o_uneven(eta(:,i),-xeta(:,i)./J(:,i));          % dx/deta
+%     xxiJeta(:,i)=FD1d2o_uneven(eta(:,i),xxi(:,i)./J(:,i));      % dy/deta
+%     yetaJeta(:,i)=FD1d2o_uneven(eta(:,i),yeta(:,i)./J(:,i));
+%     yxiJeta(:,i)=FD1d2o_uneven(eta(:,i),-yxi(:,i)./J(:,i));
+% end
+% 
+% 
+% StabGrid.xiyy=(1./J).*(xetaJeta.*xxi-xetaJxi.*xeta);
+% StabGrid.etayy=(1./J).*(xxiJeta.*xxi-xxiJxi.*xeta);
+% StabGrid.xixx=(1./J).*(yetaJxi.*yeta-yetaJeta.*yxi);
+% StabGrid.etaxx=(1./J).*(yxiJxi.*yeta-yxiJeta.*yxi);
+
+for j = 1:ny
+StabGrid.xixx(j,:) =  FD2d2o_uneven(x(j,:)',xi(j,:)')';
+StabGrid.etaxx(j,:) = FD2d2o_uneven(x(j,:)',eta(j,:)')';
+end
+
+for i = 1:nx
+StabGrid.xiyy(:,i)=  FD2d2o_uneven(y(:,i),xi(:,i));          % dx/deta
+StabGrid.etayy(:,i)= FD2d2o_uneven(y(:,i),eta(:,i));          % dy/deta
+end
+
+%Put some numerical zero's to zero 
+% StabGrid.xiyy(abs(StabGrid.xiyy)<1e-6) = 0;
+
+% for j=1:ny
+% StabGrid.an(j,:)=atand(gradient(StabGrid.y(j,:),StabGrid.x(j,:)));          % local tangent angle of physical StabGrid along the constant eta lines
+% end
+% 
+% for i=1:nx
+% StabGrid.bn(:,i)=atand(gradient(StabGrid.x(:,i),StabGrid.y(:,i)));          % local tangent angle of physical StabGrid along the constant eta lines
+% end
+
+
+
+% projection of Ue on numerical StabGrid 
+
+%Ue_in=Ue.*cosd(StabGrid.an(end,:));             % project external velocity to the numerical domain
+%Ue=Ue_in;
+%warning('setting: Ue = cosd(a)*Ue_in')
+
+
+% 
+% % 
+% 
+%         figure(1)
+%         plot(xw,yw,xnw,ynw,'o','color','k')
+%         
+        is=1;
+        js=1;
+% %         
+%         figure(97)
+%         subplot(2,1,1)
+%         mesh(x(1:js:ny,1:is:nx),y(1:js:ny,1:is:nx),x(1:js:ny,1:is:nx)*0,'EdgeColor','k')
+%         axis([0.9*S 1.1*(S+Grid.L) 0-0.1*H 1.1*H])
+%         view(2)
+%                 %daspect([1 1 1])
+% 
+%         subplot(2,1,2)
+%         mesh(ksi(1:js:ny,1:is:nx),eta(1:js:ny,1:is:nx),x(1:js:ny,1:is:nx)*0,'EdgeColor','r')
+%         axis([0.9*S 1.1*(S+Grid.L) 0-0.1*H 1.1*H])
+% 
+%         view(2)
+        %daspect([1 1 1])
+% 
+% % 
+% figure(3)
+% subplot(2,2,1)
+% contourf(xi,eta,StabGrid.xix,'LineStyle','none')
+% subplot(2,2,2)
+% contourf(xi,eta,StabGrid.xiy,'LineStyle','none')
+% subplot(2,2,3)
+% contourf(xi,eta,StabGrid.etax,'LineStyle','none')
+% subplot(2,2,4)
+% contourf(xi,eta,StabGrid.etay,'LineStyle','none')
+% 
+% % figure(4)
+% % subplot(2,2,1)
+% % contourf(ksi,eta,StabGrid.kxx,'LineStyle','none')
+% % subplot(2,2,2)
+% % contourf(ksi,eta,StabGrid.exx,'LineStyle','none')
+% % subplot(2,2,3)
+% % contourf(ksi,eta,StabGrid.kyy,'LineStyle','none')
+% % subplot(2,2,4)
+% % contourf(ksi,eta,StabGrid.eyy,'LineStyle','none')
+% 
+% figure(5)
+% subplot(2,2,1)
+% contourf(x)
+% subplot(2,2,2)
+% contourf(xi)
+% subplot(2,2,3)
+% contourf(y)
+% subplot(2,2,4)
+% contourf(eta)
+
+
+
