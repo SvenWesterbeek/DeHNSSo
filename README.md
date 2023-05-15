@@ -57,7 +57,7 @@ These structures will be discussed in detail below to help you make your own inp
 
 ### BF <a id="bf"></a>
 
-BF contains the base flow data, the grid on which it is defined, and the reference values by which everything is normalized. This data can be provided in a structured, unstructured grid, or vector format.
+BF contains the base flow data, the grid on which it is defined, and the reference values for nondimensionalization. This data can be provided in a structured, unstructured grid, or vector format.
 
 This data does not need to be presented on the same grid as presented in the Grid struct as the data will be interpolated onto the numerical grid within DeHNSSo using the griddata function (method = 'cubic'). The numerical domain cannot exceed the domain of the base flow. In the table below, the required contents of BF are described. In short, BF.X and BF.Y describe the locations where base flow quantities are described. BF.U, BF.V and BF.W describe the velocities in $x$, $y$ and $z$ respectively. Then, the BF.dxU, BF.dxV, BF.dxW, BF.dyU, BF.dyV, and BF.dyW describe the streamwise and wall-normal derivatives of the aforementioned velocities. Lastly, BF.lref, BF.Uref, BF.nu and BF.Re are the reference values and corresponding Reynolds number defined as .
 
