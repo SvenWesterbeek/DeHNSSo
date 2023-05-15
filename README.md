@@ -224,9 +224,9 @@ The BF structure is both an input and output. In the output, the structure is ap
 | BF.dxUr | $x$-derivative of streamwise base flow velocity | [-] | $(nx,ny)$ |
 | BF.dxVr | $x$-derivative of wall-normal base flow velocity | [-] | $(nx,ny)$ |
 | BF.dxWr | $x$-derivative of spanwise base flow velocity | [-] | $(nx,ny)$ |
-| BF.dyUr | y-derivative of streamwise base flow velocity | [-] | $(nx,ny)$ |
-| BF.dyVr | y-derivative of wall-normal base flow velocity | [-] | $(nx,ny)$ |
-| BF.dyWr | y-derivative of spanwise base flow velocity | [-] | $(nx,ny)$ |
+| BF.dyUr | $y$-derivative of streamwise base flow velocity | [-] | $(nx,ny)$ |
+| BF.dyVr | $y$-derivative of wall-normal base flow velocity | [-] | $(nx,ny)$ |
+| BF.dyWr | $y$-derivative of spanwise base flow velocity | [-] | $(nx,ny)$ |
 
 # Example cases <a id="example-cases"></a>
 
