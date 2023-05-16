@@ -43,7 +43,8 @@ _Thank you for your interest in using DeHNSSo. This page is intended to guide yo
 9. [Data visualization examples](#data-visualization-examples)
 10. [DeHNSSo results](#dehnsso-results)
 11. [How to cite DeHNSSo](#how-to-cite-dehnsso)
-12. [References](#references)
+12. [Acknowledgments](#acknowledgments)
+13. [References](#references)
 
 ## How to use DeHNSSo <a id="how-to-use-dehnsso"></a>
 
@@ -363,10 +364,14 @@ M.Kotsonis@tudelft.nl
 # How to cite DeHNSSo<a id="how-to-cite-dehnsso"></a>
 If you have used DeHNSSo or any subroutine within this GitHub. Please cite the GitHub and the journal article:
 
-S. Westerbeek, S. Hulshoff, H. Schuttelaars & M. Kotsonis (2023) DeHNSSo: An Efficient Harmonic Navier-Stokes Solver for Non-Linear Stability Problems with Complex 2D Geometric Features. 
-DeHNSSo. Delft Harmonic Navier-Stokes Solver. GitHub
+S. Westerbeek, S. Hulshoff, H. Schuttelaars & M. Kotsonis (2023) DeHNSSo: An Efficient Harmonic Navier-Stokes Solver for Non-Linear Stability Problems with Complex 2D Geometric Features. DOI:
+DeHNSSo. Delft Harmonic Navier-Stokes Solver. GitHub Repository. DOI: 
 
+# Acknowledgments<a id="acknowledgments"></a>
+We would like to appreciate several direct and indirect contributors for providing comments, data or codes. We thank J. Casacuberta and S. Hickel for allowing the use and publication of both the base flow data and reference results. Similarly, we thank J.A. Franco for providing AHLNS results as a reference and allowing us to publish this data in this repository. We appreciate the comments of H. Schuttelaars and S. Hullshof in the making of DeHNSSo. We thank J.A.C. Weidemann and S.C. Reddy for making their MATLAB differentiation matrix suite available and allowing it to be published alongside DeHNSSo.
 
 # References<a id="references"></a>
+
+J.A.C. Weideman, S.C. Reddy (1998)  A MATLAB differentiation matrix suite
 
 Banner created using: https://manytools.org/hacker-tools/ascii-banner/  
