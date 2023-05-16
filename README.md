@@ -8,7 +8,7 @@
  ██████████  ░░██████  █████   █████ █████  ░░█████░░█████████ ░░█████████ ░░██████ 
 ░░░░░░░░░░    ░░░░░░  ░░░░░   ░░░░░ ░░░░░    ░░░░░  ░░░░░░░░░   ░░░░░░░░░   ░░░░░░  
                                                                                           
-% Banner created using: https://manytools.org/hacker-tools/ascii-banner/   
+ 
 </pre>                                                                  
                                                                           
                                                                           
@@ -327,7 +327,7 @@ Lengths are normalized by the same reference length as the previous two cases: $
 
 ### Domain description
 
-The rectangular domain is described by $x = 685$ to $x = 993$ m and a height of $H=89$. The step is located at $x = 859$ and has a height of $3.5$. This step wall is not supplied as wall data. Instead, it is accounted for using an embedded boundary method over a flat wall. The default value of $x_b = 0.85$ is used to define a buffer region covering the last 15% of the domain.
+The rectangular domain is described by $x = 685$ to $x = 993$ and a height of $H=89$. The step is located at $x = 859$ and has a height of $3.5$. This step wall is not supplied as wall data. Instead, it is accounted for using an embedded boundary method over a flat wall. The default value of $x_b = 0.85$ is used to define a buffer region covering the last 15% of the domain.
 
 ### Base Flow
 The base flow data for this case is an interpolated version of DNS results calculated using INCA (see Hickel and Adams (2008) and Hickel et al.(2014)). This data was kindly provided by J. Casacuberta who performed a full DNS simulation for this problem in J. Casacuberta et al. (2022). This data was adjusted to fit DeHNSSo's input format. The raw DNS data can be found [here](https://PLACEHOLDER).
@@ -364,3 +364,5 @@ If you have used DeHNSSo or any subroutine within this GitHub. Please cite the G
 
 
 # References<a id="references"></a>
+
+Banner created using: https://manytools.org/hacker-tools/ascii-banner/  
