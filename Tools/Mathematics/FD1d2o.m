@@ -1,4 +1,7 @@
 function [ DD ] = FD1d2o( D,d )
+
+
+%%
 % This function determines the first derivatives of a function/field that
 % is given on a uniform grid. Note: the derivative is taken in the along
 % the rows of the data, assuming the corresponding coordinate ascends when

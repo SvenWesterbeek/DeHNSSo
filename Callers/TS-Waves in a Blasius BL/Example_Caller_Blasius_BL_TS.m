@@ -89,11 +89,11 @@ load('BF_Blasius.mat','BF')
 % Grid.StepX    (1)         [-]   Step location
 % Grid.StepH    (1)         [-]   Step Height
 % Grid.ystretch (1)         [-]   Wall-normal distribution stretching factor
-% Grid.StepType (string)    [-]   Sharp geometry type FFS, BFS (not implemented), GAP(not implemented), SHUMP(not implemented) (default = flat)
+% Grid.StepType (string)    [-]   Sharp geometry type "flat", "FFS" (default = flat)
 
 % Grid information
-Grid.nx = 1500; % [-] # of streamwise (xi) stations
-Grid.ny = 50;   % [-] # of wall-normal (eta) collocation points
+Grid.nx = 800; % [-] # of streamwise (xi) stations
+Grid.ny = 40;   % [-] # of wall-normal (eta) collocation points
 
 % Bottom wall coordinates
 xw = linspace(BF.X(1),BF.X(end),5000);  % [-] wall x-locations, defined here at 5000 locations, interpolated in DeHNSSo                
@@ -157,15 +157,15 @@ Stab.A0(ModeToModeNumber(-1,0,Stab.M,Stab.N))=0.00125*sqrt(2); % [-] Add a compl
 % translate mode notation to a mode counter (e.g. mode (1,0) = mode 6).
 
 %% Opt
-
-% Opt.xb       (1) Buffer starting location
-% Opt.kappa    (1) Buffer strength (default = 6)
-% Opt.nltbufxb (1) Nonlinear term buffer starting location (=xb by default)
-% Opt.Th       (1) Nonlinear introduction threshold
-% Opt.Conv     (1) Convergence criterion
-% Opt.ConvF    (1) Convergence criterion relaxation factor during ramping
-% Opt.Sweep    (1) Output intermediate results flag (true=1, false=0)
-% Opt.AFg      (1) Amplitude factor growth rate (default = 1.1)
+% Name         size units explanation
+% Opt.xb       (1)  [-]   Buffer starting location
+% Opt.kappa    (1)  [-]   Buffer strength (default = 6)
+% Opt.nltbufxb (1)  [-]   Nonlinear term buffer starting location (=xb by default)
+% Opt.Th       (1)  [-]   Nonlinear introduction threshold
+% Opt.Conv     (1)  [-]   Convergence criterion
+% Opt.ConvF    (1)  [-]   Convergence criterion relaxation factor during ramping
+% Opt.Sweep    (1)  [-]   Output intermediate results flag (true=1, false=0)
+% Opt.AFg      (1)  [-]   Amplitude factor growth rate (default = 1.1)
 
 Opt.xb = 85; % [-] Buffer start as a % of numerical domain
 
@@ -177,10 +177,9 @@ Opt.xb = 85; % [-] Buffer start as a % of numerical domain
 close all 
 
 % Define markers and marker locations
-marker = 'os*d>';
+marker = ["o" "+" "*" "." "x" "_" "|" "square" "diamond" "^" "v" ">" "<" "pentagram", "hexagram"];
 xmark = linspace(StabGrid.xun(1),StabGrid.xun(end),20);
 
-% Amplitudes
 % Open figure
 figure(1)
 

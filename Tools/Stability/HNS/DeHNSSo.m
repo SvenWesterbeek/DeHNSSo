@@ -34,7 +34,6 @@ function [StabRes,StabGrid,BF] = DeHNSSo(BF,Grid,Stab,Opt)
 % DOI:
 % DOI:
 
-% Note: Once this is complete and checked i will paste it in every subfunction.
 
 %% Description
  

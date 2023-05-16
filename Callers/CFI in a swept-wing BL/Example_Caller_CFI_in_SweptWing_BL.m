@@ -37,15 +37,14 @@
 % DOI:
 % DOI:
 
-%% Set up
-
+%% Clean up and load paths
 clear all
 close all
 
 %Load paths
 addpath(genpath('../../..'))
 
-%% BF: Base Flow data and grid
+%% BF: Base Flow data, base flow grid and reference values
 
 % Name         size  unit    explanation
 % BF.X   (nxbl,1)    [-]     Base Flow grid streamwise locations 
@@ -68,32 +67,32 @@ addpath(genpath('../../..'))
 % Load Base Flow data
 load('BF_SweptWing_flat.mat')
 
-%% Grid: Numerical domain specifications OR Numerical domain grid points
-% Name         size explanation
-% Grid.nx       (1) Number of streamwise stations of the stability grid
-% Grid.ny       (1) Number of wall-normal collocation points of the stability grid
-% Grid.wall     (nxwall,2) Wall definition x and y locations on arbitrary grid
-% Grid.H        (1) Domain height
-% Grid.y_i      (1) Median collocation point height
-% Grid.S        (1) Stability grid domain start
-% Grid.L        (1) Stability grid domain length (wall length)
-% Grid.mode     (string) Grid generation mode (see grid_gen)
-    % equidistant    - an equidistant streamwise distribution. Wall-refined. 
-    % xrefined       - streamwise gaussian distribution. Wall-refined. eta parallel to y
-    % fanned         - equidistant streamwise distribution. Wall-normal eta axes to 
-    %                  account for wall curvature. wall-refined. 
-    % wallorthogonal - Locally wall-orthogonal grid. eta is curved.
-% Grid.mug      (1) Streamwise grid refinement location [S S+L]
-% Grid.sig      (1) Streamwise grid refinement variance [0 1] (Gaussian)
-% Grid.ag       (1) Streamwise grid refinement strength [0 1]
-% Grid.StepX    (1) Step location
-% Grid.StepH    (1) Step Height
-% Grid.ystretch (1) wall-normal distribution stretching factor
-% Grid.StepType (string) Sharp geometry type FFS, BFS (not implemented), GAP(not implemented), SHUMP(not implemented) (default = flat)
+%% Grid: Numerical domain specifications OR Numerical domain grid points  
+% Name         size         units explanation
+% Grid.nx       (1)         [-]   Number of streamwise stations of the numerical grid
+% Grid.ny       (1)         [-]   Number of wall-normal collocation points of the numerical grid
+% Grid.wall     (nxwall,2)  [-]   Wall definition x and y locations on arbitrary grid
+% Grid.H        (1)         [-]   Domain height
+% Grid.y_i      (1)         [-]   Median collocation point height
+% Grid.S        (1)         [-]   Stability grid domain start
+% Grid.L        (1)         [-]   Stability grid domain length (wall length)
+% Grid.mode     (string)    [-]   Grid generation mode (see grid_gen)
+%%%% equidistant    - an equidistant streamwise distribution. Wall-refined. 
+%%%% xrefined       - streamwise gaussian distribution. Wall-refined. eta parallel to y
+%%%% fanned         - equidistant streamwise distribution. Wall-normal eta axes to 
+%%%%                  account for wall curvature. wall-refined. 
+%%%% wallorthogonal - Locally wall-orthogonal grid. eta is curved.
+% Grid.mug      (1)         [-]   Streamwise grid refinement location, domain [S S+L]
+% Grid.sig      (1)         [-]   Streamwise grid refinement variance (Gaussian), domain [0 1] 
+% Grid.ag       (1)         [-]   Streamwise grid refinement strength, domain [0 1]
+% Grid.StepX    (1)         [-]   Step location
+% Grid.StepH    (1)         [-]   Step Height
+% Grid.ystretch (1)         [-]   Wall-normal distribution stretching factor
+% Grid.StepType (string)    [-]   Sharp geometry type "flat", "FFS" (default = flat)
 
 % Define grid size
-Grid.nx = 1500; % [-] # of streamwise (xi) stations
-Grid.ny = 50;   % [-] # of wall-normal (eta) collocation points
+Grid.nx = 1200; % [-] # of streamwise (xi) stations
+Grid.ny = 40;   % [-] # of wall-normal (eta) collocation points
  
 % Define bottom wall
 xw = linspace(BF.X(1),BF.X(end),5000); % [-] Wall x-locations
@@ -108,25 +107,24 @@ Grid.L = BF.X(end)-BF.X(1); % [-] Length of the domain in wall-coordinate
 
 Grid.type = "equidistant";  % Select the type of grid
 
-%% Stab
-% Name         size explanation
-% Stab.N        (1) Spectral truncation of beta modes
-% Stab.M        (1) spectral truncation of omega modes
-% Stab.A0       ((2N+1)x(2M+1),1) Initial amplitudes of all modes
-% Stab.omega_0  (1) Fundamental angular frequency
-% Stab.beta_0   (1) Fundamental spanwise wavenumber
-% Stab.IC       (string) Inflow condition ILST, ZERO, LOAD
-% Stab.bcw      (any, 3x(2N+1)x(2M+1)) Inhomogeneous boundary conditions wall per mode (x,u,v,w)^T
-% Stab.bcf      (any, 3x(2N+1)x(2M+1)) Inhomogeneous boundary conditions top per mode (x,u,v,w)^T
-%   if Stab.IC == "LOAD", supply:
-% Stab.y0       (1,ny0) Wall-normal distribution of inflow perturbation data
-% Stab.u0       (3x(2N+1)x(2M+1)),ny0) Normalized streamwise perturbation velocity at inflow 
-% Stab.v0       (3x(2N+1)x(2M+1)),ny0) Normalized wall-normal perturbation velocity at inflow 
-% Stab.w0       (3x(2N+1)x(2M+1)),ny0) Normalized spanwise perturbation velocity at inflow 
-% Stab.p0       (3x(2N+1)x(2M+1)),ny0) Normalized perturbation pressures at inflow 
+%% Stab: Perturbation specifications and boundary conditions 
+% Name          size                    units  explanation
+% Stab.N        (1)                     [-]    Spectral truncation of beta modes
+% Stab.M        (1)                     [-]    spectral truncation of omega modes
+% Stab.A0       ((2N+1)x(2M+1),1)       [-]    Initial amplitudes of all modes
+% Stab.omega_0  (1)                     [-]    Fundamental angular frequency
+% Stab.beta_0   (1)                     [-]    Fundamental spanwise wavenumber
+% Stab.IC       (string)                [-]    Initialization method ILST, WALL, LOAD
+% Stab.bcw      (any, 3x(2N+1)x(2M+1))  [-]    Inhomogeneous boundary conditions wall per mode (x,u,v,w)^T
+% Stab.bcf      (any, 3x(2N+1)x(2M+1))  [-]    Inhomogeneous boundary conditions top per mode (x,u,v,w)^T
+% Stab.y0       (1,ny0)                 [-]    Wall-normal distribution of inflow perturbation data
+% Stab.u0       (3x(2N+1)x(2M+1)),ny0)  [-]    Normalized streamwise perturbation velocity at inflow 
+% Stab.v0       (3x(2N+1)x(2M+1)),ny0)  [-]    Normalized wall-normal perturbation velocity at inflow 
+% Stab.w0       (3x(2N+1)x(2M+1)),ny0)  [-]    Normalized spanwise perturbation velocity at inflow 
+% Stab.p0       (3x(2N+1)x(2M+1)),ny0)  [-]    Normalized perturbation pressures at inflow 
 
 % Spectral Truncation
-Stab.N = 1; % [-] # of beta modes
+Stab.N = 5; % [-] # of beta modes
 Stab.M = 0; % [-] # of omega modes
 
 % Fundamental frequency
@@ -142,7 +140,7 @@ Stab.beta_0 = 2*pi*BF.lref/lambda; % [-] Spanwise wavenumber
 Stab.IC = "ILST"; % Method for Primary mode introduction @ inflow  
 Stab.A0=zeros(1,(2*Stab.N+1)*(2*Stab.M+1));               % [-] initialization amplitude vector
 Stab.A0(ModeToModeNumber(0, 1,Stab.M,Stab.N))=3.5e-3/2;   % [-] Half the desired inflow amplitude
-Stab.A0(ModeToModeNumber(0,-1,Stab.M,Stab.N))=0*3.5e-3/2; % [-] Add a complex conjugate for NonLinear simulations
+Stab.A0(ModeToModeNumber(0,-1,Stab.M,Stab.N))=3.5e-3/2; % [-] Add a complex conjugate for NonLinear simulations
 
 % Explanation for the indexing above:
 % Mode counter vector has size 1 x (2*Stab.N+1)(2*Stab.M+1) 
@@ -160,17 +158,18 @@ Stab.A0(ModeToModeNumber(0,-1,Stab.M,Stab.N))=0*3.5e-3/2; % [-] Add a complex co
 
 %% Opt
 
-% Opt.xb       (1) Outflow buffer starting location
-% Opt.kappa    (1) Outflow buffer strength
-% Opt.nltbufxb (1) Nonlinear term outflow buffer start (=xb by default)
-% Opt.Th       (1) Nonlinear introduction threshold
-% Opt.Sweep    (1) Output intermediate results flag (true=1, false=0)
-% Opt.AFg      (1) Amplitude factor growth rate (default = 1.1)
-% Opt.Conv     (1) Convergence criterion (default = 1e-4)
-% Opt.AMAX     (1) Amplitude limit for linear development (default = 0.1)
+% Name         size units explanation
+% Opt.xb       (1)  [-]   Buffer starting location
+% Opt.kappa    (1)  [-]   Buffer strength (default = 6)
+% Opt.nltbufxb (1)  [-]   Nonlinear term buffer starting location (=xb by default)
+% Opt.Th       (1)  [-]   Nonlinear introduction threshold
+% Opt.Conv     (1)  [-]   Convergence criterion
+% Opt.ConvF    (1)  [-]   Convergence criterion relaxation factor during ramping
+% Opt.Sweep    (1)  [-]   Output intermediate results flag (true=1, false=0)
+% Opt.AFg      (1)  [-]   Amplitude factor growth rate (default = 1.1)
 
-Opt.xb = 85;       % [-] Buffer start in % of numerical domain
-Opt.nltbufxb = 80; % [-]        NLT buffer start in % of numerical domain
+Opt.xb = 85;       % [-] Buffer start as a % of numerical domain
+Opt.nltbufxb = 80; % [-] NLT buffer start as a % of numerical domain
 
 
 %% Run CHNS

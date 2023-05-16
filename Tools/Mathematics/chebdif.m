@@ -1,9 +1,26 @@
 function [x, DM] = chebdif(N, M)
-%% License
+%% License (GNU GENERAL PUBLIC LICENSE v3)
+%                  A MATLAB differentiation matrix suite
+%              Copyright (C) 1998 J.A.C. Weideman, S.C. Reddy
+% 
+%     This program is free software: you can redistribute it and/or modify
+%     it under the terms of the GNU General Public License as published by
+%     the Free Software Foundation, either version 3 of the License, or
+%     (at your option) any later version.
+% 
+%     This program is distributed in the hope that it will be useful,
+%     but WITHOUT ANY WARRANTY; without even the implied warranty of
+%     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%     GNU General Public License for more details.
+% 
+%     You should have received a copy of the GNU General Public License
+%     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+%  Published as part of DeHNSSo with the written permission of J.A.C. Weideman.
 
-%  J.A.C. Weideman, S.C. Reddy 1998.  Help notes modified by 
-%  JACW, May 2003.
+%  J.A.C. Weideman, S.C. Reddy (1998)  A MATLAB differentiation matrix suite
+%  Help notes modified by JACW, May 2003.
+
 %% Description
 %  The function [x, DM] =  chebdif(N,M) computes the differentiation 
 %  matrices D1, D2, ..., DM on Chebyshev nodes. 

@@ -1,8 +1,30 @@
 function [ ynd,D1y,D2y ] = Mapping(Grid,eta,D1eta,D2eta)
+%% License (GNU GENERAL PUBLIC LICENSE v3)
+%                  Delft Harmonic Navier-Stokes Solver
+%     Copyright (C) 2023 S.H.J. Westerbeek, S. Hulshoff, H. Schuttelaars
+%                          & M. Kotsonis
+% 
+%     This program is free software: you can redistribute it and/or modify
+%     it under the terms of the GNU General Public License as published by
+%     the Free Software Foundation, either version 3 of the License, or
+%     (at your option) any later version.
+% 
+%     This program is distributed in the hope that it will be useful,
+%     but WITHOUT ANY WARRANTY; without even the implied warranty of
+%     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%     GNU General Public License for more details.
+% 
+%     You should have received a copy of the GNU General Public License
+%     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+%
+%     Please cite this code and the paper if you have used this for your
+%     publication using:
 
+% DOI:
+% DOI:
 
 if Grid.ytype ~= "step"
-%% Mapping Malik
+%% Mapping Malik (see Malik 1990)
 % Transform Chebyshev to physical grid
 ynd = (Grid.y_i*Grid.H*(1+eta)./(Grid.H - eta*(Grid.H - 2*Grid.y_i)))';
 

@@ -103,7 +103,7 @@ Grid.ny = 100;   % # of wall-normal, eta, stability grid collocation points
 % Run with nx = 1200, ny = 120 for a test and ~10Gb of free RAM
     % should take ~3 minutes to set up LHS and ~7 minutes to solve.
 
-% Run with nx = 600, ny = 100 for a quick test and ~ Gb of free RAM
+% Run with nx = 600, ny = 100 for a quick test
     % should take ~1 minute to set up LHS and ~1 minute to solve.
 
 xw = linspace(S,E,5000)/NonDim.lref; % wall x-locations
