@@ -147,7 +147,7 @@ _Stab.bcw_ is used to define inhomogeneous wall conditions in the streamwise, wa
 | _Stab.beta\_0_ | Fundamental spanwise wavelength | [-] | $1$ |
 | _Stab.IC_ | Initialization method "ILST","ZERO'', 'LOAD" | [-] | string |
 | _Stab.bcwx_ | Inhomogeneous boundary condition locations | [-] | $(any,1)$ |
-| _Stab.bcw_ | Inhomogeneous boundary conditions (default = 0's) | [-] | $($ any $, 3\times(2N+1)\times(2M+1))$ |
+| _Stab.bcw_ | Inhomogeneous boundary conditions (default = 0's) | [-] | $( any, 3\times(2N+1)\times(2M+1))$ |
 | _Stab.u0_ | Normalized streamwise perturbation velocity at x\_0 | [-] | $(3 \times (2N+1) \times (2M+1)),ny)$ |
 | _Stab.v0_ | Normalized wall-normal perturbation velocity at x\_0 | [-] | $(3 \times (2N+1) \times (2M+1)),ny)$ |
 | _Stab.w0_ | Normalized spanwise perturbation velocity at x\_0 | [-] | $(3 \times (2N+1) \times (2M+1)),ny)$ |
