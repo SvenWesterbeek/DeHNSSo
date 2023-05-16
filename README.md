@@ -252,25 +252,24 @@ Some example cases are presented here so that users can test DeHNSSo and get fam
 
 ## Blasius boundary layer: Tollmien-Schlichting instabilities <a id="blasius-boundary-layer-tollmien-schlichting-instabilities"></a>
 
-The development of Tollmien-Schlichting instabilities in a Blasius boundary layer is considered in the first case. This case was previously considered in Bertolotti et al. (1992), Chang et al. (1993), and Herbert (1997).
+The development of Tollmien-Schlichting instabilities in a Blasius boundary layer is considered in the first case. This case was previously considered by Bertolotti et al. (1992), Chang et al. (1993), Herbert(1993, Agard report 793, p.4-19, figure 19), and Herbert (1997).
 
-### Geometry, outflow buffer, and discretization
+### Reference values
+All quantities are nondimensionalized by the reference velocity $U\_0=10$ m/s and $l\_{ref} = 6.075 \times 10^{-4}$ m. The kinematic viscosity is $1.518$ m^2/s such that the global $Re = U\_0 \times l\_{ref}/\nu = 400$ in accordance with Bertolotti et al. (1992), Chang et al. (1993), Herbert(1993, Agard report 793, p.4-19), and Herbert (1997).
 
-The flow setup can be described by a constant external velocity of 10 m/s (and zero pressure gradient) over a domain ranging from $x = 0.243$ to $x = 1.7336$ m. The domain height is set to $H = 0.06$ m.
+### Domain description
 
-### Reference quantities
-
-All quantities will be Nondimensionalized by (a combination of) the reference velocity $U\_0=10$ m/s and $l\_{ref} = 6.075 \times 10^{-4}$ m. The kinematic viscosity is $1.518$ m^2/s such that the global $Re = U\_0 \times l\_{ref}/\nu = 400$ in accordance with the references
-
-### Nonlinear mode ensemble and amplitude ramping
-
-The inflow conditions are comprised of the solution to the local eigenvalue problem at the inflow for $90$ Hz corresponding to $\omega = 0.0344$ superimposed with an initial streamwise perturbation amplitude of $A = 0.00125 \sqrt{2}$. This inflow amplitude does not require any amplitude ramping.
-
-For this example case, the spectral domain is truncated at $M = 5$ (and $N = 0$). Equal to the number of modes presented in the references. Higher harmonics and the mean flow distortion are not presented at the inflow and rise naturally downstream of the inflow through nonlinear forcing.
+The flow setup can be described by a constant external velocity of 10 m/s (and zero pressure gradient) over a domain (including the buffer) ranging from $x = 400$ to $x = 2854$. The outflow buffer is initiated at 85% of the domain. The domain height is set to $H = 99$. 
 
 ### Base Flow
 
-The base flow is the solution to the incompressible boundary layer equation found using an in-house solver. The base flow simulation was performed on a fine equidistant numerical grid of 2000 streamwise stations by 100 collocation points and stored here in the BF structure. The boundary layer solver is not part of the package that comes with DeHNSSo.
+The base flow is the solution to the incompressible boundary layer equation found using an in-house solver. The base flow simulation was performed on a fine equidistant numerical grid of 5000 streamwise stations by 100 collocation points and stored here in the BF structure.
+
+### Nonlinear mode ensemble and amplitude ramping
+
+The inflow conditions are comprised of the solution to the local eigenvalue problem at the inflow for $90.6$ Hz corresponding to $\omega = 0.0344$ superimposed with an initial streamwise perturbation amplitude of $A = 0.00125 \sqrt{2}$. This inflow amplitude does not require any amplitude ramping.
+
+For this example case, the spectral domain is truncated at $M = 5$ (and $N = 0$) equal to the number of modes presented in Bertolotti et al. (1992), Chang et al. (1993), Herbert(1993, Agard report 793, p.4-19), and Herbert (1997). Higher harmonics and the mean flow distortion are not presented at the inflow and rise naturally downstream of the inflow through nonlinear forcing.
 
 Running this case exactly as given will result in the data used to plot Figure 8 from Westerbeek et al. (2023).
 
@@ -282,19 +281,18 @@ $U_e(x) = 0.0023 \ln(x)^4 + 0.0377 \ln(x)^3 + 0.1752 \ln(x)^2 + 0.5303 \ln(x) + 
 
 and holds for all cases described hereafter.
 
-### Domain description and reference values
+### Reference values
+The reference length, defined as the Blasius length at the inflow is $l\_{ref} = 2.1394 \times 10^{-4}$ m. The external velocity at the inflow is $U\_{ref} = 15.1$ m/s. The kinematic viscosity of the flow is $1.47 \times 10^{-5}$ such that the global Reynolds number is $220$.
 
-The problem is described additionally by the streamwise coordinate ranging from $x = 220$. The domain height is set to $H = 0.02$ m. The reference length, defined as the Blasius length at the inflow is $l\_{ref} = 2.1394 \times 10^{-4}$ m. The external velocity at the inflow is $U\_{ref} = 15.1$ m/s. The kinematic viscosity of the flow is $1.47 \times 10^{-5}$ such that the global Reynolds number is $220$.
+### Domain description
+
+The problem is described additionally by the streamwise coordinate ranging from $x = 220$ to $x = 1542$. The domain height is set to $H = 89$. The outflow buffer is initialized from 85% of the domain and an additional damping of the nonlinear terms starts from 80% of the domain.
 
 ### Base Flow
 
-The base flow data is an interpolated version of DNS results using INCA Hickel and Adams (2008), Hickel et al.(2014) for the problem as described in the previous paragraph. This data was kindly provided by J. Casacuberta who performed a full DNS simulation for this problem in J. Casacuberta et al. (2022).
+The base flow data is an interpolated version of DNS results for the problem as described in the previous paragraph using INCA (see Hickel and Adams (2008) and Hickel et al.(2014)). This data was kindly provided by J. Casacuberta who performed a full DNS simulation for this problem in J. Casacuberta et al. (2022).
 
-### Numerical domain and buffer
-
-The domain is discretized in 1272 equidistant stations and 50 wall-normal collocation points. The outflow buffer is initialized from 85% of the domain and an additional damping of the nonlinear terms starts from 80% of the domain.
-
-### Nonlinear mode ensemble, reference data, and ramping
+### Nonlinear mode ensemble and amplitude ramping
 
 The spectral domain is truncated at five harmonics for this case ($N=5$, $M=0$) and the mean flow distortion. Only the fundamental mode, characterized by a spanwise wavelength of $\lambda_z = 7.5$ mm or $\beta = 0.18$, is introduced at the inflow as the solution to the local eigenvalue problem. The inflow amplitude of $A = 3.5 \times 10^{-2}$ is imposed on the result. For this case, amplitude ramping is required. The inflow amplitude is increased by 10% each iteration after an amplitude reduction ensures that the linear simulation result is capped at AMAX ($= 0.1$, the default value). Reference data for the stability solution is presented by J. Casacuberta (2021) as well as NPSE solutions for the current problem provided by the authors of the current code and also previously shown in the aforementioned work.
 
@@ -302,21 +300,41 @@ The spectral domain is truncated at five harmonics for this case ($N=5$, $M=0$) 
 
 This third simulation considers the interaction of a stationary CFI with a smooth hump. This case was previously examined in both Westerbeek 2023a and the article on the current solver Westerbeek 2023b.
 
-### Domain description, base flow, and reference values
+### Reference values
+Lengths are normalized by the reference length $l\_{ref} = 2.14 \times 10^{-4}$ m with is the Blasius length at the inflow. The external velocity at the inflow is $U\_{ref} = 15.1$ m/s. The kinematic viscosity of the flow is $1.47 \times 10^{-5}$. This leads to the same reference values as for the flat plate case described by a global Reynolds number of $220$.
 
-The same external flow velocity as for the flat plate case is prescribed at the top boundary of the base flow calculation. For this problem, the base flow calculation is performed in COMSOL (COMSOL 2022). The domain is described by $x = 220-2165$ and a domain height of $H=89$. Normalized by the reference length $l\_{ref} = 2.14 \times 10^{-4}$ m with is the Blasius length at the inflow. This leads to the same reference values as for the flat plate case. The external velocity at the inflow is $U\_{ref} = 15.1$ m/s. The kinematic viscosity of the flow is $1.47 \times 10^{-5}$ such that the global Reynolds number is $220$.
+### Domain description
 
-The hump is symmetrical and centered around $x\_m = 859$ and relatively shallow. Consequently, the base flow features no flow separation. The problem is thus not too challenging and does not demand much refinement around the hump. Still, a slight streamwise refinement is introduced (using Grid.mode "xrefined") around the hump for users to get familiar and play with.
+The domain is described by $x = 220$ to $x = 2150$ and a domain height of $H=89$. 
+
+The shallow hump is symmetrical and centered around $x\_m = 589$. The base flow features no flow separation from the presence of the hump. The flow problem is thus not too challenging and does not demand grid refinement around the hump. Still, a slight streamwise refinement is introduced (using _Grid.mode_ _"xrefined"_) around the hump for users to get familiar with it.
+
+### Base Flow
+For this problem, the base flow calculation was performed in COMSOL (COMSOL 2022). The same external flow velocity as for the flat plate case is prescribed at the top boundary of the base flow calculation.
 
 ### Nonlinear mode ensemble, reference data, and ramping
 
-The stability of this flow problem is assessed linearly ($N=1$, $M=0$) given that few solvers are able to perform such simulations. Only the fundamental CFI, characterized by $\beta = 0.18$ is introduced at the inflow. The reference data is provided by J. Franco of DLR using AHLNS (see Franco 2018) on the same base flow. The AHLNS is physically equivalent to the current HNS for linear simulations. No amplitude ramping is required as this concerns a linear simulation.
+The stability of this flow problem is assessed linearly ($N=1$, $M=0$) given that few solvers are able to perform such simulations nonlinearly. Only the fundamental CFI, characterized by $\beta = 0.18$ is introduced at the inflow as the solution to the local eigenvalue problem. The reference data is provided by J. Franco of DLR using AHLNS (see Franco 2018) on the same base flow. The AHLNS is physically equivalent to the current HNS for linear simulations. No amplitude ramping is required as this concerns a linear simulation.
 
 The default value of $x_b = 0.85$ is used to define a buffer region covering the last 15% of the domain.
 
 ## Swept-wing boundary layer: Interaction of Stationary crossflow instability with a Forward-Facing Step <a id="swept-wing-boundary-layer-interaction-of-a-stationary-cfi-with-a-step"></a>
 
-This last simulation
+This last simulation features a swept-wing boundary layer featuring a step. This flow problem was previously examined in Casacuberta (2022) (largest step) and is an adaptation on the experiments of Rius-Vidales and Kotsonis (2021). 
+
+### Reference values
+Lengths are normalized by the same reference length as the previous two cases: $l\_{ref} = 2.14 \times 10^{-4}$ m. The external velocity at the inflow is $U\_{ref} = 15.1$ m/s. The kinematic viscosity of the flow is $1.47 \times 10^{-5}$. This leads to the same reference values as for the flat plate case described by a global Reynolds number of $220$.
+
+### Domain description
+
+The rectangular domain is described by $x = 685$ to $x = 993$ m and a height of $H=89$. The step is located at $x = 859$ and has a height of $3.5$. This step wall is not supplied as wall data. Instead, it is accounted for using an embedded boundary method over a flat wall. The default value of $x_b = 0.85$ is used to define a buffer region covering the last 15% of the domain.
+
+### Base Flow
+The base flow data for this case is an interpolated version of DNS results calculated using INCA (see Hickel and Adams (2008) and Hickel et al.(2014)). This data was kindly provided by J. Casacuberta who performed a full DNS simulation for this problem in J. Casacuberta et al. (2022). This data was adjusted to fit DeHNSSo's input format. The raw DNS data can be found [here](https://PLACEHOLDER).
+
+### Nonlinear mode ensemble, reference data, and ramping
+The stability of this flow problem is assessed linearly ($N=1$, $M=0$) too as a nonlinear simulation would be too involved. Given that the problem is assessed linearly, no ramping was necessary. Only the fundamental CFI, characterized by $\beta = 0.18$ is introduced at the inflow as the solution to the local eigenvalue problem. The reference data is full transitional DNS data calculated using INCA provided by J. Casacuberta. 
+
 
 # License<a id="license"></a>
 
