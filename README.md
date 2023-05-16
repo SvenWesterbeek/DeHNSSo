@@ -59,19 +59,19 @@ The base flow data for the fourth example case "CFI over a step in a swept-wing 
 
 DeHNSSo requires several inputs that describe the basic state flow field, the numerical domain and grid, and an inflow boundary condition among others. This data should be provided in dimensionless form. The reference values should be provided in BF. The contents of these structs should carry specific names. These structs can be summarized as follows:
 
-1. BF - Base flow domain, grid, velocity field, and reference values
-2. Grid - numerical domain and discretization
-3. Stab - Mode specifications, spectral truncation, and inflow data
-4. Opt - Solver options such as outflow buffer specifications and inflow amplitude rate of increase.
+1. _BF_ - Base flow domain, grid, velocity field, and reference values
+2. _Grid_ - numerical domain and discretization
+3. _Stab_ - Mode specifications, spectral truncation, and inflow data
+4. _Opt_ - Solver options such as outflow buffer specifications and inflow amplitude rate of increase.
 
 
 These structures will be discussed in detail below to help you make your own input files.
 
 ### BF <a id="bf"></a>
 
-BF contains the base flow data, the grid on which it is defined, and the reference values for nondimensionalization. This data can be provided in a structured, unstructured grid, or vector format.
+_BF_ contains the base flow data, the grid on which it is defined, and the reference values for nondimensionalization. This data can be provided in a structured, unstructured grid, or vector format.
 
-This data does not need to be presented on the same grid as presented in the Grid struct as the data will be interpolated onto the numerical grid within DeHNSSo using the griddata function (method = 'cubic'). The numerical domain cannot exceed the domain of the base flow. In the table below, the required contents of BF are described. In short, BF.X and BF.Y describe the locations where base flow quantities are described. BF.U, BF.V and BF.W describe the velocities in $x$, $y$ and $z$ respectively. Then, the BF.dxU, BF.dxV, BF.dxW, BF.dyU, BF.dyV, and BF.dyW describe the streamwise and wall-normal derivatives of the aforementioned velocities. Lastly, BF.lref, BF.Uref, BF.nu and BF.Re are the reference values and corresponding Reynolds number defined as .
+This data does not need to be presented on the same grid as presented in the _Grid_ struct as the data will be interpolated onto the numerical grid within DeHNSSo using the griddata function (method = 'cubic'). The numerical domain cannot exceed the domain of the base flow. In the table below, the required contents of _BF_ are described. In short, _BF.X_ and _BF.Y_ describe the locations where base flow quantities are described. _BF.U_, _BF.V_ and _BF.W_ describe the velocities in $x$, $y$ and $z$ respectively. Then, the _BF.dxU_, _BF.dxV_, _BF.dxW_, _BF.dyU_, _BF.dyV_, and _BF.dyW_ describe the streamwise and wall-normal derivatives of the aforementioned velocities. Lastly, _BF.lref_, _BF.Uref_, _BF.nu_ and _BF.Re_ are the reference values and corresponding Reynolds number defined as $Re = l_{ref}\times U_{ref}/\nu$.
 
 | Name | Content | Unit | Size |
 | --- | --- | --- | --- |
@@ -146,7 +146,7 @@ _Stab.bcw_ is used to define inhomogeneous wall conditions in the streamwise, wa
 | _Stab.beta\_0_ | Fundamental spanwise wavelength | [-] | $1$ |
 | _Stab.IC_ | Initialization method "ILST","ZERO'', 'LOAD" | [-] | string |
 | _Stab.bcwx_ | Inhomogeneous boundary condition locations | [-] | $(any,1)$ |
-| _Stab.bcw_ | Inhomogeneous boundary conditions (default = 0's) | [-] | $($ Stab.bcwx $, 3\times(2N+1)\times(2M+1))$ |
+| _Stab.bcw_ | Inhomogeneous boundary conditions (default = 0's) | [-] | $($ any $, 3\times(2N+1)\times(2M+1))$ |
 | _Stab.u0_ | Normalized streamwise perturbation velocity at x\_0 | [-] | $(3 \times (2N+1) \times (2M+1)),ny)$ |
 | _Stab.v0_ | Normalized wall-normal perturbation velocity at x\_0 | [-] | $(3 \times (2N+1) \times (2M+1)),ny)$ |
 | _Stab.w0_ | Normalized spanwise perturbation velocity at x\_0 | [-] | $(3 \times (2N+1) \times (2M+1)),ny)$ |
@@ -193,14 +193,14 @@ The StabGrid structure contains the numerical grid generated in the solver on wh
 | StabGrid.y | Global wall-normal coordinate | [-] | $(nx,ny)$ |
 | StabGrid.xi | Computational streamwise coordinate | [-] | $(nx,ny)$ |
 | StabGrid.eta | Computational wall-normal coordinate | [-] | $(nx,ny)$ |
-| StabGrid.xix | dxi/dx transformation coefficient | [-] | $(nx,ny)$ |
-| StabGrid.xiy | dxi/dy transformation coefficient | [-] | $(nx,ny)$ |
-| StabGrid.xixx | ddxi/dxx transformation coefficient | [-] | $(nx,ny)$ |
-| StabGrid.xiyy | ddxi/dyy transformation coefficient | [-] | $(nx,ny)$ |
-| StabGrid.etax | deta/dx transformation coefficient | [-] | $(nx,ny)$ |
-| StabGrid.etay | deta/dy transformation coefficient | [-] | $(nx,ny)$ |
-| StabGrid.etaxx | ddeta/dxx transformation coefficient | [-] | $(nx,ny)$ |
-| StabGrid.etayy | ddeta/dyy transformation coefficient | [-] | $(nx,ny)$ |
+| StabGrid.xix | $\frac{\partial \xi}{\partial x}$ transformation coefficient | [-] | $(nx,ny)$ |
+| StabGrid.xiy | $\frac{\partial \xi}{\partial y}$ transformation coefficient | [-] | $(nx,ny)$ |
+| StabGrid.xixx | $\frac{\partial^2 \xi}{\partial x^2}$ transformation coefficient | [-] | $(nx,ny)$ |
+| StabGrid.xiyy | $\frac{\partial^2 \xi}{\partial y^2}$ transformation coefficient | [-] | $(nx,ny)$ |
+| StabGrid.etax | $\frac{\partial \eta}{\partial x}$ transformation coefficient | [-] | $(nx,ny)$ |
+| StabGrid.etay | $\frac{\partial \eta}{\partial y}$ transformation coefficient | [-] | $(nx,ny)$ |
+| StabGrid.etaxx | $\frac{\partial^2 \eta}{\partial x^2}$ transformation coefficient | [-] | $(nx,ny)$ |
+| StabGrid.etayy | $\frac{\partial^2 \eta}{\partial y^2}$ transformation coefficient | [-] | $(nx,ny)$ |
 
 ## StabRes <a id="stabres"></a>
 
@@ -263,7 +263,7 @@ The flow setup can be described by a constant external velocity of 10 m/s (and z
 
 ### Base Flow
 
-The base flow is the solution to the incompressible boundary layer equation found using an in-house solver. The base flow simulation was performed on a fine equidistant numerical grid of 5000 streamwise stations by 100 collocation points and stored here in the BF structure.
+The base flow is the solution to the incompressible boundary layer equation found using an in-house solver that employs second-order backward streamwise discretization and wall-normal derivatives are calculated using a spectral collocation method with Chebyshev polynomial bases. The base flow simulation was performed on a fine equidistant numerical grid of 5000 streamwise stations by 100 collocation points and stored in the BF structure loaded here.
 
 ### Nonlinear mode ensemble and amplitude ramping
 
