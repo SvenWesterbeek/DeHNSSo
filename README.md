@@ -254,10 +254,10 @@ Some example cases are presented here so that users can test DeHNSSo and get fam
 
 ## Blasius boundary layer: Tollmien-Schlichting instabilities <a id="blasius-boundary-layer-tollmien-schlichting-instabilities"></a>
 
-The development of Tollmien-Schlichting instabilities in a Blasius boundary layer is considered in the first case. This case was previously considered by Bertolotti et al. (1992), Chang et al. (1993), Herbert(1993, Agard report 793, p.4-19, figure 19), and Herbert (1997).
+The development of Tollmien-Schlichting instabilities in a Blasius boundary layer is considered in the first case. This case was previously considered by Bertolotti _et al._ (1992), Chang _et al._ (1993), Herbert(1993, Agard report 793, p.4-19, figure 19), and Herbert (1997).
 
 ### Reference values
-All quantities are nondimensionalized by the reference velocity $U\_0=10$ m/s and $l\_{ref} = 6.075 \times 10^{-4}$ m. The kinematic viscosity is $1.518$ m^2/s such that the global $Re = U\_0 \times l\_{ref}/\nu = 400$ in accordance with Bertolotti et al. (1992), Chang et al. (1993), Herbert(1993, Agard report 793, p.4-19), and Herbert (1997).
+All quantities are nondimensionalized by the reference velocity $U\_0=10$ m/s and $l\_{ref} = 6.075 \times 10^{-4}$ m. The kinematic viscosity is $1.518$ m^2/s such that the global $Re = U\_0 \times l\_{ref}/\nu = 400$ in accordance with Bertolotti _et al._ (1992), Chang _et al._ (1993), Herbert(1993, Agard report 793, p.4-19), and Herbert (1997).
 
 ### Domain description
 
@@ -271,13 +271,13 @@ The base flow is the solution to the incompressible boundary layer equation foun
 
 The inflow conditions are comprised of the solution to the local eigenvalue problem at the inflow for $90.6$ Hz corresponding to $\omega = 0.0344$ superimposed with an initial streamwise perturbation amplitude of $A = 0.00125 \sqrt{2}$. This inflow amplitude does not require any amplitude ramping.
 
-For this example case, the spectral domain is truncated at $M = 5$ (and $N = 0$) equal to the number of modes presented in Bertolotti et al. (1992), Chang et al. (1993), Herbert(1993, Agard report 793, p.4-19), and Herbert (1997). Higher harmonics and the mean flow distortion are not presented at the inflow and rise naturally downstream of the inflow through nonlinear forcing.
+For this example case, the spectral domain is truncated at $M = 5$ (and $N = 0$) equal to the number of modes presented in Bertolotti _et al._ (1992), Chang _et al._ (1993), Herbert(1993, Agard report 793, p.4-19), and Herbert (1997). Higher harmonics and the mean flow distortion are not presented at the inflow and rise naturally downstream of the inflow through nonlinear forcing.
 
-Running this case exactly as given will result in the data used to plot Figure 8 from Westerbeek et al. (2023).
+Running this case exactly as given will result in the data used to plot Figure 8 from Westerbeek _et al._ (2023).
 
 ## Swept-wing boundary layer: Stationary crossflow instability <a id="swept-wing-boundary-layer-stationary-crossflow-instability"></a>
 
-In the second example, the stability of a swept-wing boundary layer is assessed nonlinearly for stationary crossflow instabilities. The boundary layer is simulated on a flat plate mimicking the experiments of Rius-Vidales et al. (2021). This is done by imposing a fitted external velocity distribution on the top boundary of the base flow simulation as presented in Casacuberta et al. (2022). The external velocity is given by the equation:
+In the second example, the stability of a swept-wing boundary layer is assessed nonlinearly for stationary crossflow instabilities. The boundary layer is simulated on a flat plate mimicking the experiments of Rius-Vidales _et al._ (2021). This is done by imposing a fitted external velocity distribution on the top boundary of the base flow simulation as presented in Casacuberta _et al._ (2022). The external velocity is given by the equation:
 
 $U_e(x) = 0.0023 \ln(x)^4 + 0.0377 \ln(x)^3 + 0.1752 \ln(x)^2 + 0.5303 \ln(x) + 1.874$
 
@@ -292,7 +292,7 @@ The problem is described additionally by the streamwise coordinate ranging from 
 
 ### Base Flow
 
-The base flow data is an interpolated version of DNS results for the problem as described in the previous paragraph using INCA (see Hickel and Adams (2008) and Hickel et al.(2014)). This data was kindly provided by J. Casacuberta who performed a full DNS simulation for this problem in J. Casacuberta et al. (2022).
+The base flow data is an interpolated version of DNS results for the problem as described in the previous paragraph using INCA (see Hickel and Adams (2008) and Hickel _et al._ (2014)). This data was kindly provided by J. Casacuberta who performed a full DNS simulation for this problem in J. Casacuberta _et al._ (2022).
 
 ### Nonlinear mode ensemble and amplitude ramping
 
@@ -300,7 +300,7 @@ The spectral domain is truncated at five harmonics for this case ($N=5$, $M=0$) 
 
 ## Swept-wing boundary layer: Interaction of Stationary crossflow instability with a hump <a id="swept-wing-boundary-layer-interaction-of-a-stationary-cfi-with-a-hump"></a>
 
-This third simulation considers the interaction of a stationary CFI with a smooth hump. This case was previously examined in both Westerbeek 2023a and the article on the current solver Westerbeek 2023b.
+This third simulation considers the interaction of a stationary CFI with a smooth hump. This case was previously examined in both Westerbeek (2023a) and the article on the current solver Westerbeek (2023b).
 
 ### Reference values
 Lengths are normalized by the reference length $l\_{ref} = 2.14 \times 10^{-4}$ m with is the Blasius length at the inflow. The external velocity at the inflow is $U\_{ref} = 15.1$ m/s. The kinematic viscosity of the flow is $1.47 \times 10^{-5}$. This leads to the same reference values as for the flat plate case described by a global Reynolds number of $220$.
@@ -332,7 +332,7 @@ Lengths are normalized by the same reference length as the previous two cases: $
 The rectangular domain is described by $x = 685$ to $x = 993$ and a height of $H=89$. The step is located at $x = 859$ and has a height of $3.5$. This step wall is not supplied as wall data. Instead, it is accounted for using an embedded boundary method over a flat wall. The default value of $x_b = 0.85$ is used to define a buffer region covering the last 15% of the domain.
 
 ### Base Flow
-The base flow data for this case is an interpolated version of DNS results calculated using INCA (see Hickel and Adams (2008) and Hickel et al.(2014)). This data was kindly provided by J. Casacuberta who performed a full DNS simulation for this problem in J. Casacuberta et al. (2022). This data was adjusted to fit DeHNSSo's input format. The raw DNS data can be found [here](https://PLACEHOLDER).
+The base flow data for this case is an interpolated version of DNS results calculated using INCA (see Hickel and Adams (2008) and Hickel _et al._(2014)). This data was kindly provided by J. Casacuberta who performed a full DNS simulation for this problem in J. Casacuberta _et al._ (2022). This data was adjusted to fit DeHNSSo's input format. The raw DNS data can be found [here](https://PLACEHOLDER).
 
 ### Nonlinear mode ensemble, reference data, and ramping
 The stability of this flow problem is assessed linearly ($N=1$, $M=0$) too as a nonlinear simulation would be too involved. Given that the problem is assessed linearly, no ramping was necessary. Only the fundamental CFI, characterized by $\beta = 0.18$ is introduced at the inflow as the solution to the local eigenvalue problem. The reference data is full transitional DNS data calculated using INCA provided by J. Casacuberta. 
@@ -380,5 +380,6 @@ Weideman, J. A., & Reddy, S. C. (2000). A MATLAB differentiation matrix suite. A
 Franco, J. A., Hein, S., & Valero, E. (2018). Effect of humps and indentations on boundary-layer transition of compressible flows using the AHLNS methodology. Proc. 6th ECCM–7th ECFD, Paper, 2018.
 Rius-Vidales, A. F., & Kotsonis, M. (2021). Impact of a forward-facing step on the development of crossflow instability. Journal of Fluid Mechanics, 924, A34.
 Casacuberta, J., Hickel, S., Westerbeek, S., & Kotsonis, M. (2022). Direct numerical simulation of interaction between a stationary crossflow instability and forward-facing steps. Journal of Fluid Mechanics, 943, A46.
+Westerbeek, S., Franco Sumariva, J. A., Michelis, T., Hein, S., & Kotsonis, M. (2023). Linear and Nonlinear Stability Analysis of a Three-Dimensional Boundary Layer over a Hump. In AIAA SCITECH 2023 Forum (p. 0678).
 
 Banner created using: https://manytools.org/hacker-tools/ascii-banner/  
