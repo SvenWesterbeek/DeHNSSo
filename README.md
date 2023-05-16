@@ -54,7 +54,7 @@ The first step to using DeHNSSo is ensuring that you have MATLAB installed. It i
 
 To start using DeHNSSo, please download the files from this GitHub [Repository](https://github.com/SvenWesterbeek/DeHNSSo). The current version of DeHNSSo was made using MATLAB R2022b. Support for earlier versions is not guaranteed. This file contains several folders, namely: Callers, Tools, Data Files, and Documentation. All folders must remain together in a directory of your choosing.
 
-The base flow data for the fourth example case "CFI over a step in a swept-wing BL" is too large for this repository and can be found in the data [Repository](https://PLACEHOLDER) repository of J. Casacuberta instead.
+The base flow data for the fourth example case "CFI over a step in a swept-wing BL" is too large for this repository and can be found in the release snapshot 4TU [Repository](https://PLACEHOLDER) adjusted for use in DeHNSSo. The raw files can be found in the [Repository](https://PLACEHOLDER) of J. Casacuberta instead.
 
 ### Input files <a name="input-files"></a>
 
