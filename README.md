@@ -189,8 +189,6 @@ The StabGrid structure contains the numerical grid generated in the solver on wh
 
 | Name | Content | Unit | Size |
 | --- | --- | --- | --- |
-| StabGrid.xw | Global Streamwise wall coordinate | [-] | $(nx)$ |
-| StabGrid.yw | Global Wall-normal wall coordinate | [-] | $(nx)$ |
 | StabGrid.x | Global streamwise coordinate | [-] | $(nx,ny)$ |
 | StabGrid.y | Global wall-normal coordinate | [-] | $(nx,ny)$ |
 | StabGrid.xi | Computational streamwise coordinate | [-] | $(nx,ny)$ |
