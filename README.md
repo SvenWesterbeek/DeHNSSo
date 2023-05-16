@@ -13,7 +13,7 @@
                                                                           
                                                                           
 
-Delft Harmonic Navier-Stokes Solver - A nonlinear stability solver for flow problems in complex 2-dimensional domains.
+Delft Harmonic Navier-Stokes Solver - A nonlinear stability solver for flow problems in complex two-dimensional domains.
 
 _Thank you for your interest in using DeHNSSo. This page is intended to guide you through using DeHNSSo easily and fast._
 
