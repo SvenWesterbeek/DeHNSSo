@@ -93,7 +93,7 @@ This data does not need to be presented on the same grid as presented in the _Gr
 
 ### Grid <a id="grid"></a>
 
-The Grid structure contains the information on the numerical domain and grid used to generate both the Cartesian ($x$, $y$) and numerical body-fitted grid ($\xi$, $\eta$). All contents of this structure are summarized in the table below.
+The Grid structure contains the information on the numerical domain and grid used to generate both the Cartesian ($x$, $y$) and numerical body-fitted grid ($\xi$, $\eta$).
 
 _Grid.wall_ presents DeHNSSo with the bottom wall coordinates via 2 rows of data. The first row contains the $x$-coordinates and the second row supplies the corresponding $y$-coordinates; This matrix can be of any size. However, it is preferred to be highly refined around any geometric wall features to ensure the interpolation is performed well. Note that sharp surfaces are not explicitly featured in this list. To include a step, define the step via the inputs _Grid.StepX_ and _Grid.StepH_. The step is then accounted for using this data via an embedded boundary method.
 
@@ -108,6 +108,7 @@ _Grid.mode_ allows for several built-in grid generations to be used. The options
 - "wallorthogonal"
   - Creates a grid elliptically with orthogonality at the wall following exactly the $\eta$ distribution of the mapping of Malik (1990) according to a user-defined $y\_i$. The streamwise distribution is nearly equidistant but can be slightly adjusted for the sake of orthogonality.
 
+The rest of the inputs to _Grid_ are shown in the table below:
 
 
 | Name | Content | Unit | Size |
@@ -155,7 +156,7 @@ _Stab.bcw_ is used to define inhomogeneous wall conditions in the streamwise, wa
 
 ## Opt <a id="opt"></a>
 
-The final structure put into the solver contains solver-specific options. All of these have default options which will work for most cases. The user can choose to change these to improve solver convergence, speed and numerical behaviour if necessary.
+The input structure to DeHNSSo contains solver-specific options. All of these have default options which will work for most cases. The user can choose to overwrite these to improve solver convergence, speed and numerical behaviour for specific cases if necessary.
 
 The buffer can be adjusted using the inputs for the starting location (_Opt.xb_) and strength (_Opt.kappa_) as well as the start of the buffer on nonlinear terms (_Opt.nltbufxb_). The expected amplitude that a mode needs to have can be adjusted via the option _Opt.Th_.  Strong inflow amplitudes will likely be damped to improve the odds of converging the nonlinear terms. The maximum amplitude that a mode can reach linearly in the first iteration can be adjusted via _Opt.AMAX_. The applied damping results in a lower inflow amplitude. This amplitude is increased every iteration by rate of  _Opt.AFg_. The results of intermediate steps can be saved by supplying the _Opt.Sweep_ parameter with a 1. Intermediate results need not be converged to the criterion supplied by _opt.Conv_. However, if _Opt.Sweep_ $=1$, the input _Opt.ConvF_ allows the user to specify the required convergence of intermediate spteps as a factor of the final convergence criterion (_Opt.Conv_)
 
