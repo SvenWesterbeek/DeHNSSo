@@ -1,5 +1,17 @@
-#
-# DeHNSSo
+<pre>
+ ██████████            █████   █████ ██████   █████  █████████   █████████          
+░░███░░░░███          ░░███   ░░███ ░░██████ ░░███  ███░░░░░███ ███░░░░░███         
+ ░███   ░░███  ██████  ░███    ░███  ░███░███ ░███ ░███    ░░░ ░███    ░░░   ██████ 
+ ░███    ░███ ███░░███ ░███████████  ░███░░███░███ ░░█████████ ░░█████████  ███░░███
+ ░███    ░███░███████  ░███░░░░░███  ░███ ░░██████  ░░░░░░░░███ ░░░░░░░░███░███ ░███
+ ░███    ███ ░███░░░   ░███    ░███  ░███  ░░█████  ███    ░███ ███    ░███░███ ░███
+ ██████████  ░░██████  █████   █████ █████  ░░█████░░█████████ ░░█████████ ░░██████ 
+░░░░░░░░░░    ░░░░░░  ░░░░░   ░░░░░ ░░░░░    ░░░░░  ░░░░░░░░░   ░░░░░░░░░   ░░░░░░  
+                                                                                          
+% Banner created using: https://manytools.org/hacker-tools/ascii-banner/   
+</pre>                                                                  
+                                                                          
+                                                                          
 
 Delft Harmonic Navier-Stokes Solver - A nonlinear stability solver for flow problems in complex 2-dimensional domains.
 
@@ -81,20 +93,22 @@ This data does not need to be presented on the same grid as presented in the Gri
 
 ### Grid <a id="grid"></a>
 
-The Grid structure contains the information on the numerical domain and grid. All contents of this structure are summarized in the table below.
+The Grid structure contains the information on the numerical domain and grid used to generate both the Cartesian ($x$, $y) and numerical body-fitted grid ($\xi$, $\eta$). All contents of this structure are summarized in the table below.
 
-_Grid.wall_ presents the CHNS with the bottom wall coordinates via 2 rows of data. The first row contains the $x$-coordinates and the second row supplies the corresponding $y$-coordinates; This matrix can be of any size. However, it is preferred to be highly refined around any geometric wall features to ensure the interpolation is performed well. Sharp features should not be accounted for in wall as they will be incorporated via an embedded boundary method.
+_Grid.wall_ presents DeHNSSo with the bottom wall coordinates via 2 rows of data. The first row contains the $x$-coordinates and the second row supplies the corresponding $y$-coordinates; This matrix can be of any size. However, it is preferred to be highly refined around any geometric wall features to ensure the interpolation is performed well. Note that sharp surfaces are not explicitly featured in this list. To include a step, define the step via the inputs _Grid.StepX_ and _Grid.StepH_. The step is then accounted for using this data via an embedded boundary method.
 
 _Grid.mode_ allows for several built-in grid generations to be used. The options currently available are:
 
 - "equidistant"
-  - Creates a grid following equidistant streamwise discretization and an eta distribution of collocation points following Malik for a user-defined median collocation point $y\_i$.
+  - Creates a grid following equidistant streamwise discretization and an $\eta$ distribution of collocation points following Malik (1990) for a user-defined median collocation point $y\_i$.
 - "refined"
-  - Creates a grid with a streamwise refined grid based on a Gaussian distribution following user-defined inputs _Grid.mug, Grid.sig and Grid.ag._ Wall-normal distribution follows Malik for a user-defined median collocation point $y\_i$.
+  - Creates a grid with a streamwise refined grid based on a Gaussian distribution following user-defined inputs _Grid.mug, Grid.sig and Grid.ag._ Wall-normal distribution follows Malik (1990) for a user-defined median collocation point $y\_i$.
 - "curved"
-  - Creates an equidistant distribution of streamwise grid points over a curved surface with straight $\eta$ axes wall-normal to that surface. The $\eta$ axes are thus not parallel to the global y axes. Wall-normal collocation points are clustered near the wall following Malik's mapping for a user-defined median collocation point $y\_i$.
+  - Creates an equidistant distribution of streamwise grid points over a curved surface with straight $\eta$ axes wall-normal to that surface. The $\eta$ axes are thus not parallel to the global $y$ axis. Wall-normal collocation points are clustered near the wall following Malik's (1990) mapping for a user-defined median collocation point $y\_i$.
 - "wallorthogonal"
-  - Creates a grid elliptically with orthogonality at the wall following exactly the eta distribution of the mapping of Malik according to a user-defined $y\_i$. The streamwise distribution is nearly equidistant but can be slightly adjusted for the sake of orthogonality.
+  - Creates a grid elliptically with orthogonality at the wall following exactly the $\eta$ distribution of the mapping of Malik (1990) according to a user-defined $y\_i$. The streamwise distribution is nearly equidistant but can be slightly adjusted for the sake of orthogonality.
+
+
 
 | Name | Content | Unit | Size |
 | --- | --- | --- | --- |
@@ -113,11 +127,15 @@ _Grid.mode_ allows for several built-in grid generations to be used. The options
 | _Grid.StepX_ | Step location (default = 0) | [-] | $1$ |
 | _Grid.StepH_ | Step Height (default = 0) | [-] | $1$ |
 | _Grid.ystretch_ | Wall-normal distribution stretching factor | [-] | $1$ |
-| Grid.StepType | Sharp geometry type "FFS", "BFS", "GAP", "HUMP" | [-] | String |
+| Grid.StepType | Sharp geometry type ("FFS") | [-] | String |
 
 ## <a id="stab"></a> stab
 
-The _Stab_ structure is used to define the mode ensemble of interest and present the solver with inflow conditions.
+The _Stab_ structure is used to define the mode ensemble of interest and present the solver with inflow conditions. The spectral truncation can be defined by _Stab.N_ and _Stab.M_ which are the maximum multiples of the fundamental _Stab.omega\_0_ and _Stab.beta\_0_ respectively. 
+
+_Stab.IC_ sets the mode initialization method. Currently, two methods are implemented. "ILST" calls a routine that finds the solution to the local eigenvalue problem at the inflow for all modes that have a nonzero amplitude (presented in _Stab.A0_). Note that not all modes need to be supplied with an amplitude at the inflow. These results are then normalized with the maximum streamwise perturbation velocity and multiplied by the respective initialization amplitude. "ZERO" instead means no inflow condition is supplied. This generally means that the user intends to simulate the receptivity problem by supplying inhomogeneous boundary conditions. "LOAD" instead uses the perturbation profiles presented in _Stab.u0, Stab.v0, Stab.w0, Stab.p0_ to define the inflow boundary condition. The initial perturbation data is interpolated onto the numerical grid within the solver and can thus be supplied on any distribution of points consistent with _Stab.y0_.
+
+Stab.bcw is used to define inhomogeneous wall conditions in the streamwise, wall-normal and spanwise velocity components per mode defined at the streamwise locations presented in _Stab.bcwx._
 
 | Name | Content | Unit | Size |
 | --- | --- | --- | --- |
@@ -135,21 +153,19 @@ The _Stab_ structure is used to define the mode ensemble of interest and present
 | _Stab.p0_ | Normalized perturbation pressure at x\_0 | [-] | $(3 \times (2N+1) \times (2M+1)),ny)$ |
 | _Stab.y0_ | Wall-normal distribution of inflow perturbation data | [-] | $(1,ny)$ |
 
-_Stab.IC_ sets the mode initialization method. Currently, two methods are implemented. "ILST" calls a routine that finds the solution to the local eigenvalue problem at the inflow for all modes that have a nonzero amplitude (presented in _Stab.A0_). These results are then normalized with the maximum streamwise perturbation velocity and multiplied by the respective initialization amplitude. "ZERO" instead means no inflow condition is supplied. This generally means that the user intends to simulate the receptivity problem by supplying inhomogeneous boundary conditions. "LOAD" instead uses the perturbation profiles presented in _Stab.u0, Stab.v0, Stab.w0, Stab.p0_ to define the inflow boundary condition. The initial perturbation data is interpolated onto the numerical grid within the solver and can thus be supplied on any distribution of points consistent with _Stab.y0_.
-
-Stab.bcw is used to define inhomogeneous wall conditions in the streamwise, wall-normal and spanwise velocity components per mode defined at the streamwise locations presented in _Stab.bcwx._
-
 ## Opt <a id="opt"></a>
 
-The final structure put into the solver contains solver-specific options.
+The final structure put into the solver contains solver-specific options. All of these have default options which will work for most cases. The user can choose to change these to improve solver convergence, speed and numerical behaviour if necessary.
+
+The buffer can be adjusted using the inputs for the starting location (_Opt.xb_) and strength (_Opt.kappa_) as well as the start of the buffer on nonlinear terms (_Opt.nltbufxb_). The expected amplitude that a mode needs to have can be adjusted via the option _Opt.Th_.  Strong inflow amplitudes will likely be damped to improve the odds of converging the nonlinear terms. The maximum amplitude that a mode can reach linearly in the first iteration can be adjusted via _Opt.AMAX_. The applied damping results in a lower inflow amplitude. This amplitude is increased every iteration by a factor suppplied in _Opt.AFg_. The results of intermediate steps can be saved by supplying the _Opt.Sweep_ parameter with a 1.
 
 | Name | Content | Unit | Size |
 | --- | --- | --- | --- |
-| Opt.xb | Buffer starting location [0 1] | [-] | $1$ |
-| Opt.kappa | Buffer strength [1 -\>] | [-] | $1$ |
-| Opt.nltbufxb | Nonlinear term buffer starting location | [-] | $1$ |
-| Opt.Th | Nonlinear convergence threshold | [-] | $1$ |
-| Opt.Sweep | Output intermediate results flag (true = $1$, false = $0$) | [-] | $1$ |
+| Opt.xb | Buffer starting location [0 1] (default = 0.85)| [-] | $1$ |
+| Opt.kappa | Buffer strength [1 -\>] (default = 6) | [-] | $1$ |
+| Opt.nltbufxb | Nonlinear term buffer starting location (default = _Opt.xb_)| [-] | $1$ |
+| Opt.Th | Nonlinear mode introduction threshold (default = $10^{-11}$)| [-] | $1$ |
+| Opt.Sweep | Output intermediate results flag (true = $1$, false = $0$ (default)) | [-] | $1$ |
 | Opt.AFg | Amplitude factor growth rate (default = 1.1) | [-] | $1$ |
 | Opt.Conv | Convergence criterion (default = 1e-4) | [-] | $1$ |
 | Opt.ConvF | Convergence criterion relaxation during ramping (default = 100) | [-] | $1$ |
