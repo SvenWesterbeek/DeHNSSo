@@ -115,7 +115,7 @@ The rest of the inputs to _Grid_ are shown in the table below:
 | --- | --- | --- | --- |
 | _Grid.nx_ | Number of streamwise stations | [-] | $1$ |
 | _Grid.ny_ | Number of wall-normal stations | [-] | $1$ |
-| _Grid.wall_ | Smooth wall description | [-] | ($nx\_{wall}$,2) |
+| _Grid.wall_ | Smooth wall description | [-] | ($nx\_{wall}$,$2$) |
 | _Grid.H_ | Domain height | [-] | $1$ |
 | _Grid.y\_i_ | Median collocation point height | [-] | $1$ |
 | _Grid.S_ | Domain start | [-] | $1$ |
