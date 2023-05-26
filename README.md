@@ -338,7 +338,7 @@ The stability of this flow problem is assessed linearly ($N=1$, $M=0$) too as a 
 
 # License<a id="license"></a>
 
-The contents in the Data files directory are licensed under a  **CC-BY 4.0**  (see CC-BY-4.0 file and [here](/https://joinup.ec.europa.eu/licence/creative-commons-attribution-40-international-cc-40). The codes and any other file in this repository are licensed under a  **GPLv3 license**  (see GPLv3 file and [here](/https://www.gnu.org/licenses/gpl-3.0.en.html).
+The contents in the Data files directory are licensed under a  **CC-BY 4.0**  (see CC-BY-4.0 file and [here](/https://joinup.ec.europa.eu/licence/creative-commons-attribution-40-international-cc-40)). The codes and any other file in this repository are licensed under a  **GPLv3 license**  (see GPLv3 file and [here](/https://www.gnu.org/licenses/gpl-3.0.en.html)).
 
 Copyright notice:
 
