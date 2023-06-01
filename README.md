@@ -371,13 +371,21 @@ We would like to appreciate several direct and indirect contributors for providi
 # References<a id="references"></a>
 
 Malik, M. R. (1990). Numerical methods for hypersonic boundary layer stability. Journal of computational physics, 86(2), 376-413.
+
 Bertolotti, F. P., Herbert, T., & Spalart, P. R. (1992). Linear and nonlinear stability of the Blasius boundary layer. Journal of fluid mechanics, 242, 441-474.
+
 Chang, C. L., Malik, M. R., Erlebacher, G., & Hussaini, M. Y. (1993). Linear and nonlinear PSE for compressible boundary layers. INSTITUTE FOR COMPUTER APPLICATIONS IN SCIENCE AND ENGINEERING HAMPTON VA.
+
 Herbert, T. (1997). Parabolized stability equations. Annual Review of Fluid Mechanics, 29(1), 245-283.
+
 Weideman, J. A., & Reddy, S. C. (2000). A MATLAB differentiation matrix suite. ACM Transactions on Mathematical Software (TOMS), 26(4), 465-519.
+
 Franco, J. A., Hein, S., & Valero, E. (2018). Effect of humps and indentations on boundary-layer transition of compressible flows using the AHLNS methodology. Proc. 6th ECCM–7th ECFD, Paper, 2018.
+
 Rius-Vidales, A. F., & Kotsonis, M. (2021). Impact of a forward-facing step on the development of crossflow instability. Journal of Fluid Mechanics, 924, A34.
+
 Casacuberta, J., Hickel, S., Westerbeek, S., & Kotsonis, M. (2022). Direct numerical simulation of interaction between a stationary crossflow instability and forward-facing steps. Journal of Fluid Mechanics, 943, A46.
+
 Westerbeek, S., Franco Sumariva, J. A., Michelis, T., Hein, S., & Kotsonis, M. (2023). Linear and Nonlinear Stability Analysis of a Three-Dimensional Boundary Layer over a Hump. In AIAA SCITECH 2023 Forum (p. 0678).
 
 Banner created using: https://manytools.org/hacker-tools/ascii-banner/  
