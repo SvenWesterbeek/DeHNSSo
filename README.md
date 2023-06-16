@@ -48,25 +48,24 @@ _Thank you for your interest in using DeHNSSo. This page is intended to guide yo
 
 ## How to use DeHNSSo <a id="how-to-use-dehnsso"></a>
 
-The first step to using DeHNSSo is ensuring that you have MATLAB installed. It is recommended to use at least version R2022b. For help with installing Matlab, please follow the instructions on the [MathWorks web page](https://nl.mathworks.com/products/matlab.html). Then, you will need to download DeHNSSo from the DeHNSSo GitHub as will be explained below. DeHNSSo comes with 4 standard examples that can be run immediately. To perform custom simulations, please familiarize yourself with the input formats through these examples and adjust them accordingly.
+The first step towards using DeHNSSo is ensuring that you have MATLAB installed **[#CMM:is this sufficient? what toolboxes are necessary? i found a symbolic toolbox necessity in grid. what others?]**. It is recommended to use at least version R2022b. For help with installing Matlab, please follow the instructions on the [MathWorks web page](https://nl.mathworks.com/products/matlab.html). Then, you will need to download DeHNSSo from the DeHNSSo repository **[#CMM: update with correct name, possibly GitLab]** as will be explained below. DeHNSSo comes with 4 representative test cases that can be executed immediately. To perform custom or modified simulations, please familiarize yourself with the input formats through these examples and adjust them accordingly.
 
 ## Installation <a id="installation"></a>
 
-To start using DeHNSSo, please download the files from this GitHub [Repository](https://github.com/SvenWesterbeek/DeHNSSo). The current version of DeHNSSo was made using MATLAB R2022b. Support for earlier versions is not guaranteed. This file contains several folders, namely: Callers, Tools, Data Files, and Documentation. All folders must remain together in a directory of your choosing.
+To start using DeHNSSo, please download the files from this GitHub [Repository](https://github.com/SvenWesterbeek/DeHNSSo) **[#CMM: update this accordingly. possibly GitLab]**.  The current version of DeHNSSo was made using MATLAB R2022b. Support for earlier versions is not guaranteed. This file contains several folders, namely: Callers, Tools, Data Files, and Documentation. All folders must remain together in a directory of your choosing.
 
-The base flow data for the fourth example case "CFI over a step in a swept-wing BL" is too large for this repository and can be found in the release snapshot 4TU [Repository](https://PLACEHOLDER) adjusted for use in DeHNSSo. The raw files can be found in the [Repository](https://PLACEHOLDER) of J. Casacuberta instead.
+The base flow data for the fourth example case "CFI over a step in a swept-wing BL" is too large for this repository and can be found in the release snapshot 4TU [Repository](https://PLACEHOLDER) adjusted for use in DeHNSSo. The raw files can be found in the [Repository](https://PLACEHOLDER) of J. Casacuberta instead. **[#CMM: in principle we will not be allowed to store large data on GitLab. maybe we need to find a different solution for keeping data]**
 
 ### Input files <a name="input-files"></a>
 
-DeHNSSo requires several inputs that describe the basic state flow field, the numerical domain and grid, and an inflow boundary condition among others. This data should be provided in dimensionless form. The reference values should be provided in BF. The contents of these structs should carry specific names. These structs can be summarized as follows:
+DeHNSSo requires several inputs in the form of MATLAB structure arrays (_struct_) that describe the basic state flow field, the numerical domain and grid, and an inflow boundary condition among others. This data should be provided in dimensionless form. The reference values should be provided in BF. The contents of these structure arrays should carry specific names. These can be summarized as follows:
 
 1. _BF_ - Base flow domain, grid, velocity field, and reference values
 2. _Grid_ - numerical domain and discretization
 3. _Stab_ - Mode specifications, spectral truncation, and inflow data
 4. _Opt_ - Solver options such as outflow buffer specifications and inflow amplitude rate of increase.
 
-
-These structures will be discussed in detail below to help you make your own input files.
+These structure arrays will be discussed in detail below to help you make your own input files.
 
 ### BF <a id="bf"></a>
 
@@ -107,7 +106,7 @@ _Grid.mode_ allows for several built-in grid generations to be used. The options
 - "curved"
   - Creates an equidistant distribution of streamwise grid points over a curved surface with straight $\eta$ axes wall-normal to that surface. The $\eta$ axes are thus not parallel to the global $y$ axis. Wall-normal collocation points are clustered near the wall following Malik's (1990) mapping for a user-defined median collocation point $y\_i$.
 - "wallorthogonal"
-  - Creates a grid elliptically with orthogonality at the wall following exactly the $\eta$ distribution of the mapping of Malik (1990) according to a user-defined $y\_i$. The streamwise distribution is nearly equidistant but can be slightly adjusted for the sake of orthogonality.
+  - Creates a grid using elliptic generation, with orthogonality at the wall following exactly the $\eta$ distribution of the mapping of Malik (1990) according to a user-defined $y\_i$. The streamwise distribution is nearly equidistant but can be slightly adjusted for the sake of orthogonality.
 
 The rest of the inputs to _Grid_ are shown in the table below:
 
@@ -148,8 +147,8 @@ _Stab.bcw_ is used to define inhomogeneous wall conditions in the streamwise, wa
 | _Stab.beta\_0_ | Fundamental spanwise wavelength | [-] | $1$ |
 | _Stab.IC_ | Initialization method "ILST","ZERO'', 'LOAD" | [-] | string |
 | _Stab.bcwx_ | Inhomogeneous boundary condition locations | [-] | $(any,1)$ |
-| _Stab.bcw_ | Inhomogeneous boundary conditions (default = 0's) | [-] | $( any, 3\times(2N+1)\times(2M+1))$ |
-| _Stab.u0_ | Normalized streamwise perturbation velocity at x\_0 | [-] | $(3 \times (2N+1) \times (2M+1)),ny)$ |
+| _Stab.bcw_ | Inhomogeneous boundary conditions (default = 0's) | [-] | $( any, 3\times(2N+1)\times(2M+1))$ |    **[#CMM: in the code you also have top boundary condition. add descriptions here]**
+| _Stab.u0_ | Normalized streamwise perturbation velocity at x\_0 | [-] | $(3 \times (2N+1) \times (2M+1)),ny)$ | **[#CMM: make it more clear what normalised means]**
 | _Stab.v0_ | Normalized wall-normal perturbation velocity at x\_0 | [-] | $(3 \times (2N+1) \times (2M+1)),ny)$ |
 | _Stab.w0_ | Normalized spanwise perturbation velocity at x\_0 | [-] | $(3 \times (2N+1) \times (2M+1)),ny)$ |
 | _Stab.p0_ | Normalized perturbation pressure at x\_0 | [-] | $(3 \times (2N+1) \times (2M+1)),ny)$ |
@@ -159,7 +158,7 @@ _Stab.bcw_ is used to define inhomogeneous wall conditions in the streamwise, wa
 
 The input structure to DeHNSSo contains solver-specific options. All of these have default options which will work for most cases. The user can choose to overwrite these to improve solver convergence, speed and numerical behaviour for specific cases if necessary.
 
-The buffer can be adjusted using the inputs for the starting location (_Opt.xb_) and strength (_Opt.kappa_) as well as the start of the buffer on nonlinear terms (_Opt.nltbufxb_). The expected amplitude that a mode needs to have can be adjusted via the option _Opt.Th_.  Strong inflow amplitudes will likely be damped to improve the odds of converging the nonlinear terms. The maximum amplitude that a mode can reach linearly in the first iteration can be adjusted via _Opt.AMAX_. The applied damping results in a lower inflow amplitude. This amplitude is increased every iteration by rate of  _Opt.AFg_. The results of intermediate steps can be saved by supplying the _Opt.Sweep_ parameter with a 1. Intermediate results need not be converged to the criterion supplied by _opt.Conv_. However, if _Opt.Sweep_ $=1$, the input _Opt.ConvF_ allows the user to specify the required convergence of intermediate spteps as a factor of the final convergence criterion (_Opt.Conv_)
+The buffer can be adjusted using the inputs for the starting location (_Opt.xb_) and strength (_Opt.kappa_) as well as the start of the buffer on nonlinear terms (_Opt.nltbufxb_). The expected amplitude that a mode needs to have can be adjusted via the option _Opt.Th_.  High inflow amplitudes will likely be damped to improve the odds of converging the nonlinear terms. The maximum amplitude that a mode can reach linearly in the first iteration can be adjusted via _Opt.AMAX_. The applied damping results in a lower inflow amplitude. This amplitude is increased every iteration by rate of  _Opt.AFg_. The results of intermediate steps can be saved by supplying the _Opt.Sweep_ parameter with a 1. Intermediate results need not be converged to the criterion supplied by _opt.Conv_. However, if _Opt.Sweep_ $=1$, the input _Opt.ConvF_ allows the user to specify the required convergence of intermediate spteps as a factor of the final convergence criterion (_Opt.Conv_)
 
 | Name | Content | Unit | Size |
 | --- | --- | --- | --- |
@@ -259,7 +258,7 @@ All quantities are nondimensionalized by the reference velocity $U\_0=10$ m/s an
 
 ### Domain description
 
-The flow setup can be described by a constant external velocity of 10 m/s (and zero pressure gradient) over a domain (including the buffer) ranging from $x = 400$ to $x = 2854$. The outflow buffer is initiated at 85% of the domain. The domain height is set to $H = 99$. 
+The flow setup can be described by a constant external velocity of 10 m/s (and zero pressure gradient) over a domain (including the buffer) ranging from $x = 400$ to $x = 2854$. The outflow buffer is initiated at 85% of the domain. The domain height is set to $H = 99$. The flow is fully two-dimensional, thus spanwise velocity is zero.
 
 ### Base Flow
 
@@ -273,16 +272,18 @@ For this example case, the spectral domain is truncated at $M = 5$ (and $N = 0$)
 
 Running this case exactly as given will result in the data used to plot Figure 8 from Westerbeek _et al._ (2023).
 
-## Swept-wing boundary layer: Stationary crossflow instability <a id="swept-wing-boundary-layer-stationary-crossflow-instability"></a>
+## Swept-wing boundary layer: Stationary Crossflow Instability (CFI) <a id="swept-wing-boundary-layer-stationary-crossflow-instability"></a>
 
 In the second example, the stability of a swept-wing boundary layer is assessed nonlinearly for stationary crossflow instabilities. The boundary layer is simulated on a flat plate mimicking the experiments of Rius-Vidales _et al._ (2021). This is done by imposing a fitted external velocity distribution on the top boundary of the base flow simulation as presented in Casacuberta _et al._ (2022). The external velocity is given by the equation:
 
 $U_e(x) = 0.0023 \ln(x)^4 + 0.0377 \ln(x)^3 + 0.1752 \ln(x)^2 + 0.5303 \ln(x) + 1.874$
 
+**[#CMM: add the information for spanwise velocity for all three CFI test cases]**
+
 and holds for all cases described hereafter.
 
 ### Reference values
-The reference length, defined as the Blasius length at the inflow is $l\_{ref} = 2.1394 \times 10^{-4}$ m. The external velocity at the inflow is $U\_{ref} = 15.1$ m/s. The kinematic viscosity of the flow is $1.47 \times 10^{-5}$ such that the global Reynolds number is $220$.
+The reference length, defined as the Blasius length at the inflow is $l\_{ref} = 2.1394 \times 10^{-4}$ m. The external velocity at the inflow is $U\_{ref} = 15.1$ m/s. The kinematic viscosity of the flow is $1.47 \times 10^{-5}$ such that the global Reynolds number is $220$. **[#CMM: spanwise information??]**
 
 ### Domain description
 
@@ -290,13 +291,13 @@ The problem is described additionally by the streamwise coordinate ranging from 
 
 ### Base Flow
 
-The base flow data is an interpolated version of DNS results for the problem as described in the previous paragraph using INCA (see Hickel and Adams (2008) and Hickel _et al._ (2014)). This data was kindly provided by J. Casacuberta who performed a full DNS simulation for this problem in J. Casacuberta _et al._ (2022).
+The base flow data is an interpolated version of DNS results for the problem as described in the previous paragraph using the solver INCA (see Hickel and Adams (2008) and Hickel _et al._ (2014)). This data was kindly provided by J. Casacuberta who performed a full DNS simulation for this problem in J. Casacuberta _et al._ (2022).
 
 ### Nonlinear mode ensemble and amplitude ramping
 
 The spectral domain is truncated at five harmonics for this case ($N=5$, $M=0$) and the mean flow distortion. Only the fundamental mode, characterized by a spanwise wavelength of $\lambda_z = 7.5$ mm or $\beta = 0.18$, is introduced at the inflow as the solution to the local eigenvalue problem. The inflow amplitude of $A = 3.5 \times 10^{-2}$ is imposed on the result. For this case, amplitude ramping is required. The inflow amplitude is increased by 10% each iteration after an amplitude reduction ensures that the linear simulation result is capped at AMAX ($= 0.1$, the default value). Reference data for the stability solution is presented by J. Casacuberta (2021) as well as NPSE solutions for the current problem provided by the authors of the current code and also previously shown in the aforementioned work.
 
-## Swept-wing boundary layer: Interaction of Stationary crossflow instability with a hump <a id="swept-wing-boundary-layer-interaction-of-a-stationary-cfi-with-a-hump"></a>
+## Swept-wing boundary layer: Interaction of Stationary Crossflow Instability with a hump <a id="swept-wing-boundary-layer-interaction-of-a-stationary-cfi-with-a-hump"></a>
 
 This third simulation considers the interaction of a stationary CFI with a smooth hump. This case was previously examined in both Westerbeek (2023a) and the article on the current solver Westerbeek (2023b).
 
@@ -314,11 +315,11 @@ For this problem, the base flow calculation was performed in COMSOL (COMSOL 2022
 
 ### Nonlinear mode ensemble, reference data, and ramping
 
-The stability of this flow problem is assessed linearly ($N=1$, $M=0$) given that few solvers are able to perform such simulations nonlinearly. Only the fundamental CFI, characterized by $\beta = 0.18$ is introduced at the inflow as the solution to the local eigenvalue problem. The reference data is provided by J. Franco of DLR using AHLNS (see Franco 2018) on the same base flow. The AHLNS is physically equivalent to the current HNS for linear simulations. No amplitude ramping is required as this concerns a linear simulation.
+The stability of this flow problem is assessed linearly ($N=1$, $M=0$) for computational efficiency. Only the fundamental CFI, characterized by $\beta = 0.18$ is introduced at the inflow as the solution to the local eigenvalue problem. The reference data is provided by J. Franco of DLR using AHLNS (see Franco 2018) on the same base flow. The AHLNS is physically equivalent to the current HNS for linear simulations. No amplitude ramping is required as this concerns a linear simulation.
 
 The default value of $x_b = 0.85$ is used to define a buffer region covering the last 15% of the domain.
 
-## Swept-wing boundary layer: Interaction of Stationary crossflow instability with a Forward-Facing Step <a id="swept-wing-boundary-layer-interaction-of-a-stationary-cfi-with-a-step"></a>
+## Swept-wing boundary layer: Interaction of Stationary Crossflow Instability with a Forward-Facing Step <a id="swept-wing-boundary-layer-interaction-of-a-stationary-cfi-with-a-step"></a>
 
 This last simulation features a swept-wing boundary layer featuring a step. This flow problem was previously examined in Casacuberta (2022) (largest step) and is an adaptation on the experiments of Rius-Vidales and Kotsonis (2021). 
 
@@ -333,7 +334,7 @@ The rectangular domain is described by $x = 685$ to $x = 993$ and a height of $H
 The base flow data for this case is an interpolated version of DNS results calculated using INCA (see Hickel and Adams (2008) and Hickel _et al._(2014)). This data was kindly provided by J. Casacuberta who performed a full DNS simulation for this problem in J. Casacuberta _et al._ (2022). This data was adjusted to fit DeHNSSo's input format. The raw DNS data can be found [here](https://PLACEHOLDER).
 
 ### Nonlinear mode ensemble, reference data, and ramping
-The stability of this flow problem is assessed linearly ($N=1$, $M=0$) too as a nonlinear simulation would be too involved. Given that the problem is assessed linearly, no ramping was necessary. Only the fundamental CFI, characterized by $\beta = 0.18$ is introduced at the inflow as the solution to the local eigenvalue problem. The reference data is full transitional DNS data calculated using INCA provided by J. Casacuberta. 
+The stability of this flow problem is assessed linearly ($N=1$, $M=0$). Given that the problem is assessed linearly, no ramping was necessary. Only the fundamental CFI, characterized by $\beta = 0.18$ is introduced at the inflow as the solution to the local eigenvalue problem. The reference data is full transitional DNS data calculated using INCA provided by J. Casacuberta. 
 
 
 # License<a id="license"></a>
@@ -349,10 +350,10 @@ Henri Werij, Dean of Faculty of Aerospace Engineering, Technische Universiteit D
 © 2023, Sven Westerbeek & Marios Kotsonis
 
 # Common errors and solutions <a id="common-errors-and-solutions"></a>
-This section covers some of the most common errors and their solutions. If your specific question is not answered in this section, please send your questions to S.H.J.Westerbeek@tudelft.nl and it will be patched if possible. However, some errors might not be a bug and instead, be the result of improper use. In this section, some hints are posted as to what might have gone wrong when certain errors appear and how to fix them. Additionally, DeHNSSo might be adjusted to provide error messages with solution hints within MATLAB directly.
+This section covers some of the most common errors and their solutions. If your specific question is not answered in this section, please send your questions to S.H.J.Westerbeek@tudelft.nl or M.Kotsonis@tudelft.nl and it will be patched if possible. However, some errors might not be a bug and instead, be the result of improper use. In this section, some hints will be posted as to what might have gone wrong when certain errors appear and how to fix them. Additionally, DeHNSSo might be adjusted to provide error messages with solution hints within MATLAB directly.
 
 # FAQ<a id="faq"></a>
-Questions that we receive concerning DeHNSSo will be used to improve DeHNSSo. This concerns either the code itself, the commenting, the manual and/or posting the questions with answers in this section.
+Questions that we receive concerning DeHNSSo will be used to improve DeHNSSo. This concerns either the code itself, the commenting and the documentation. We will post the questions with answers in this section.
 
 # DeHNSSo results<a id="dehnsso-results"></a>
 Here we will post results obtained using DeHNSSo. If you have worked with DeHNSSo and have figures that you would like to share, please contact us at:
