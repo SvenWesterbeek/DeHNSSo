@@ -1,20 +1,37 @@
 function [StabGrid,D1,D2]=grid_gen(Grid)
-%% License
+%% License (GNU GENERAL PUBLIC LICENSE v3)
+%                  Delft Harmonic Navier-Stokes Solver
+%     Copyright (C) 2023 S.H.J. Westerbeek, S. Hulshoff, H. Schuttelaars
+%                          & M. Kotsonis
+% 
+%     This program is free software: you can redistribute it and/or modify
+%     it under the terms of the GNU General Public License as published by
+%     the Free Software Foundation, either version 3 of the License, or
+%     (at your option) any later version.
+% 
+%     This program is distributed in the hope that it will be useful,
+%     but WITHOUT ANY WARRANTY; without even the implied warranty of
+%     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%     GNU General Public License for more details.
+% 
+%     You should have received a copy of the GNU General Public License
+%     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 %% Description
 % Creates a StabGrid for a domain defined by a wall, height and range with nx
 % streamwise stations and ny collocation points. Grid optionality is
 % provided via a string in "Grid.type". 
 
-% Grid.wall: x and y coordinates of the wall in physical space
-% Grid.S: inflow in physical space
-% Grid.L: length of calculation domain in physical space
-% Grid.H: height of computational domain at inflow
-% Grid.nx: points in numerical StabGrid in ksi
-% Grid.ny: points in eta (correspoinds to collocation points of Chebychev polynomials)
-% Grid.y_i: median collocation point height
-% Grid.type: type of StabGrid
-% Grid.ft: flat top flag 1=true, 0=false.
+% Name      size        unit explanation
+% Grid.wall (2, N_wall) [-]  x and y coordinates of the wall in physical space
+% Grid.S    (1,1)       [-]  inflow in physical space
+% Grid.L    (1,1)       [-]  length of calculation domain in physical space
+% Grid.H    (1,1)       [-]  height of computational domain at inflow
+% Grid.nx   (1,1)       [-]  points in numerical StabGrid in ksi
+% Grid.ny   (1,1)       [-]  points in eta (corresponds to collocation points of Chebyshev polynomials)
+% Grid.y_i  (1,1)       [-]  median collocation point height
+% Grid.type string      [-]  Grid type definition
+% Grid.ft   (1,1)       [-]  flat top flag (1=true, 0=false)
 
 % Grid modes:
 % "equidistant" - an equidistant streamwise distribution. Wall-refined.
@@ -34,12 +51,13 @@ nx  = Grid.nx;
 ny  = Grid.ny;
 H   = Grid.H;
 
+
 %%
 switch Grid.xtype
     case "equidistant"
        
-        xnw = linspace(Grid.S,Grid.S+Grid.L,nx);                          % interpolate physical x of wall on numerical StabGrid
-        ynw = interp1(wall(1,:),wall(2,:),xnw,'linear');           % interpolate physical y of wall on numerical StabGrid
+        xnw = linspace(Grid.S,Grid.S+Grid.L,nx);                   % interpolate physical x of wall on numerical StabGrid
+        ynw = fillmissing(interp1(xw,yw,xnw,'pchip'),'linear');           % interpolate physical y of wall on numerical StabGrid
         
         % construction of ksi
         ksi = repmat(xnw,ny,1);
@@ -64,6 +82,7 @@ switch Grid.xtype
         end
         end
 
+       
   
         
     case "xrefined"
@@ -107,7 +126,7 @@ switch Grid.xtype
         end
         
         xnw = X;
-        ynw = interp1(wall(1,:),wall(2,:),xnw,'linear');           % interpolate physical y of wall on numerical StabGrid
+        ynw = interp1(wall(1,:),wall(2,:),xnw,'pchip');           % interpolate physical y of wall on numerical StabGrid
 
         x =repmat(xnw,ny,1); 
         
@@ -138,15 +157,15 @@ switch Grid.xtype
         % construction of ksi
         sw=cumtrapz(xw,sqrt(1+gradient(yw,xw).^2))+xw(1); % evaluate the arc length of the wall
         
-        s1=interp1(xw,sw,Grid.S,'spline');    % arc length at inflow
-        s2=interp1(xw,sw,Grid.S+Grid.L,'spline');  % arc length at outflow
+        s1=interp1(xw,sw,Grid.S,'pchip');    % arc length at inflow
+        s2=interp1(xw,sw,Grid.S+Grid.L,'pchip');  % arc length at outflow
         
         ksir=linspace(s1,s2,nx);         % equispaced ksi row at wall
         
         ksi =repmat(ksir,ny,1);          % construction of the ksi matrix (repeat the ksi row)
         
-        xnw=interp1(sw,xw,ksir,'spline');% interpolate physical x of wall on numerical grid
-        ynw=interp1(sw,yw,ksir,'spline');% interpolate physical y of wall on numerical grid
+        xnw=interp1(sw,xw,ksir,'pchip');% interpolate physical x of wall on numerical grid
+        ynw=interp1(sw,yw,ksir,'pchip');% interpolate physical y of wall on numerical grid
         
         aw=atand(gradient(ynw,xnw));     % local tangent to the wall
         
@@ -174,8 +193,8 @@ switch Grid.xtype
         
         sw=cumtrapz(xw,sqrt(1+gradient(yw,xw).^2))+xw(1); % evaluate the arc length of the wall
         
-        s1=interp1(xw,sw,Grid.S,'spline');                     % arc length at inflow
-        s2=interp1(xw,sw,Grid.S+Grid.L,'spline');                   % arc length at outflow
+        s1=interp1(xw,sw,Grid.S,'pchip');                     % arc length at inflow
+        s2=interp1(xw,sw,Grid.S+Grid.L,'pchip');                   % arc length at outflow
         
         ksir=linspace(s1,s2,nx);                          % equispaced ksi row at wall
         
@@ -189,8 +208,8 @@ switch Grid.xtype
         eta=repmat(etac,1,nx);     
         
         
-        xw=interp1(sw,xw,ksir,'spline');                          % interpolate physical x of wall on numerical StabGrid
-        yw=interp1(sw,yw,ksir,'spline');                          % interpolate physical y of wall on numerical StabGrid
+        xw=interp1(sw,xw,ksir,'pchip');                          % interpolate physical x of wall on numerical StabGrid
+        yw=interp1(sw,yw,ksir,'pchip');                          % interpolate physical y of wall on numerical StabGrid
         
         maxit=1000;
         show=0;            % 1 for yes o for no  to disp solution while solving

@@ -51,13 +51,14 @@ function [StabRes,StabGrid,BF] = DeHNSSo(BF,Grid,Stab,Opt)
 % reference values defined in BF. Solver options should be presented in 
 % Opt.
 
-% The output contains two structs: StabGrid and StabRes. StabGrid contains
-% the global and numerical domains as well as the transformation
+% The output contains three structs: BF, StabGrid, and StabRes. BF is the 
+% input struct BF appended with the base flow interpolation result. StabGrid 
+% contains the global and numerical domains as well as the transformation
 % coefficients. StabRes contains the stability results, providing shape
 % functions, amplitude development and wavenumbers.
 
 % Authors: Sven Westerbeek and Marios Kotsonis
-% last update: March 2023
+% last update: June 2023
 
 % Article: 
 % DOI: 
@@ -65,80 +66,84 @@ function [StabRes,StabGrid,BF] = DeHNSSo(BF,Grid,Stab,Opt)
 
 % For comments, questions, suggestions, ideas or collaborations, 
 % please contact us at:
-% S.H.J.Westerbeek@tudelft.nl; svenwesterbeek@gmail.nl
+% S.H.J.Westerbeek@tudelft.nl;
 % M.Kotsonis@tudelft.nl
 
 
 
 %% Updates
-% 04-2023: V1 Published 
+% 06-2023: V1 Published 
 
 %% Overview of inputs
 
 % BF: Base Flow data + grid and Reference values + Reynolds number
-% Name    size        unit    explanation
-% BF.X    (nxbl,nybl) [-]     Base Flow grid streamwise locations 
-% BF.Y    (nxbl,nybl) [-]     Base Flow grid streamwise locations
-% BF.U    (nxbl,nybl) [-]     Base Flow Streamwise Velocity
-% BF.V    (nxbl,nybl) [-]     Base Flow Wall-normal Velocity
-% BF.W    (nxbl,nybl) [-]     Base Flow Spanwise Velocity
-% BF.dxU  (nxbl,nybl) [-]     Streamwise Gradient of Base Flow Streamwise Velocity
-% BF.dxV  (nxbl,nybl) [-]     Streamwise Gradient of Base Flow Wall-normal Velocity
-% BF.dxW  (nxbl,nybl) [-]     Streamwise Gradient of Base Flow Spanwise Velocity
-% BF.dyU  (nxbl,nybl) [-]     Wall-normal Gradient of Base Flow Streamwise Velocity
-% BF.dyV  (nxbl,nybl) [-]     Wall-normal Gradient of Base Flow Wall-normal Velocity
-% BF.dyW  (nxbl,nybl) [-]     Wall-normal Gradient of Base Flow Spanwise Velocity
-% BF.Re   (1)         [-]     Reynolds number (=U_ref * l_ref / nu)
-% BF.Uref (1)         [m/s]   Reference velocity
-% BF.lref (1)         [m]     Reference length
-% BF.nu   (1)         [m^2/s] Kinematic viscosity
+% Name         size  unit    explanation
+% BF.X   (nxbl,1)    [-]     Base flow grid streamwise locations 
+% BF.Y   (1,nybl)    [-]     Base flow grid wall-normal locations
+% BF.U   (nxbl,nybl) [-]     Base flow streamwise velocity
+% BF.V   (nxbl,nybl) [-]     Base flow wall-normal velocity
+% BF.W   (nxbl,nybl) [-]     Base flow spanwise velocity
+% BF.dxU (nxbl,nybl) [-]     Streamwise gradient of base flow streamwise velocity
+% BF.dxV (nxbl,nybl) [-]     Streamwise gradient of base flow wall-normal velocity
+% BF.dxW (nxbl,nybl) [-]     Streamwise gradient of base flow spanwise velocity
+% BF.dyU (nxbl,nybl) [-]     Wall-normal gradient of base flow streamwise velocity
+% BF.dyV (nxbl,nybl) [-]     Wall-normal gradient of base flow wall-normal velocity
+% BF.dyW (nxbl,nybl) [-]     Wall-normal gradient of base flow spanwise velocity
+% BF.lref   (1)      [m]     Reference length (Blasius lengthscale)
+% BF.Uref   (1)      [m/s]   Reference velocity 
+% BF.nu     (1)      [m^2/s] Kinematic viscocity 
+% BF.Re     (1)      [-]     Reynolds number
 
-% Grid: Stability domain and grid
-% Name          size     unit explanation
-% Grid.nx       (1)      [-]  Number of streamwise stations of the numerical grid
-% Grid.ny       (1)      [-]  Number of wall-normal collocation points of the numerical grid
-% Grid.wall     (any,2)  [-]  Wall definition x and y locations on arbitrary grid
-% Grid.H        (1)      [-]  Domain height
-% yi            (1)      [-]  Median collocation point height
-% Grid.S        (1)      [-]  Stability grid domain start
-% Grid.L        (1)      [-]  Stability grid domain length (wall length)
-% Grid.mode     (string) [-]  Grid generation mode (see grid_gen)
-% Grid.ft       (1)      [-]  Flat top boundary flag 0=no, 1=yes (default = 1)
-% Grid.mug      (1)      [-]  Streamwise grid refinement location [S S+L]
-% Grid.sig      (1)      [-]  Streamwise grid refinement variance [0 1] (Gaussian)
-% Grid.ag       (1)      [-]  Streamwise grid refinement strength [0 1]
-% Grid.StepX    (1)      [-]  Step location
-% Grid.StepH    (1)      [-]  Step Height
-% Grid.ystretch (1)      [-]  wall-normal distribution stretching factor
-% Grid.StepType (string) [-]  Sharp geometry type FFS, BFS, GAP, HUMP
+% Grid: Numerical domain and grid
+% Name         size         units explanation
+% Grid.nx       (1)         [-]   Number of streamwise stations of the numerical grid
+% Grid.ny       (1)         [-]   Number of wall-normal collocation points of the numerical grid
+% Grid.wall     (nxwall,2)  [-]   Wall definition x and y locations 
+% Grid.H        (1)         [-]   Domain height
+% Grid.y_i      (1)         [-]   Median collocation point height
+% Grid.S        (1)         [-]   Numerical grid domain start
+% Grid.L        (1)         [-]   Numerical grid domain length (wall length)
+% Grid.mode     (string)    [-]   Grid generation mode (see grid_gen)
+%   * equidistant    - an equidistant streamwise distribution. Wall-refined. 
+%   * xrefined       - streamwise gaussian distribution. Wall-refined. eta parallel to y
+%   * fanned         - equidistant streamwise distribution. Wall-normal eta axes to 
+%                      account for wall curvature. Wall-refined. 
+%   * wallorthogonal - Locally wall-orthogonal grid. Eta is curved.
+% Grid.mug      (1)         [-]   Streamwise grid refinement center, domain [S S+L]
+% Grid.sig      (1)         [-]   Streamwise grid refinement variance (Gaussian), domain [0 1] 
+% Grid.ag       (1)         [-]   Streamwise grid refinement strength, domain [0 1]
+% Grid.StepX    (1)         [-]   Step location
+% Grid.StepH    (1)         [-]   Step Height
+% Grid.ystretch (1)         [-]   Wall-normal distribution stretching factor
+% Grid.StepType (string)    [-]   Sharp geometry type "flat", "FFS" (default = flat)
 
 % Stab: Stability specifications
-% Name          size                    unit explanation
-% Stab.N        (1)                     [-]  Spectral truncation of beta modes
-% Stab.M        (1)                     [-]  Spectral truncation of omega modes
-% Stab.A0       ((2N+1)x(2M+1),1)       [-]  Initial amplitudes of all modes
-% Stab.omega_0  (1)                     [-] Fundamental angular frequency
-% Stab.beta_0   (1)                     [-] Fundamental spanwise wavenumber
-% Stab.IC       (string)                [-] Initialization method ILST, ZERO, LOAD
-% Stab.bcw      (any, 3x(2N+1)x(2M+1))  [-] Inhomogeneous boundary conditions wall per mode (x,u,v,w)^T
-% Stab.bct      (any, 3x(2N+1)x(2M+1))  [-] Inhomogeneous boundary conditions top per mode (x,u,v,w)^T
-% Stab.y0       (1,ny0)                 [-] Wall-normal distribution of inflow perturbation data
-% Stab.u0       (3x(2N+1)x(2M+1)),ny0)  [-] Normalized streamwise perturbation velocity at inflow 
-% Stab.v0       (3x(2N+1)x(2M+1)),ny0)  [-] Normalized wall-normal perturbation velocity at inflow 
-% Stab.w0       (3x(2N+1)x(2M+1)),ny0)  [-] Normalized spanwise perturbation velocity at inflow 
-% Stab.p0       (3x(2N+1)x(2M+1)),ny0)  [-] Normalized perturbation pressures at inflow 
+% Name          size                    units  explanation
+% Stab.N        (1)                     [-]    Spectral truncation of beta modes
+% Stab.M        (1)                     [-]    Spectral truncation of omega modes
+% Stab.A0       ((2N+1)x(2M+1),1)       [-]    Initial amplitudes of all modes
+% Stab.omega_0  (1)                     [-]    Fundamental angular frequency
+% Stab.beta_0   (1)                     [-]    Fundamental spanwise wavenumber
+% Stab.IC       (string)                [-]    Initialization method ILST, WALL, LOAD
+% Stab.bcw      (any, 3x(2N+1)x(2M+1))  [-]    Inhomogeneous boundary conditions wall per mode (x,u,v,w)^T
+% Stab.bcf      (any, 3x(2N+1)x(2M+1))  [-]    Inhomogeneous boundary conditions top per mode (x,u,v,w)^T
+% Stab.y0       (1,ny0)                 [-]    Wall-normal distribution of inflow perturbation data
+% Stab.u0       (3x(2N+1)x(2M+1)),ny0)  [-]    Streamwise perturbation velocity shape function at inflow 
+% Stab.v0       (3x(2N+1)x(2M+1)),ny0)  [-]    Wall-normal perturbation velocity shape function at inflow 
+% Stab.w0       (3x(2N+1)x(2M+1)),ny0)  [-]    Spanwise perturbation velocity shape function at inflow 
+% Stab.p0       (3x(2N+1)x(2M+1)),ny0)  [-]    Perturbation pressures shape function at inflow 
 
 % Opt: Solver options
-% Name         size  unit explanation
-% Opt.xb       (1)   [-]  Buffer starting location
-% Opt.kappa    (1)   [-]  Buffer strength (default = 6)
-% Opt.nltbufxb (1)   [-]  Nonlinear term buffer starting location (=xb by default)
-% Opt.Th       (1)   [-]  Nonlinear introduction threshold
-% Opt.Conv     (1)   [-]  Convergence criterion
-% Opt.ConvF    (1)   [-]  Convergence criterion relaxation factor during ramping
-% Opt.Sweep    (1)   [-]  Output intermediate results flag (true=1, false=0)
-% Opt.AFg      (1)   [-]  Amplitude factor growth rate (default = 1.1)
-%
+% Name         size units explanation
+% Opt.xb       (1)  [-]   Buffer starting location as a % of the domain (default = 85)
+% Opt.kappa    (1)  [-]   Buffer strength (default = 6)
+% Opt.nltbufxb (1)  [-]   Nonlinear term buffer starting location (=xb by default)
+% Opt.Th       (1)  [-]   Nonlinear introduction threshold (default = 1e-11)
+% Opt.Conv     (1)  [-]   Convergence criterion (default = 1e-4)
+% Opt.ConvF    (1)  [-]   Convergence criterion relaxation factor during ramping (default = 100)
+% Opt.Sweep    (1)  [-]   Output intermediate results flag (true=1,false=0) (default = 0)
+% Opt.AFg      (1)  [-]   Amplitude factor growth rate (default = 1.1)
+
 
 %% Overview of outputs
 
@@ -199,34 +204,34 @@ function [StabRes,StabGrid,BF] = DeHNSSo(BF,Grid,Stab,Opt)
 if ~isfield(Stab,'bcx'); Stab.bcx = linspace(Grid.S,Grid.S+Grid.L,10); end
 if ~isfield(Stab,'bcw'); Stab.bcw = zeros(3,10,3*(2*Stab.N+1)*(2*Stab.M+1)+1); end
 if ~isfield(Stab,'bct'); Stab.bct = zeros(3,10,3*(2*Stab.N+1)*(2*Stab.M+1)+1); end
-if ~isfield(Stab,'A0'); Stab.A0 = []; end
+if ~isfield(Stab,'A0');  Stab.A0 = []; end
 
 % Grid: Straight geometry without streamwise refinement by default
-if ~isfield(Grid,'StepType'), Grid.StepType = "FLAT"; end
-if ~isfield(Grid,'ytype'), Grid.ytype ="malik"; end
-if ~isfield(Grid,'xtype'), Grid.xtype ="equidistant"; end
-if ~isfield(Grid,'StepX'), Grid.StepX = 0; end
-if ~isfield(Grid,'StepH'), Grid.StepH = 0; end
-if ~isfield(Grid,'mug'), Grid.mug = 0; end
-if ~isfield(Grid,'sig'), Grid.sig = 1; end
-if ~isfield(Grid,'ag'), Grid.ag = 0; end
-if ~isfield(Grid,'ft'), Grid.ft = 1; end
+if ~isfield(Grid,'StepType'),   Grid.StepType = "FLAT"; end
+if ~isfield(Grid,'ytype'),      Grid.ytype ="malik"; end
+if ~isfield(Grid,'xtype'),      Grid.xtype ="equidistant"; end
+if ~isfield(Grid,'StepX'),      Grid.StepX = 0; end
+if ~isfield(Grid,'StepH'),      Grid.StepH = 0; end
+if ~isfield(Grid,'mug'),        Grid.mug = 0; end
+if ~isfield(Grid,'sig'),        Grid.sig = 1; end
+if ~isfield(Grid,'ag'),         Grid.ag = 0; end
+if ~isfield(Grid,'ft'),         Grid.ft = 1; end
 
 % Opt: Set default solver specifications
-if ~isfield(Opt,'xb'), Opt.xb = 85; end
-if ~isfield(Opt,'AFg'),  Opt.AFg = 1.1; end
-if ~isfield(Opt,'Sweep'), Opt.Sweep = 0; end
-if ~isfield(Opt,'nltbufxb'); Opt.nltbufxb = Opt.xb; end
-if ~isfield(Opt,'TH'); Opt.TH = 1e-11; end
-if ~isfield(Opt,'Conv'); Opt.Conv = 1e-4 ; end
-if ~isfield(Opt,'kappa'); Opt.kappa = 6; end
-if ~isfield(Opt,'AMAX'); Opt.AMAX = 0.1; end
-if ~isfield(Opt,'ConvF'); Opt.ConvF = 100; end
+if ~isfield(Opt,'xb'),          Opt.xb = 85; end
+if ~isfield(Opt,'AFg'),         Opt.AFg = 1.1; end
+if ~isfield(Opt,'Sweep'),       Opt.Sweep = 0; end
+if ~isfield(Opt,'nltbufxb');    Opt.nltbufxb = Opt.xb; end
+if ~isfield(Opt,'TH');          Opt.TH = 1e-11; end
+if ~isfield(Opt,'Conv');        Opt.Conv = 1e-4 ; end
+if ~isfield(Opt,'kappa');       Opt.kappa = 6; end
+if ~isfield(Opt,'AMAX');        Opt.AMAX = 0.1; end
+if ~isfield(Opt,'ConvF');       Opt.ConvF = 100; end
 
 % Define imaginary unit
 iu=sqrt(-1);
 
-%% Setup mode vector and harmonic balancing matrices.
+%% Setup mode vector and harmonic balancing matrices
 
 % Find all mode interactions
 [Nmat, Mmat, Modevec,Mvec,Nvec] = Mint(Stab.M,Stab.N);
@@ -247,10 +252,9 @@ nf = max(L);
 fprintf('Generating grid. \n')
 [StabGrid,D1,D2]=grid_gen(Grid);
 
-%% Base Flow and BC Interpolation on stability grd
+%% Base flow and BC interpolation on stability grid
 
 fprintf('Interpolating base flow on the numerical grid. \n')
-% Check DNS base flow from step loading
 
 % Interpolate base flow on numerical grid
 % fillmissing corrects possible numerical differences in the wall description
@@ -274,18 +278,18 @@ BF.dyWr = fillmissing(griddata(BF.X,BF.Y,BF.dyW,StabGrid.x,StabGrid.y,'cubic'),'
 % Define Inhomogeneous BC's on numerical grid
 for k = 1:3 % loop over u v w
     for j = 1:nf % loop over all modes
-    bcw(k,:,j) = interp1(Stab.bcx,Stab.bcw(k,:,j),StabGrid.xun,"cubic");
-    bct(k,:,j) = interp1(Stab.bcx,Stab.bct(k,:,j),StabGrid.xun,"cubic");
+    bcw(k,:,j) = interp1(Stab.bcx,Stab.bcw(k,:,j),StabGrid.xun,"cubic"); % Wall BC
+    bct(k,:,j) = interp1(Stab.bcx,Stab.bct(k,:,j),StabGrid.xun,"cubic"); % Top BC
     end
 end
 
 
-%% Inflow BC definition
+%% Define inflow conditions
 
 nonzeromodeswall = [];  % initialize nonzeromodeswall
 nonzeromodesic = [];    % initialize nonzeromodesic
 
-% Initialize solution vector phi = [u v w p]'(x,y) and alpha = alpha(x)
+% Initialize solution vector phi = [u v w p]', Amplitude A and streamwise wavenumber alpha 
 StabRes.phi    = zeros(nf,4*Grid.ny,Grid.nx);
 StabRes.alpha  = zeros(nf,Grid.nx);
 StabRes.A      = zeros(nf,Grid.nx);
@@ -315,7 +319,7 @@ elseif Stab.IC=="ILST"
     if j >= round(nf/2)% Mode is physical
     [StabRes]=IC_HNS(j,1,BF.Re,BF.Ur,BF.Wr,BF.dyUr,BF.dyWr,D1,D2,StabRes,StabGrid); 
            
-    %output from CIC is normalized by max(u'), superimpose Amplitude
+    % Output from IC_HNS is normalized by max(u'), superimpose amplitude
     StabRes.u(j,:,1) = Stab.A0(j).*StabRes.u(j,:,1);
     StabRes.v(j,:,1) = Stab.A0(j).*StabRes.v(j,:,1);
     StabRes.w(j,:,1) = Stab.A0(j).*StabRes.w(j,:,1);
@@ -357,6 +361,7 @@ return
 
 end
 
+% nonzero modes are those initiated at inflow + those forced at wall
 nonzeromodes = unique([nonzeromodesic, nonzeromodeswall]);
 RunJ = nonzeromodes; % Used in loops to assess only active modes
 
@@ -428,23 +433,25 @@ end
 
 %% initialisation of the matrices
 
+% Initiate identity and zero matrix of order ny
 I      = eye(Grid.ny);
 Z      = zeros(Grid.ny);
 
+% Allocate LHS matrix blocks 1-4 and seperately for MFD
 ML1MFD = spalloc(4*Grid.ny,4*Grid.ny*Grid.nx,4*(3*Grid.ny^2+4*Grid.ny)+7*Grid.ny^2+4*Grid.ny);  % LHS preallocate sparse matrix per i station. !!! dependent on formulation of finite differences
 ML1 =    spalloc(4*Grid.ny,4*Grid.ny*Grid.nx,4*(3*Grid.ny^2+4*Grid.ny)+7*Grid.ny^2+4*Grid.ny);  % LHS preallocate sparse matrix per i station. !!! dependent on formulation of finite differences
 ML2 = spalloc(4*Grid.ny,4*Grid.ny*Grid.nx,3*Grid.ny);  % LHS preallocate sparse matrix per i station. !!! dependent on formulation of finite differences
 ML3 = spalloc(4*Grid.ny,4*Grid.ny*Grid.nx,5*Grid.ny);  % LHS preallocate sparse matrix per i station. !!! dependent on formulation of finite differences
 ML4 = spalloc(4*Grid.ny,4*Grid.ny*Grid.nx,3*Grid.ny);  % LHS preallocate sparse matrix per i station. !!! dependent on formulation of finite differences
 
-R=zeros(4*Grid.nx*Grid.ny,1);         % RHS
+R=zeros(4*Grid.nx*Grid.ny,1);  % Initiate RHS vector
 
+% Reset LHS location (i,j) and value (s) vectors
 iML1MFDtotal = []; iML1total = []; iML2total = []; iML3total = []; iML4total = [];
 jML1MFDtotal = []; jML1total = []; jML2total = []; jML3total = []; jML4total = [];
 sML1MFDtotal = []; sML1total = []; sML2total = []; sML3total = []; sML4total = [];
 
-% construction of the matrix blocks
-
+% xi step size dxi is constant
 dxi  =   StabGrid.xiun(1,2) - StabGrid.xiun(1,1);
 
 %% Initialize Nonlinear convergence loop
@@ -553,7 +560,7 @@ for i=1:Grid.nx
         Z       Z                                          Z       Z];
     
     
-    % Ensure pressure is extrapolated downward from the surface
+    % Ensure pressure is copied downward from the surface
     Pres = I.*(1-bufsp(:,i)) + diag(-1*(1-bufsp(2:end,i)),-1);
 
     % Set up buffer and embedded boundary method
@@ -962,9 +969,10 @@ if Opt.Sweep == 1 % If intermedate results are requested, allow all modes to ent
     [nzA, ] = find((StabRes.A(:,index))); %find nonzero Amplitudes
     nfm = max(nzA)+(1);     %find index of highest harmonic+1
     nfl = min(nzA)-(1);     %find index of conjugate of highest harmonic-1 
+
 else
     % If amplitude ramping finished (AF=1) and converged introduce higher harmonics
-    if AF>=1 && max(abs(dalsave(:,max(k1,1))))<=Conv*100 && ~isnan(dalsave(max(RunJ),k1))
+    if AF>=1 && max(abs(dalsave(:,max(k1,1))))<=Conv*Opt.ConvF && ~isnan(dalsave(max(RunJ),k1))
     [nzA, ] = find((StabRes.A(:,index))); %find nonzero Amplitudes
     nfm = max(nzA)+(1);     %find index of highest harmonic+1
     nfl = min(nzA)-(1);     %find index of conjugate of highest harmonic-1  
@@ -1032,17 +1040,12 @@ for i = 1:Grid.nx
 end
 end
 
-figure(473)
-hold off
-for j = RunJ(RunJ>=round(nf/2))
-    semilogy(StabGrid.xiun(1:round(Grid.nx)),squeeze(max(abs(f_phi(j,1:Grid.ny,1:round(Grid.nx)))))) 
-    hold on
+modeslegend = [];
+for jj = [RunJ(RunJ >= round(nf/2))]
+modeslegend = [modeslegend, convertCharsToStrings(['Mode (m,n) = (' num2str(Mvec(jj)) ',' num2str(Nvec(jj)) ')']) ];
 end
-ylim([1e-12 1])
-title('forcing term')
 
 figure(474)
-subplot(4,1,1:3)
 hold off
 for j = RunJ(RunJ>=round(nf/2))
     semilogy(StabGrid.xiun(1:round(Grid.nx)),squeeze(max(abs(phi(j,1:Grid.ny,1:round(Grid.nx)))))) 
@@ -1051,15 +1054,13 @@ end
 plot(StabGrid.xiun(round(Grid.nx*Opt.xb/100))*ones(1,2),[1e-10 1])
 xlim([StabGrid.xiun(1) StabGrid.xiun(end)])
 ylim([1e-12 1])
-title('Amplitude evolution')
-set(gcf, 'Position', [650 400 500 400]);
-ylabel('A')
-
-subplot(4,1,4)
-plot(StabGrid.xiun,bufc)
-xlim([StabGrid.xiun(1) StabGrid.xiun(end)])
-xlabel('x')
-
+title('Amplitude evolution','FontName','Times New Roman','FontSize',10)
+set(gcf, 'Position', [100 50 700 400]);
+ylabel('A','FontAngle','italic','FontName','Times New Roman','FontSize',10,'FontAngle','italic','Rot',0)
+xlabel('x','FontAngle','italic','FontName','Times New Roman','FontSize',10,'FontAngle','italic')
+legend([modeslegend, 'Buffer start'],'Location','NorthEastOutside','FontName','Times New Roman','FontSize',10)
+grid on
+pause(0.05)
 
 
 %% Convergence
@@ -1069,7 +1070,10 @@ for j = RunJ
 end
 
 % End simulation if only 1 mode is present (Linear)
-if length(RunJ) == 1 ; dal = zeros(size(dal)); end
+if length(RunJ) == 1; dal = zeros(size(dal)); end
+
+% End simulation if it starts divering
+if AVAL>=2 && k1~=0; dal = zeros(size(dal)); end
 
 % Save amplitudes
 Aold = StabRes.A;
@@ -1155,28 +1159,36 @@ end
 
 end
 %% Plot convergence
-
+modeslegend = [];
+for jj = [RunJ(RunJ >= round(nf/2))]
+modeslegend = [modeslegend, convertCharsToStrings(['Mode (m,n) = (' num2str(Mvec(jj)) ',' num2str(Nvec(jj)) ')']) ];
+end
 dalsave(:,k1) = abs(dal);
 
 dalsave(dalsave <= 0) = NaN;
 dalsave(dalsave == 1) = NaN;
 
 figure(15)
-hold off
-semilogy(linspace(1,k1,k1),dalsave(RunJ,:))
+clf
+semilogy(linspace(1,k1,k1),dalsave(RunJ(RunJ >= round(nf/2)),:))
 hold on
-semilogy(linspace(1,k1,k1),Conv.*ones(1,k1),'k--')
-set(gcf, 'Position', [100 400 500 400]);
+semilogy(linspace(1,k1,k1),Conv*Opt.ConvF.*ones(1,k1),'k--')
+semilogy(linspace(1,k1,k1),Conv.*ones(1,k1),'k-')
+set(gcf, 'Position', [100 550 700 400]);
+
 xlim([0 k1])
-ylabel('Relative error')
-xlabel('Iteration')
+ylabel('Relative error','FontName','Times New Roman','FontSize',10)
+xlabel('Iteration','FontName','Times New Roman','FontSize',10)
+title('Convergence tracker','FontName','Times New Roman','FontSize',10)
+legend([modeslegend "Intermediate convergence threshold" "Final convergence threshold"],'Location','NorthEastOutside','FontName','Times New Roman','FontSize',10)
 pause(0.05)
+
 end %convergence loop
 
 %% Prepare output via shape function normalization
 % Calculate du/dxi
 for j = RunJ
-dux(j,:,:) = - FD1d4o( squeeze(StabRes.u(j,:,:)), dxi );
+dux(j,:,:) = - FD1d4o( squeeze(StabRes.u(j,:,:)), dxi ).*StabGrid.xix(end,:);
 end
 
 % Create y integration vector

@@ -1,5 +1,28 @@
 function [ f ] = NLT_HNS(StabGrid,RunJ,StabRes,D1,HB)
-%% License 
+%% License (GNU GENERAL PUBLIC LICENSE v3)
+%                  Delft Harmonic Navier-Stokes Solver
+%     Copyright (C) 2023 S.H.J. Westerbeek, S. Hulshoff, H. Schuttelaars
+%                          & M. Kotsonis
+% 
+%     This program is free software: you can redistribute it and/or modify
+%     it under the terms of the GNU General Public License as published by
+%     the Free Software Foundation, either version 3 of the License, or
+%     (at your option) any later version.
+% 
+%     This program is distributed in the hope that it will be useful,
+%     but WITHOUT ANY WARRANTY; without even the implied warranty of
+%     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%     GNU General Public License for more details.
+% 
+%     You should have received a copy of the GNU General Public License
+%     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+%
+%     Please cite this code and the paper if you have used this for your
+%     publication:
+
+% DOI:
+% DOI:
+
 
 %% Description
 
@@ -7,15 +30,19 @@ function [ f ] = NLT_HNS(StabGrid,RunJ,StabRes,D1,HB)
 % on the grid defined in StabGrid for perturbation velocities presented in
 % u, v, and w. 
 
-% Inputs
+%% Inputs
+% Structures
 % StabGrid  Structure containing grid information
-% RunJ      (1, at most (2N+1)x(2M+1))  Modes to run for
 % StabRes   Stability results
-% D1        (ny,ny)  First-order wall-normal derivative operator
-% HB        ((2N+1)x(2M+1),(2N+1)x(2M+1),(2N+1)x(2M+1))  Harmonic Balancing matrices
 
-% Outputs
-% f ((2N+1)x(2M+1), 4 ny nx) Forcing term
+% Name    size      unit explanation
+% RunJ    (1,1)     [-]  Considered mode j
+% D1      (ny,ny)   [-]  First-order wall-normal derivative operator
+% HB      ((2N+1)x(2M+1),(2N+1)x(2M+1),(2N+1)x(2M+1)) [-]  Harmonic Balancing matrices
+
+%% Outputs
+% Name  size                    unit explanation
+% f     ((2N+1)x(2M+1), 4 ny nx) [-] Forcing term
 
 %% Find further necessary values from inputs
 

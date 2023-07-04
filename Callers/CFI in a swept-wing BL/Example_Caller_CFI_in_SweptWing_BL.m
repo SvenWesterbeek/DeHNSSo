@@ -47,42 +47,43 @@ addpath(genpath('../../..'))
 %% BF: Base Flow data, base flow grid and reference values
 
 % Name         size  unit    explanation
-% BF.X   (nxbl,1)    [-]     Base Flow grid streamwise locations 
-% BF.Y   (1,nybl)    [-]     Base Flow grid streamwise locations
-% BF.U   (nxbl,nybl) [-]     Base Flow Streamwise Velocity
-% BF.V   (nxbl,nybl) [-]     Base Flow Wall-normal Velocity
-% BF.W   (nxbl,nybl) [-]     Base Flow Spanwise Velocity
-% BF.dxU (nxbl,nybl) [-]     Streamwise Gradient of Base Flow Streamwise Velocity
-% BF.dxV (nxbl,nybl) [-]     Streamwise Gradient of Base Flow Wall-normal Velocity
-% BF.dxW (nxbl,nybl) [-]     Streamwise Gradient of Base Flow Spanwise Velocity
-% BF.dyU (nxbl,nybl) [-]     Wall-normal Gradient of Base Flow Streamwise Velocity
-% BF.dyV (nxbl,nybl) [-]     Wall-normal Gradient of Base Flow Wall-normal Velocity
-% BF.dyW (nxbl,nybl) [-]     Wall-normal Gradient of Base Flow Spanwise Velocity
+% BF.X   (nxbl,1)    [-]     Base flow grid streamwise locations 
+% BF.Y   (1,nybl)    [-]     Base flow grid wall-normal locations
+% BF.U   (nxbl,nybl) [-]     Base flow streamwise velocity
+% BF.V   (nxbl,nybl) [-]     Base flow wall-normal velocity
+% BF.W   (nxbl,nybl) [-]     Base flow spanwise velocity
+% BF.dxU (nxbl,nybl) [-]     Streamwise gradient of base flow streamwise velocity
+% BF.dxV (nxbl,nybl) [-]     Streamwise gradient of base flow wall-normal velocity
+% BF.dxW (nxbl,nybl) [-]     Streamwise gradient of base flow spanwise velocity
+% BF.dyU (nxbl,nybl) [-]     Wall-normal gradient of base flow streamwise velocity
+% BF.dyV (nxbl,nybl) [-]     Wall-normal gradient of base flow wall-normal velocity
+% BF.dyW (nxbl,nybl) [-]     Wall-normal gradient of base flow spanwise velocity
 
-% BF.lref   (1)      [m]     reference length (Blasius lengthscale)
-% BF.Uref   (1)      [m/s]   reference velocity 
-% BF.nu     (1)      [m^2/s] kinematic viscocity 
+% BF.lref   (1)      [m]     Reference length (Blasius lengthscale)
+% BF.Uref   (1)      [m/s]   Reference velocity 
+% BF.nu     (1)      [m^2/s] Kinematic viscocity 
 % BF.Re     (1)      [-]     Reynolds number
 
 % Load Base Flow data
 load('BF_SweptWing_flat.mat')
 
 %% Grid: Numerical domain specifications OR Numerical domain grid points  
+
 % Name         size         units explanation
 % Grid.nx       (1)         [-]   Number of streamwise stations of the numerical grid
 % Grid.ny       (1)         [-]   Number of wall-normal collocation points of the numerical grid
-% Grid.wall     (nxwall,2)  [-]   Wall definition x and y locations on arbitrary grid
+% Grid.wall     (nxwall,2)  [-]   Wall definition x and y locations 
 % Grid.H        (1)         [-]   Domain height
 % Grid.y_i      (1)         [-]   Median collocation point height
-% Grid.S        (1)         [-]   Stability grid domain start
-% Grid.L        (1)         [-]   Stability grid domain length (wall length)
+% Grid.S        (1)         [-]   Numerical grid domain start
+% Grid.L        (1)         [-]   Numerical grid domain length (wall length)
 % Grid.mode     (string)    [-]   Grid generation mode (see grid_gen)
-%%%% equidistant    - an equidistant streamwise distribution. Wall-refined. 
-%%%% xrefined       - streamwise gaussian distribution. Wall-refined. eta parallel to y
-%%%% fanned         - equidistant streamwise distribution. Wall-normal eta axes to 
-%%%%                  account for wall curvature. wall-refined. 
-%%%% wallorthogonal - Locally wall-orthogonal grid. eta is curved.
-% Grid.mug      (1)         [-]   Streamwise grid refinement location, domain [S S+L]
+%   * equidistant    - an equidistant streamwise distribution. Wall-refined. 
+%   * xrefined       - streamwise gaussian distribution. Wall-refined. eta parallel to y
+%   * fanned         - equidistant streamwise distribution. Wall-normal eta axes to 
+%                      account for wall curvature. Wall-refined. 
+%   * wallorthogonal - Locally wall-orthogonal grid. Eta is curved.
+% Grid.mug      (1)         [-]   Streamwise grid refinement center, domain [S S+L]
 % Grid.sig      (1)         [-]   Streamwise grid refinement variance (Gaussian), domain [0 1] 
 % Grid.ag       (1)         [-]   Streamwise grid refinement strength, domain [0 1]
 % Grid.StepX    (1)         [-]   Step location
@@ -100,17 +101,18 @@ yw = 0*xw;                             % [-] Wall is flat
 Grid.wall = [xw;yw];                   % [-] Wall description [-]
 
 % Set domain
-Grid.H = max(BF.Y);         % [-] Domain height
-Grid.y_i = Grid.H/10;       % [-] Median collocation point height
-Grid.S = BF.X(1);           % [-] Start of the domain in wall-coordinate
-Grid.L = BF.X(end)-BF.X(1); % [-] Length of the domain in wall-coordinate
+Grid.H = max(BF.Y)*0.99;        % [-] Domain height
+Grid.y_i = Grid.H/10;           % [-] Median collocation point height
+Grid.S = BF.X(1);               % [-] Start of the domain in wall-coordinate
+Grid.L = BF.X(end-1)-BF.X(1);   % [-] Length of the domain in wall-coordinate
 
 Grid.type = "equidistant";  % Select the type of grid
 
 %% Stab: Perturbation specifications and boundary conditions 
+
 % Name          size                    units  explanation
 % Stab.N        (1)                     [-]    Spectral truncation of beta modes
-% Stab.M        (1)                     [-]    spectral truncation of omega modes
+% Stab.M        (1)                     [-]    Spectral truncation of omega modes
 % Stab.A0       ((2N+1)x(2M+1),1)       [-]    Initial amplitudes of all modes
 % Stab.omega_0  (1)                     [-]    Fundamental angular frequency
 % Stab.beta_0   (1)                     [-]    Fundamental spanwise wavenumber
@@ -118,10 +120,10 @@ Grid.type = "equidistant";  % Select the type of grid
 % Stab.bcw      (any, 3x(2N+1)x(2M+1))  [-]    Inhomogeneous boundary conditions wall per mode (x,u,v,w)^T
 % Stab.bcf      (any, 3x(2N+1)x(2M+1))  [-]    Inhomogeneous boundary conditions top per mode (x,u,v,w)^T
 % Stab.y0       (1,ny0)                 [-]    Wall-normal distribution of inflow perturbation data
-% Stab.u0       (3x(2N+1)x(2M+1)),ny0)  [-]    Normalized streamwise perturbation velocity at inflow 
-% Stab.v0       (3x(2N+1)x(2M+1)),ny0)  [-]    Normalized wall-normal perturbation velocity at inflow 
-% Stab.w0       (3x(2N+1)x(2M+1)),ny0)  [-]    Normalized spanwise perturbation velocity at inflow 
-% Stab.p0       (3x(2N+1)x(2M+1)),ny0)  [-]    Normalized perturbation pressures at inflow 
+% Stab.u0       (3x(2N+1)x(2M+1)),ny0)  [-]    Streamwise perturbation velocity shape function at inflow 
+% Stab.v0       (3x(2N+1)x(2M+1)),ny0)  [-]    Wall-normal perturbation velocity shape function at inflow 
+% Stab.w0       (3x(2N+1)x(2M+1)),ny0)  [-]    Spanwise perturbation velocity shape function at inflow 
+% Stab.p0       (3x(2N+1)x(2M+1)),ny0)  [-]    Perturbation pressures shape function at inflow 
 
 % Spectral Truncation
 Stab.N = 5; % [-] # of beta modes
@@ -159,13 +161,13 @@ Stab.A0(ModeToModeNumber(0,-1,Stab.M,Stab.N))=3.5e-3/2; % [-] Add a complex conj
 %% Opt
 
 % Name         size units explanation
-% Opt.xb       (1)  [-]   Buffer starting location
+% Opt.xb       (1)  [-]   Buffer starting location as a % of the domain (default = 85)
 % Opt.kappa    (1)  [-]   Buffer strength (default = 6)
 % Opt.nltbufxb (1)  [-]   Nonlinear term buffer starting location (=xb by default)
-% Opt.Th       (1)  [-]   Nonlinear introduction threshold
-% Opt.Conv     (1)  [-]   Convergence criterion
-% Opt.ConvF    (1)  [-]   Convergence criterion relaxation factor during ramping
-% Opt.Sweep    (1)  [-]   Output intermediate results flag (true=1, false=0)
+% Opt.Th       (1)  [-]   Nonlinear introduction threshold (default = 1e-11)
+% Opt.Conv     (1)  [-]   Convergence criterion (default = 1e-4)
+% Opt.ConvF    (1)  [-]   Convergence criterion relaxation factor during ramping (default = 100)
+% Opt.Sweep    (1)  [-]   Output intermediate results flag (true=1,false=0) (default = 0)
 % Opt.AFg      (1)  [-]   Amplitude factor growth rate (default = 1.1)
 
 Opt.xb = 85;       % [-] Buffer start as a % of numerical domain
@@ -173,7 +175,9 @@ Opt.nltbufxb = 80; % [-] NLT buffer start as a % of numerical domain
 
 
 %% Run CHNS
+tstart = tic;
 [StabRes,StabGrid,BF] = DeHNSSo(BF,Grid,Stab,Opt);
+time = toc(tstart);
 
 %% Plotting
 % Reset figures
@@ -188,11 +192,14 @@ xmark = linspace(StabGrid.xun(1),StabGrid.xun(end),20);
 figure(1)
 
 % Plot HNS results
+if any(StabRes.A(1,:)) %Plot MFD
 semilogy(StabGrid.xun,StabRes.A(1,:)/sqrt(2),'k--','linewidth',1.5)
 hold on
-for j = 2:length(StabRes.omegavec)
+end
+for j = 2:length(StabRes.betavec)
     % plot amplitudes
-semilogy(StabGrid.xun,StabRes.A(j,:)/sqrt(2),'k-','linewidth',1.5)
+semilogy(StabGrid.xun,StabRes.A(j,:)/sqrt(2),'k-','linewidth',1.5, 'HandleVisibility', 'off')
+hold on
     % Interpolate marker locations
 ymark = interp1(StabGrid.xun,StabRes.A(j,:)/sqrt(2),xmark);
     % plot markers
@@ -201,23 +208,26 @@ end
 
 % Plot Reference results
 if Stab.N > 1
-load('StabRes_SweptWing_flat_NPSE.mat')
-semilogy(StabGrid2.xun,StabRes2.A(1,:)/sqrt(2),'r--','linewidth',1.5)
+    load('StabRes_SweptWing_flat_NPSE.mat')
+if any(StabRes2.A(1,:)) %Plot MFD
+semilogy(StabGrid2.x,StabRes2.A(1,:)/sqrt(2),'r--','linewidth',1.5)
 hold on
-for j = 2:length(StabRes2.omegavec)
+end
+for j = 2:size(StabRes2.A,1)
     % plot amplitudes
-semilogy(StabGrid2.xun,StabRes2.A(j,:)/sqrt(2),'r-','linewidth',1.5)
+semilogy(StabGrid2.x,StabRes2.A(j,:)/sqrt(2),'r-','linewidth',1.5, 'HandleVisibility', 'off')
+hold on
     % Interpolate marker locations
-ymark = interp1(StabGrid2.xun,StabRes2.A(j,:)/sqrt(2),xmark);
+ymark = interp1(StabGrid2.x,StabRes2.A(j,:)/sqrt(2),xmark);
     % plot markers
 semilogy(xmark,ymark,marker(j-1),'color','r','markersize',5)
 end
 
 load('StabRes_SweptWing_flat_DNS.mat')
-semilogy(StabGridDNS.xun, StabResDNS.A(:,1),'m-')
-for j = 2:length(StabRes2.omegavec)
+semilogy(StabGridDNS.xun, StabResDNS.A(:,1)/sqrt(2),'m--')
+for j = 2:size(StabRes.A,1)
     % plot amplitudes
-semilogy(StabGridDNS.xun, StabResDNS.A(:,j),'m-')
+semilogy(StabGridDNS.xun, StabResDNS.A(:,j)/sqrt(2),'m-', 'HandleVisibility', 'off')
     % Interpolate marker locations
 ymark = interp1(StabGridDNS.xun,StabResDNS.A(:,j)/sqrt(2),xmark);
     % plot markers
@@ -231,11 +241,13 @@ semilogy(StabGridLPSE.xun,StabResLPSE.A(1,:)/sqrt(2),'r--','linewidth',1.5)
 ylim([1e-3 10])
 end
 
-xlim([218.9 1670])
+xlim([218.9 1400])
 
 % Set label and figure title text
 hYLabel = ylabel('$u^{\prime}_{rms}$', 'interpreter', 'latex','rotation',0);
 hXLabel = xlabel('$x$', 'interpreter', 'latex');
+hTitle = title ('Amplitude development CFI in a swept-wing BL','FontName','Times New Roman','FontSize',10);
+
 % Fonts and font sizes
 set( gca,'FontName','Times' );
 set([ hXLabel, hYLabel], ...
@@ -247,4 +259,40 @@ set([hXLabel, hYLabel]  , ...
 grid on
 hold off
 clear marker xmark ymark
+
+% HNS modes
+hnsmodeslegend = [];
+for jj = 1:length(StabRes.betavec)
+    if any(StabRes.A(jj,:))
+% hnsmodeslegend = [hnsmodeslegend, convertCharsToStrings(['HNS mode (m,n) = (' num2str(StabRes.betavec(jj)/StabRes.betavec(2)) ',' num2str(0) ')']),convertCharsToStrings(['LPSE mode (m,n) = (' num2str(StabRes.betavec(jj)/StabRes.betavec(2)) ',' num2str(0) ') marker'])  ];
+hnsmodeslegend = [hnsmodeslegend, convertCharsToStrings(['LPSE mode (m,n) = (' num2str(StabRes.betavec(jj)/StabRes.betavec(2)) ',' num2str(0) ')'])  ];
+    end
+end
+
+
+if Stab.N>1 %NPSE
+% PSE modes
+psemodeslegend = [];
+for jj = 1:length(StabRes.betavec)
+    if any(StabRes2.A(jj,:))
+psemodeslegend = [psemodeslegend, convertCharsToStrings(['NPSE mode (m,n) = (' num2str(StabRes.betavec(jj)/StabRes.betavec(2)) ',' num2str(0) ')'])  ];
+    end
+end
+
+% DNS modes
+dnsmodeslegend = [];
+for jj = 1:length(StabRes.betavec)
+    if any(StabRes.A(jj,:))
+dnsmodeslegend = [dnsmodeslegend, convertCharsToStrings(['HNS mode (m,n) = (' num2str(StabRes.betavec(jj)/StabRes.betavec(2)) ',' num2str(0) ')'])];
+    end
+end
+else
+% PSE modes
+psemodeslegend = [convertCharsToStrings(['LPSE mode (m,n) = (' num2str(StabRes.betavec(2)/StabRes.betavec(2)) ',' num2str(0) ')'])];
+dnsmodeslegend = [];
+end
+
+
+legend([hnsmodeslegend psemodeslegend dnsmodeslegend],'Location','EastOutside')
+
 

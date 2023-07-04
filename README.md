@@ -48,7 +48,7 @@ _Thank you for your interest in using DeHNSSo. This page is intended to guide yo
 
 ## How to use DeHNSSo <a id="how-to-use-dehnsso"></a>
 
-The first step towards using DeHNSSo is ensuring that you have MATLAB installed. It is recommended to use at least version R2022b. For help with installing Matlab, please follow the instructions on the [MathWorks web page](https://nl.mathworks.com/products/matlab.html). Then, you will need to download DeHNSSo from the DeHNSSo repository **[#CMM: update with correct name, possibly GitLab]** as will be explained below. DeHNSSo comes with 4 representative test cases that can be executed immediately. To perform custom or modified simulations, please familiarize yourself with the input formats through these examples and adjust them accordingly.
+The first step towards using DeHNSSo is ensuring that you have MATLAB installed **[#CMM:is this sufficient? what toolboxes are necessary? i found a symbolic toolbox necessity in grid. what others?]**. It is recommended to use at least version R2022b. For help with installing Matlab, please follow the instructions on the [MathWorks web page](https://nl.mathworks.com/products/matlab.html). Then, you will need to download DeHNSSo from the DeHNSSo repository **[#CMM: update with correct name, possibly GitLab]** as will be explained below. DeHNSSo comes with 4 representative test cases that can be executed immediately. To perform custom or modified simulations, please familiarize yourself with the input formats through these examples and adjust them accordingly.
 
 ## Installation <a id="installation"></a>
 
@@ -147,12 +147,11 @@ _Stab.bcw_ is used to define inhomogeneous wall conditions in the streamwise, wa
 | _Stab.beta\_0_ | Fundamental spanwise wavelength | [-] | $1$ |
 | _Stab.IC_ | Initialization method "ILST","ZERO'', 'LOAD" | [-] | string |
 | _Stab.bcwx_ | Inhomogeneous boundary condition locations | [-] | $(any,1)$ |
-| _Stab.bcw_ | Inhomogeneous wall boundary conditions (default = 0's) | [-] | $( any, 3\times(2N+1)\times(2M+1))$ |  
-| _Stab.bcf_ | Inhomogeneous top boundary conditions (default = 0's) | [-] | $( any, 3\times(2N+1)\times(2M+1))$ | 
-| _Stab.u0_ | Streamwise perturbation velocity shape function at x\_0 | [-] | $(3 \times (2N+1) \times (2M+1)),ny)$ |
-| _Stab.v0_ | Wall-normal perturbation velocity shape function at x\_0 | [-] | $(3 \times (2N+1) \times (2M+1)),ny)$ |
-| _Stab.w0_ | Spanwise perturbation velocity shape function at x\_0 | [-] | $(3 \times (2N+1) \times (2M+1)),ny)$ |
-| _Stab.p0_ | Perturbation velocity shape function at x\_0 | [-] | $(3 \times (2N+1) \times (2M+1)),ny)$ |
+| _Stab.bcw_ | Inhomogeneous boundary conditions (default = 0's) | [-] | $( any, 3\times(2N+1)\times(2M+1))$ |    **[#CMM: in the code you also have top boundary condition. add descriptions here]**
+| _Stab.u0_ | Normalized streamwise perturbation velocity at x\_0 | [-] | $(3 \times (2N+1) \times (2M+1)),ny)$ | **[#CMM: make it more clear what normalised means]**
+| _Stab.v0_ | Normalized wall-normal perturbation velocity at x\_0 | [-] | $(3 \times (2N+1) \times (2M+1)),ny)$ |
+| _Stab.w0_ | Normalized spanwise perturbation velocity at x\_0 | [-] | $(3 \times (2N+1) \times (2M+1)),ny)$ |
+| _Stab.p0_ | Normalized perturbation pressure at x\_0 | [-] | $(3 \times (2N+1) \times (2M+1)),ny)$ |
 | _Stab.y0_ | Wall-normal distribution of inflow perturbation data | [-] | $(1,ny)$ |
 
 ## Opt <a id="opt"></a>
@@ -275,14 +274,16 @@ Running this case exactly as given will result in the data used to plot Figure 8
 
 ## Swept-wing boundary layer: Stationary Crossflow Instability (CFI) <a id="swept-wing-boundary-layer-stationary-crossflow-instability"></a>
 
-In the second example, the stability of a swept-wing boundary layer is assessed nonlinearly for stationary crossflow instabilities. The boundary layer is simulated on a flat plate mimicking the experiments of Rius-Vidales _et al._ (2021). This is done by imposing a fitted external velocity distribution on the top boundary of the base flow simulation as presented in Casacuberta _et al._ (2022). The external streamwise velocity is given by the equation:
+In the second example, the stability of a swept-wing boundary layer is assessed nonlinearly for stationary crossflow instabilities. The boundary layer is simulated on a flat plate mimicking the experiments of Rius-Vidales _et al._ (2021). This is done by imposing a fitted external velocity distribution on the top boundary of the base flow simulation as presented in Casacuberta _et al._ (2022). The external velocity is given by the equation:
 
 $U_e(x) = 0.0023 \ln(x)^4 + 0.0377 \ln(x)^3 + 0.1752 \ln(x)^2 + 0.5303 \ln(x) + 1.874$
 
-with an external spanwise velocity of $W_e = -1.24$ constant over the domain. This holds for all cases described hereafter.
+**[#CMM: add the information for spanwise velocity for all three CFI test cases]**
+
+and holds for all cases described hereafter.
 
 ### Reference values
-The reference length, defined as the Blasius length at the inflow is $l\_{ref} = 2.1394 \times 10^{-4}$ m. The external velocity at the inflow is $U\_{ref} = 15.1$ m/s. The kinematic viscosity of the flow is $1.47 \times 10^{-5}$ such that the global Reynolds number is $220$. 
+The reference length, defined as the Blasius length at the inflow is $l\_{ref} = 2.1394 \times 10^{-4}$ m. The external velocity at the inflow is $U\_{ref} = 15.1$ m/s. The kinematic viscosity of the flow is $1.47 \times 10^{-5}$ such that the global Reynolds number is $220$. **[#CMM: spanwise information??]**
 
 ### Domain description
 
