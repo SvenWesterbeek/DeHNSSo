@@ -54,7 +54,7 @@ The first step towards using DeHNSSo is ensuring that you have MATLAB installed 
 
 To start using DeHNSSo, please download the files from this GitHub [Repository](https://github.com/SvenWesterbeek/DeHNSSo) **[#CMM: update this accordingly. possibly GitLab]**.  The current version of DeHNSSo was made using MATLAB R2022b. Support for earlier versions is not guaranteed. This file contains several folders, namely: Callers, Tools, Data Files, and Documentation. All folders must remain together in a directory of your choosing.
 
-The base flow data for the fourth example case "CFI over a step in a swept-wing BL" is too large for this repository and can be found in the release snapshot 4TU [Repository](https://PLACEHOLDER) adjusted for use in DeHNSSo. The raw files can be found in the [Repository](https://PLACEHOLDER) of J. Casacuberta instead. **[#CMM: in principle we will not be allowed to store large data on GitLab. maybe we need to find a different solution for keeping data]**
+The base flow data for the fourth example case "CFI over a step in a swept-wing BL" is too large for this repository and can be found in the release snapshot 4TU [Repository](https://PLACEHOLDER) adjusted for use in DeHNSSo. The raw files can be found in the [Repository](https://PLACEHOLDER) of J. Casacuberta instead. 
 
 ### Input files <a name="input-files"></a>
 
@@ -136,7 +136,7 @@ The _Stab_ structure is used to define the mode ensemble of interest and present
 
 _Stab.IC_ sets the mode initialization method. Currently, two methods are implemented. "ILST" calls a routine that finds the solution to the local eigenvalue problem at the inflow for all modes that have a nonzero amplitude (presented in _Stab.A0_). Note that not all modes need to be supplied with an amplitude at the inflow. These results are then normalized with the maximum streamwise perturbation velocity and multiplied by the respective initialization amplitude. "ZERO" instead means no inflow condition is supplied. This generally means that the user intends to simulate the receptivity problem by supplying inhomogeneous boundary conditions. "LOAD" instead uses the perturbation profiles presented in _Stab.u0, Stab.v0, Stab.w0, Stab.p0_ to define the inflow boundary condition. The initial perturbation data is interpolated onto the numerical grid within the solver and can thus be supplied on any distribution of points consistent with _Stab.y0_.
 
-_Stab.bcw_ is used to define inhomogeneous wall conditions in the streamwise, wall-normal and spanwise velocity components per mode defined at the streamwise locations presented in _Stab.bcwx._
+_Stab.bcw_ is used to define inhomogeneous wall conditions in the streamwise, wall-normal, and spanwise velocity components per mode defined at the streamwise locations presented in _Stab.bcwx._
 
 | Name | Content | Unit | Size |
 | --- | --- | --- | --- |
@@ -276,14 +276,12 @@ Running this case exactly as given will result in the data used to plot Figure 8
 
 In the second example, the stability of a swept-wing boundary layer is assessed nonlinearly for stationary crossflow instabilities. The boundary layer is simulated on a flat plate mimicking the experiments of Rius-Vidales _et al._ (2021). This is done by imposing a fitted external velocity distribution on the top boundary of the base flow simulation as presented in Casacuberta _et al._ (2022). The external velocity is given by the equation:
 
-$U_e(x) = 0.0023 \ln(x)^4 + 0.0377 \ln(x)^3 + 0.1752 \ln(x)^2 + 0.5303 \ln(x) + 1.874$
+$U_e(x) = 0.0023 \ln(x)^4 + 0.0377 \ln(x)^3 + 0.1752 \ln(x)^2 + 0.5303 \ln(x) + 1.874.$
 
-**[#CMM: add the information for spanwise velocity for all three CFI test cases]**
-
-and holds for all cases described hereafter.
+The spanwise velocity $W_e=-1.24$ is constant over the domain. This holds for all cases described hereafter.
 
 ### Reference values
-The reference length, defined as the Blasius length at the inflow is $l\_{ref} = 2.1394 \times 10^{-4}$ m. The external velocity at the inflow is $U\_{ref} = 15.1$ m/s. The kinematic viscosity of the flow is $1.47 \times 10^{-5}$ such that the global Reynolds number is $220$. **[#CMM: spanwise information??]**
+The reference length, defined as the Blasius length at the inflow is $l\_{ref} = 2.1394 \times 10^{-4}$ m. The external velocity at the inflow is $U\_{ref} = 15.1$ m/s. The kinematic viscosity of the flow is $1.47 \times 10^{-5}$ such that the global Reynolds number is $220$.
 
 ### Domain description
 
