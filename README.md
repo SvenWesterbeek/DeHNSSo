@@ -48,11 +48,11 @@ _Thank you for your interest in using DeHNSSo. This page is intended to guide yo
 
 ## How to use DeHNSSo <a id="how-to-use-dehnsso"></a>
 
-The first step towards using DeHNSSo is ensuring that you have MATLAB installed **[#CMM:is this sufficient? what toolboxes are necessary? i found a symbolic toolbox necessity in grid. what others?]**. It is recommended to use at least version R2022b. For help with installing Matlab, please follow the instructions on the [MathWorks web page](https://nl.mathworks.com/products/matlab.html). Then, you will need to download DeHNSSo from the DeHNSSo repository **[#CMM: update with correct name, possibly GitLab]** as will be explained below. DeHNSSo comes with 4 representative test cases that can be executed immediately. To perform custom or modified simulations, please familiarize yourself with the input formats through these examples and adjust them accordingly.
+The first step towards using DeHNSSo is ensuring that you have MATLAB installed. It is recommended to use at least version R2022b. For help with installing Matlab, please follow the instructions on the [MathWorks web page](https://nl.mathworks.com/products/matlab.html). Then, you will need to download DeHNSSo from the DeHNSSo repository as will be explained below. DeHNSSo comes with 4 representative test cases that can be executed immediately. To perform custom or modified simulations, please familiarize yourself with the input formats through these examples and adjust them accordingly.
 
 ## Installation <a id="installation"></a>
 
-To start using DeHNSSo, please download the files from this GitHub [Repository](https://github.com/SvenWesterbeek/DeHNSSo) **[#CMM: update this accordingly. possibly GitLab]**.  The current version of DeHNSSo was made using MATLAB R2022b. Support for earlier versions is not guaranteed. This file contains several folders, namely: Callers, Tools, Data Files, and Documentation. All folders must remain together in a directory of your choosing.
+To start using DeHNSSo, please download the files from this GitHub [Repository](https://github.com/SvenWesterbeek/DeHNSSo).  The current version of DeHNSSo was made using MATLAB R2022b. Support for earlier versions is not guaranteed. This file contains several folders, namely: Callers, Tools, Data Files, and Documentation. All folders must remain together in a directory of your choosing.
 
 The base flow data for the fourth example case "CFI over a step in a swept-wing BL" is too large for this repository and can be found in the release snapshot 4TU [Repository](https://PLACEHOLDER) adjusted for use in DeHNSSo. The raw files can be found in the [Repository](https://PLACEHOLDER) of J. Casacuberta instead. 
 
@@ -134,7 +134,7 @@ The rest of the inputs to _Grid_ are shown in the table below:
 
 The _Stab_ structure is used to define the mode ensemble of interest and present the solver with inflow conditions. The spectral truncation can be defined by _Stab.N_ and _Stab.M_ which are the maximum multiples of the fundamental _Stab.omega\_0_ and _Stab.beta\_0_ respectively. 
 
-_Stab.IC_ sets the mode initialization method. Currently, two methods are implemented. "ILST" calls a routine that finds the solution to the local eigenvalue problem at the inflow for all modes that have a nonzero amplitude (presented in _Stab.A0_). Note that not all modes need to be supplied with an amplitude at the inflow. These results are then normalized with the maximum streamwise perturbation velocity and multiplied by the respective initialization amplitude. "ZERO" instead means no inflow condition is supplied. This generally means that the user intends to simulate the receptivity problem by supplying inhomogeneous boundary conditions. "LOAD" instead uses the perturbation profiles presented in _Stab.u0, Stab.v0, Stab.w0, Stab.p0_ to define the inflow boundary condition. The initial perturbation data is interpolated onto the numerical grid within the solver and can thus be supplied on any distribution of points consistent with _Stab.y0_.
+_Stab.IC_ sets the mode initialization method. Currently, two methods are implemented. "ILST" calls a routine that finds the solution to the local eigenvalue problem at the inflow for all modes that have a nonzero amplitude (presented in _Stab.A0_). Note that not all modes need to be supplied with an amplitude at the inflow. These results are then normalized with the maximum streamwise perturbation velocity and multiplied by the respective initialization amplitude. "ZERO" instead means no inflow condition is supplied. This generally means that the user intends to simulate the receptivity problem by supplying inhomogeneous boundary conditions. "LOAD" instead uses the perturbation profiles presented in _Stab.u0, Stab.v0, Stab.w0, Stab.p0_ to define the inflow boundary condition. These should be normalized by the peak value of _Stab.u0_. The initial perturbation data is interpolated onto the numerical grid within the solver and can thus be supplied on any distribution of points consistent with _Stab.y0_.
 
 _Stab.bcw_ is used to define inhomogeneous wall conditions in the streamwise, wall-normal, and spanwise velocity components per mode defined at the streamwise locations presented in _Stab.bcwx._
 
@@ -147,8 +147,9 @@ _Stab.bcw_ is used to define inhomogeneous wall conditions in the streamwise, wa
 | _Stab.beta\_0_ | Fundamental spanwise wavelength | [-] | $1$ |
 | _Stab.IC_ | Initialization method "ILST","ZERO'', 'LOAD" | [-] | string |
 | _Stab.bcwx_ | Inhomogeneous boundary condition locations | [-] | $(any,1)$ |
-| _Stab.bcw_ | Inhomogeneous boundary conditions (default = 0's) | [-] | $( any, 3\times(2N+1)\times(2M+1))$ |    **[#CMM: in the code you also have top boundary condition. add descriptions here]**
-| _Stab.u0_ | Normalized streamwise perturbation velocity at x\_0 | [-] | $(3 \times (2N+1) \times (2M+1)),ny)$ | **[#CMM: make it more clear what normalised means]**
+| _Stab.bcw_ | Inhomogeneous wall boundary conditions (default = 0's) | [-] | $( any, 3\times(2N+1)\times(2M+1))$ |    
+| _Stab.bct_ | Inhomogeneous top boundary conditions (default = 0's) | [-] | $( any, 3\times(2N+1)\times(2M+1))$ |    
+| _Stab.u0_ | Normalized streamwise perturbation velocity at x\_0 | [-] | $(3 \times (2N+1) \times (2M+1)),ny)$ | 
 | _Stab.v0_ | Normalized wall-normal perturbation velocity at x\_0 | [-] | $(3 \times (2N+1) \times (2M+1)),ny)$ |
 | _Stab.w0_ | Normalized spanwise perturbation velocity at x\_0 | [-] | $(3 \times (2N+1) \times (2M+1)),ny)$ |
 | _Stab.p0_ | Normalized perturbation pressure at x\_0 | [-] | $(3 \times (2N+1) \times (2M+1)),ny)$ |
