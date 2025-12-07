@@ -54,7 +54,7 @@ The first step towards using DeHNSSo is ensuring that you have MATLAB installed.
 
 To start using DeHNSSo, please download the files from this GitHub [Repository](https://github.com/SvenWesterbeek/DeHNSSo).  The current version of DeHNSSo was made using MATLAB R2022b. Support for earlier versions is not guaranteed. This file contains several folders, namely: Callers, Tools, Data Files, and Documentation. All folders must remain together in a directory of your choosing.
 
-The base flow data for the fourth example case "CFI over a step in a swept-wing BL" is too large for this repository and can be found in the release snapshot 4TU [Repository](https://PLACEHOLDER) adjusted for use in DeHNSSo. The raw files can be found in the [Repository](https://PLACEHOLDER) of J. Casacuberta instead. 
+The base flow data for the fourth example case "CFI over a step in a swept-wing BL" is too large for this repository and can be found in the release snapshot 4TU [Repository](10.4121/5f4e98c8-dcdd-4b7d-8e01-d0615f1c93ca) adjusted for use in DeHNSSo. The raw files can be found in the [Repository](https://PLACEHOLDER) of J. Casacuberta instead. 
 
 ### Input files <a name="input-files"></a>
 
@@ -338,7 +338,7 @@ The stability of this flow problem is assessed linearly ($N=1$, $M=0$). Given th
 
 # License<a id="license"></a>
 
-The contents in the Data files directory are licensed under a  **CC-BY 4.0**  (see CC-BY-4.0 file and [here](/https://joinup.ec.europa.eu/licence/creative-commons-attribution-40-international-cc-40)). The codes and any other file in this repository are licensed under a  **GPLv3 license**  (see GPLv3 file and [here](/https://www.gnu.org/licenses/gpl-3.0.en.html)).
+The contents in the Data files directory are licensed under a  **CC-BY 4.0**  (see CC-BY-4.0 file and [here](https://joinup.ec.europa.eu/licence/creative-commons-attribution-40-international-cc-40)). The codes and any other file in this repository are licensed under a  **GPLv3 license**  (see GPLv3 file and [here](https://www.gnu.org/licenses/gpl-3.0.en.html)).
 
 Copyright notice:
 
