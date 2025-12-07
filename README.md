@@ -344,7 +344,7 @@ Copyright notice:
 
 Technische Universiteit Delft hereby disclaims all copyright interest in the program "DeHNSSo". DeHNSSo is a MATLAB tool to solve Nonlinear Harmonic Navier-Stokes problems written by the Author(s).
 
-Henri Werij, Dean of Faculty of Aerospace Engineering, Technische Universiteit Delft.
+Henri Werij, Dean of the Faculty of Aerospace Engineering, Technische Universiteit Delft.
 
 © 2023, Sven Westerbeek & Marios Kotsonis
 
@@ -362,8 +362,9 @@ M.Kotsonis@tudelft.nl
 # How to cite DeHNSSo<a id="how-to-cite-dehnsso"></a>
 If you have used DeHNSSo or any subroutine within this GitHub. Please cite the GitHub and the journal article:
 
-S. Westerbeek, S. Hulshoff, H. Schuttelaars & M. Kotsonis (2023) DeHNSSo: An Efficient Harmonic Navier-Stokes Solver for Non-Linear Stability Problems with Complex 2D Geometric Features. DOI:
-DeHNSSo. Delft Harmonic Navier-Stokes Solver. GitHub Repository. DOI: 
+S. Westerbeek, S. Hulshoff, H. Schuttelaars & M. Kotsonis (2023) DeHNSSo: An Efficient Harmonic Navier-Stokes Solver for Non-Linear Stability Problems with Complex 2D Geometric Features. DOI:https://doi.org/10.1016/j.cpc.2024.109250
+
+DeHNSSo. Delft Harmonic Navier-Stokes Solver. GitHub Repository. DOI: 10.4121/5f4e98c8-dcdd-4b7d-8e01-d0615f1c93ca
 
 # Acknowledgments<a id="acknowledgments"></a>
 We would like to appreciate several direct and indirect contributors for providing comments, data or codes. We thank J. Casacuberta and S. Hickel for allowing the use and publication of both the base flow data and reference results. Similarly, we thank J.A. Franco for providing AHLNS results as a reference and allowing us to publish this data in this repository. We appreciate the comments of H. Schuttelaars and S. Hullshof in the making of DeHNSSo. We thank J.A.C. Weidemann and S.C. Reddy for making their MATLAB differentiation matrix suite available and allowing it to be published alongside DeHNSSo.
